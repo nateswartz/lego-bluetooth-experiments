@@ -374,6 +374,33 @@ namespace SDKTemplate
             }
         }
 
+        private async void SetLedPurple_Click()
+        {
+            var command = "0800813211510002";
+            await SetHexValue(command);
+        }
+
+        private async void SetLedRed_Click()
+        {
+            var command = "0800813211510009";
+            await SetHexValue(command);
+        }
+
+        private async Task<bool> SetHexValue(string hex)
+        {
+            var bytes = Enumerable.Range(0, hex.Length)
+                          .Where(x => x % 2 == 0)
+                          .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                          .ToArray();
+
+            var writer = new DataWriter();
+            writer.ByteOrder = ByteOrder.LittleEndian;
+            writer.WriteBytes(bytes);
+
+            var writeSuccessful = await WriteBufferToSelectedCharacteristicAsync(writer.DetachBuffer());
+            return writeSuccessful;
+        }
+
         private async Task<bool> WriteBufferToSelectedCharacteristicAsync(IBuffer buffer)
         {
             try
