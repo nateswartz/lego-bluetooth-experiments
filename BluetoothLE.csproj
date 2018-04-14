@@ -103,9 +103,6 @@
     <Compile Include="DisplayHelpers.cs" />
     <Compile Include="PresentationFormats.cs" />
     <Compile Include="SampleConfiguration.cs" />
-    <Compile Include="Scenario1_Discovery.xaml.cs">
-      <DependentUpon>Scenario1_Discovery.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Scenario2_Client.xaml.cs">
       <DependentUpon>Scenario2_Client.xaml</DependentUpon>
     </Compile>
@@ -124,10 +121,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Scenario1_Discovery.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Styles\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -138,6 +131,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\SmallTile-sdk.scale-100.png" />
+    <Content Include="Assets\Splash-sdk.scale-100.png" />
+    <Content Include="Assets\squareTile-sdk.scale-100.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\microsoft-sdk.png" />
     <Content Include="Assets\smalltile-sdk.png" />

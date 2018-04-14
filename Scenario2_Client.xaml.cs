@@ -41,8 +41,16 @@ namespace SDKTemplate
         private ObservableCollection<BluetoothLEAttributeDisplay> ServiceCollection = new ObservableCollection<BluetoothLEAttributeDisplay>();
         private ObservableCollection<BluetoothLEAttributeDisplay> CharacteristicCollection = new ObservableCollection<BluetoothLEAttributeDisplay>();
 
+        private ObservableCollection<BluetoothLEDeviceDisplay> KnownDevices = new ObservableCollection<BluetoothLEDeviceDisplay>();
+        private List<DeviceInformation> UnknownDevices = new List<DeviceInformation>();
+
+        private DeviceWatcher deviceWatcher;
+
         private BluetoothLEDevice bluetoothLeDevice = null;
         private GattCharacteristic selectedCharacteristic;
+
+        private GattDeviceService moveHubService;
+        private GattCharacteristic moveHubCharacteristic;
 
         // Only one registered characteristic at a time.
         private GattCharacteristic registeredCharacteristic;
@@ -77,6 +85,253 @@ namespace SDKTemplate
                 rootPage.NotifyUser("Error: Unable to reset app state", NotifyType.ErrorMessage);
             }
         }
+
+        private void EnumerateButton_Click()
+        {
+            if (deviceWatcher == null)
+            {
+                StartBleDeviceWatcher();
+                EnumerateButton.Content = "Stop enumerating";
+                rootPage.NotifyUser($"Device watcher started.", NotifyType.StatusMessage);
+            }
+            else
+            {
+                StopBleDeviceWatcher();
+                EnumerateButton.Content = "Start enumerating";
+                rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
+            }
+        }
+        #endregion
+
+        #region Device discovery
+
+        /// <summary>
+        /// Starts a device watcher that looks for all nearby Bluetooth devices (paired or unpaired). 
+        /// Attaches event handlers to populate the device collection.
+        /// </summary>
+        private void StartBleDeviceWatcher()
+        {
+            // Additional properties we would like about the device.
+            // Property strings are documented here https://msdn.microsoft.com/en-us/library/windows/desktop/ff521659(v=vs.85).aspx
+            string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected", "System.Devices.Aep.Bluetooth.Le.IsConnectable" };
+
+            // BT_Code: Example showing paired and non-paired in a single query.
+            string aqsAllBluetoothLEDevices = "(System.Devices.Aep.ProtocolId:=\"{bb7bb05e-5972-42b5-94fc-76eaa7084d49}\")";
+
+            deviceWatcher =
+                    DeviceInformation.CreateWatcher(
+                        aqsAllBluetoothLEDevices,
+                        requestedProperties,
+                        DeviceInformationKind.AssociationEndpoint);
+
+            // Register event handlers before starting the watcher.
+            deviceWatcher.Added += DeviceWatcher_Added;
+            deviceWatcher.Updated += DeviceWatcher_Updated;
+            deviceWatcher.Removed += DeviceWatcher_Removed;
+            deviceWatcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
+            deviceWatcher.Stopped += DeviceWatcher_Stopped;
+
+            // Start over with an empty collection.
+            KnownDevices.Clear();
+
+            // Start the watcher.
+            deviceWatcher.Start();
+        }
+
+        /// <summary>
+        /// Stops watching for all nearby Bluetooth devices.
+        /// </summary>
+        private void StopBleDeviceWatcher()
+        {
+            if (deviceWatcher != null)
+            {
+                // Unregister the event handlers.
+                deviceWatcher.Added -= DeviceWatcher_Added;
+                deviceWatcher.Updated -= DeviceWatcher_Updated;
+                deviceWatcher.Removed -= DeviceWatcher_Removed;
+                deviceWatcher.EnumerationCompleted -= DeviceWatcher_EnumerationCompleted;
+                deviceWatcher.Stopped -= DeviceWatcher_Stopped;
+
+                // Stop the watcher.
+                deviceWatcher.Stop();
+                deviceWatcher = null;
+            }
+        }
+
+        private BluetoothLEDeviceDisplay FindBluetoothLEDeviceDisplay(string id)
+        {
+            foreach (BluetoothLEDeviceDisplay bleDeviceDisplay in KnownDevices)
+            {
+                if (bleDeviceDisplay.Id == id)
+                {
+                    return bleDeviceDisplay;
+                }
+            }
+            return null;
+        }
+
+        private DeviceInformation FindUnknownDevices(string id)
+        {
+            foreach (DeviceInformation bleDeviceInfo in UnknownDevices)
+            {
+                if (bleDeviceInfo.Id == id)
+                {
+                    return bleDeviceInfo;
+                }
+            }
+            return null;
+        }
+
+        private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
+        {
+            // We must update the collection on the UI thread because the collection is databound to a UI element.
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                lock (this)
+                {
+                    Debug.WriteLine(String.Format("Added ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
+
+                    // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+                    if (sender == deviceWatcher)
+                    {
+                        // Make sure device isn't already present in the list.
+                        if (FindBluetoothLEDeviceDisplay(deviceInfo.Id) == null)
+                        {
+                            if (deviceInfo.Name == "LEGO Move Hub")
+                            {
+                                rootPage.SelectedBleDeviceId = deviceInfo.Id;
+                                rootPage.SelectedBleDeviceName = deviceInfo.Name;
+                                ConnectButton.IsEnabled = true;
+                                Debug.WriteLine(String.Format("Found Move Hub"));                     
+                            }
+                        }
+
+                    }
+                }
+            });
+        }
+
+        private async void DeviceWatcher_Updated(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate)
+        {
+            // We must update the collection on the UI thread because the collection is databound to a UI element.
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                lock (this)
+                {
+                    Debug.WriteLine(String.Format("Updated {0}{1}", deviceInfoUpdate.Id, ""));
+
+                    // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+                    if (sender == deviceWatcher)
+                    {
+                        BluetoothLEDeviceDisplay bleDeviceDisplay = FindBluetoothLEDeviceDisplay(deviceInfoUpdate.Id);
+                        if (bleDeviceDisplay != null)
+                        {
+                            // Device is already being displayed - update UX.
+                            bleDeviceDisplay.Update(deviceInfoUpdate);
+                            return;
+                        }
+
+                        DeviceInformation deviceInfo = FindUnknownDevices(deviceInfoUpdate.Id);
+                        if (deviceInfo != null)
+                        {
+                            deviceInfo.Update(deviceInfoUpdate);
+                            // If device has been updated with a friendly name it's no longer unknown.
+                            if (deviceInfo.Name != String.Empty)
+                            {
+                                KnownDevices.Add(new BluetoothLEDeviceDisplay(deviceInfo));
+                                UnknownDevices.Remove(deviceInfo);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        private async void DeviceWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate)
+        {
+            // We must update the collection on the UI thread because the collection is databound to a UI element.
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                lock (this)
+                {
+                    Debug.WriteLine(String.Format("Removed {0}{1}", deviceInfoUpdate.Id, ""));
+
+                    // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+                    if (sender == deviceWatcher)
+                    {
+                        // Find the corresponding DeviceInformation in the collection and remove it.
+                        BluetoothLEDeviceDisplay bleDeviceDisplay = FindBluetoothLEDeviceDisplay(deviceInfoUpdate.Id);
+                        if (bleDeviceDisplay != null)
+                        {
+                            KnownDevices.Remove(bleDeviceDisplay);
+                        }
+
+                        DeviceInformation deviceInfo = FindUnknownDevices(deviceInfoUpdate.Id);
+                        if (deviceInfo != null)
+                        {
+                            UnknownDevices.Remove(deviceInfo);
+                        }
+                    }
+                }
+            });
+        }
+
+        private async void DeviceWatcher_EnumerationCompleted(DeviceWatcher sender, object e)
+        {
+            // We must update the collection on the UI thread because the collection is databound to a UI element.
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+                if (sender == deviceWatcher)
+                {
+                    rootPage.NotifyUser($"{KnownDevices.Count} devices found. Enumeration completed.",
+                        NotifyType.StatusMessage);
+                }
+            });
+        }
+
+        private async void DeviceWatcher_Stopped(DeviceWatcher sender, object e)
+        {
+            // We must update the collection on the UI thread because the collection is databound to a UI element.
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+                if (sender == deviceWatcher)
+                {
+                    rootPage.NotifyUser($"No longer watching for devices.",
+                            sender.Status == DeviceWatcherStatus.Aborted ? NotifyType.ErrorMessage : NotifyType.StatusMessage);
+                }
+            });
+        }
+        #endregion
+
+        #region Pairing
+
+        private bool isBusy = false;
+
+        private async void PairButton_Click()
+        {
+            // Do not allow a new Pair operation to start if an existing one is in progress.
+            if (isBusy)
+            {
+                return;
+            }
+
+            isBusy = true;
+
+            rootPage.NotifyUser("Pairing started. Please wait...", NotifyType.StatusMessage);
+
+            // BT_Code: Pair the currently selected device.
+            bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(rootPage.SelectedBleDeviceId);
+            DevicePairingResult result = await bluetoothLeDevice.DeviceInformation.Pairing.PairAsync();
+            rootPage.NotifyUser($"Pairing result = {result.Status}",
+                result.Status == DevicePairingResultStatus.Paired || result.Status == DevicePairingResultStatus.AlreadyPaired
+                    ? NotifyType.StatusMessage
+                    : NotifyType.ErrorMessage);
+
+            isBusy = false;
+        }
+
         #endregion
 
         #region Enumerating Services
@@ -138,8 +393,19 @@ namespace SDKTemplate
                 {
                     var services = result.Services;
                     rootPage.NotifyUser(String.Format("Found {0} services", services.Count), NotifyType.StatusMessage);
+                    Debug.WriteLine(String.Format("Found {0} services", services.Count));
+
                     foreach (var service in services)
                     {
+                        if (service.Uuid == new Guid("00001623-1212-efde-1623-785feabcd123"))
+                        {
+                            moveHubService = service;
+                            var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid("00001624-1212-efde-1623-785feabcd123"));
+                            foreach (var characteristic in characteristics.Characteristics)
+                            {
+                                moveHubCharacteristic = characteristic;
+                            }
+                        }
                         ServiceCollection.Add(new BluetoothLEAttributeDisplay(service));
                     }
                     ConnectButton.Visibility = Visibility.Collapsed;
@@ -397,8 +663,39 @@ namespace SDKTemplate
             writer.ByteOrder = ByteOrder.LittleEndian;
             writer.WriteBytes(bytes);
 
-            var writeSuccessful = await WriteBufferToSelectedCharacteristicAsync(writer.DetachBuffer());
+            var writeSuccessful = await WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
             return writeSuccessful;
+        }
+
+        private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)
+        {
+            try
+            {
+                // BT_Code: Writes the value from the buffer to the characteristic.
+                var result = await moveHubCharacteristic.WriteValueWithResultAsync(buffer);
+
+                if (result.Status == GattCommunicationStatus.Success)
+                {
+                    rootPage.NotifyUser("Successfully wrote value to device", NotifyType.StatusMessage);
+                    return true;
+                }
+                else
+                {
+                    rootPage.NotifyUser($"Write failed: {result.Status}", NotifyType.ErrorMessage);
+                    return false;
+                }
+            }
+            catch (Exception ex) when (ex.HResult == E_BLUETOOTH_ATT_INVALID_PDU)
+            {
+                rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
+                return false;
+            }
+            catch (Exception ex) when (ex.HResult == E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED || ex.HResult == E_ACCESSDENIED)
+            {
+                // This usually happens when a device reports that it support writing, but it actually doesn't.
+                rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
+                return false;
+            }
         }
 
         private async Task<bool> WriteBufferToSelectedCharacteristicAsync(IBuffer buffer)

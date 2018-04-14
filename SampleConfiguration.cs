@@ -23,7 +23,6 @@ namespace SDKTemplate
 
         List<Scenario> scenarios = new List<Scenario>
         {
-            new Scenario() { Title="Client: Discover servers", ClassType=typeof(Scenario1_Discovery) },
             new Scenario() { Title="Client: Connect to a server", ClassType=typeof(Scenario2_Client) },
         };
 

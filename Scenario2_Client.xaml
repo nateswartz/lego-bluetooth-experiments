@@ -47,6 +47,7 @@
                 selected in the "Discover GATT Servers" scenario
                 and communicates with the device.
             </TextBlock>
+            <Button x:Name="EnumerateButton" Content="Start enumerating" Click="{x:Bind EnumerateButton_Click}" Margin="0,10,10,0"/>
             <TextBlock Style="{StaticResource ListItemTextStyle}" TextWrapping="Wrap" Margin="0,10,0,0">
                 Selected device: <Run Text="{x:Bind rootPage.SelectedBleDeviceName}" FontWeight="Bold"/>
             </TextBlock>
