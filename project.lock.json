@@ -15490,12 +15490,12 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "C:\\Users\\nates\\source\\repos\\Windows-universal-samples-master\\Samples\\BluetoothLE\\cs\\BluetoothLE.csproj",
+      "projectUniqueName": "C:\\Users\\nates\\source\\repos\\boost-universal-windows\\BluetoothLE.csproj",
       "projectName": "BluetoothLE",
-      "projectPath": "C:\\Users\\nates\\source\\repos\\Windows-universal-samples-master\\Samples\\BluetoothLE\\cs\\BluetoothLE.csproj",
-      "projectJsonPath": "C:\\Users\\nates\\source\\repos\\Windows-universal-samples-master\\Samples\\BluetoothLE\\cs\\project.json",
+      "projectPath": "C:\\Users\\nates\\source\\repos\\boost-universal-windows\\BluetoothLE.csproj",
+      "projectJsonPath": "C:\\Users\\nates\\source\\repos\\boost-universal-windows\\project.json",
       "packagesPath": "C:\\Users\\nates\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nates\\source\\repos\\Windows-universal-samples-master\\Samples\\BluetoothLE\\cs\\obj\\",
+      "outputPath": "C:\\Users\\nates\\source\\repos\\boost-universal-windows\\obj\\",
       "projectStyle": "ProjectJson",
       "configFilePaths": [
         "C:\\Users\\nates\\AppData\\Roaming\\NuGet\\NuGet.Config",
