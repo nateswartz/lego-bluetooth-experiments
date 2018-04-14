@@ -106,9 +106,6 @@
     <Compile Include="Scenario1_Discovery.xaml.cs">
       <DependentUpon>Scenario1_Discovery.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Scenario3_ServerForeground.xaml.cs">
-      <DependentUpon>Scenario3_ServerForeground.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Scenario2_Client.xaml.cs">
       <DependentUpon>Scenario2_Client.xaml</DependentUpon>
     </Compile>
@@ -132,10 +129,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Scenario3_ServerForeground.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
