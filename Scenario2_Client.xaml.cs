@@ -74,6 +74,8 @@ namespace SDKTemplate
             if (string.IsNullOrEmpty(rootPage.SelectedBleDeviceId))
             {
                 ConnectButton.IsEnabled = false;
+                SetLEDPurpleButton.IsEnabled = false;
+                SetLEDRedButton.IsEnabled = false;
             }
         }
 
@@ -202,7 +204,10 @@ namespace SDKTemplate
                                 rootPage.SelectedBleDeviceId = deviceInfo.Id;
                                 rootPage.SelectedBleDeviceName = deviceInfo.Name;
                                 ConnectButton.IsEnabled = true;
-                                Debug.WriteLine(String.Format("Found Move Hub"));                     
+                                Debug.WriteLine(String.Format("Found Move Hub"));
+                                StopBleDeviceWatcher();
+                                EnumerateButton.Content = "Start enumerating";
+                                rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
                             }
                         }
 
@@ -410,6 +415,8 @@ namespace SDKTemplate
                     }
                     ConnectButton.Visibility = Visibility.Collapsed;
                     ServiceList.Visibility = Visibility.Visible;
+                    SetLEDPurpleButton.IsEnabled = true;
+                    SetLEDRedButton.IsEnabled = true;
                 }
                 else
                 {

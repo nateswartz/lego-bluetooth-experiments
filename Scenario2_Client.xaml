@@ -69,8 +69,8 @@
                 <Button Content="Write Value as Number" Click="{x:Bind CharacteristicWriteButtonInt_Click}" Margin="0,10,0,0"/>
                 <Button Content="Write Value as UTF-8" Click="{x:Bind CharacteristicWriteButton_Click}" Margin="0,10,0,0"/>
                 <Button Content="Write Value as Hex" Click="{x:Bind CharacteristicWriteButtonHex_Click}" Margin="0,10,0,0"/>
-                <Button Content="Set LED Red" Click="{x:Bind SetLedRed_Click}" Margin="0,10,0,0"/>
-                <Button Content="Set LED Purple" Click="{x:Bind SetLedPurple_Click}" Margin="0,10,0,0"/>
+                <Button x:Name="SetLEDRedButton" Content="Set LED Red" Click="{x:Bind SetLedRed_Click}" Margin="0,10,0,0"/>
+                <Button x:Name="SetLEDPurpleButton" Content="Set LED Purple" Click="{x:Bind SetLedPurple_Click}" Margin="0,10,0,0"/>
             </StackPanel>
             <TextBlock x:Name="CharacteristicLatestValue" Margin="0,10,0,0"/>
         </StackPanel>
