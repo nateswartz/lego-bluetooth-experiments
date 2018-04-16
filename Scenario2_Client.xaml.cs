@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -19,7 +18,6 @@ using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
-using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -38,17 +36,14 @@ namespace SDKTemplate
     {
         private MainPage rootPage = MainPage.Current;
 
-        private ObservableCollection<BluetoothLEAttributeDisplay> CharacteristicCollection = new ObservableCollection<BluetoothLEAttributeDisplay>();
-
-        private ObservableCollection<BluetoothLEDeviceDisplay> KnownDevices = new ObservableCollection<BluetoothLEDeviceDisplay>();
-        private List<DeviceInformation> UnknownDevices = new List<DeviceInformation>();
-
         private DeviceWatcher deviceWatcher;
 
         private BluetoothLEDevice bluetoothLeDevice = null;
 
         private GattDeviceService moveHubService;
         private GattCharacteristic moveHubCharacteristic;
+
+        private List<string> notifications = new List<string>();
 
         #region Error Codes
         readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
@@ -68,14 +63,14 @@ namespace SDKTemplate
             if (string.IsNullOrEmpty(rootPage.SelectedBleDeviceId))
             {
                 ConnectButton.IsEnabled = false;
-                SetLEDPurpleButton.IsEnabled = false;
-                SetLEDRedButton.IsEnabled = false;
+                DisconnectButton.IsEnabled = false;
+                ToggleButtons(false);
             }
         }
 
         protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
-            var success = await ClearBluetoothLEDeviceAsync();
+            var success = await DisconnectBluetoothLEDeviceAsync();
             if (!success)
             {
                 rootPage.NotifyUser("Error: Unable to reset app state", NotifyType.ErrorMessage);
@@ -96,6 +91,15 @@ namespace SDKTemplate
                 ScanButton.Content = "Start scanning";
                 rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
             }
+        }
+
+        private void ToggleButtons(bool state)
+        {
+            SetLEDPurpleButton.IsEnabled = state;
+            SetLEDRedButton.IsEnabled = state;
+            SetLEDGreenButton.IsEnabled = state;
+            WriteHexButton.IsEnabled = state;
+            EnableButtonNotificationsButton.IsEnabled = state;
         }
         #endregion
 
@@ -127,9 +131,6 @@ namespace SDKTemplate
             deviceWatcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
             deviceWatcher.Stopped += DeviceWatcher_Stopped;
 
-            // Start over with an empty collection.
-            KnownDevices.Clear();
-
             // Start the watcher.
             deviceWatcher.Start();
         }
@@ -154,30 +155,6 @@ namespace SDKTemplate
             }
         }
 
-        private BluetoothLEDeviceDisplay FindBluetoothLEDeviceDisplay(string id)
-        {
-            foreach (BluetoothLEDeviceDisplay bleDeviceDisplay in KnownDevices)
-            {
-                if (bleDeviceDisplay.Id == id)
-                {
-                    return bleDeviceDisplay;
-                }
-            }
-            return null;
-        }
-
-        private DeviceInformation FindUnknownDevices(string id)
-        {
-            foreach (DeviceInformation bleDeviceInfo in UnknownDevices)
-            {
-                if (bleDeviceInfo.Id == id)
-                {
-                    return bleDeviceInfo;
-                }
-            }
-            return null;
-        }
-
         private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
         {
             // We must update the collection on the UI thread because the collection is databound to a UI element.
@@ -185,26 +162,23 @@ namespace SDKTemplate
             {
                 lock (this)
                 {
-                    Debug.WriteLine(String.Format("Added ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
+                    Debug.WriteLine(String.Format("Added Called for ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
 
                     // Protect against race condition if the task runs after the app stopped the deviceWatcher.
                     if (sender == deviceWatcher)
                     {
-                        // Make sure device isn't already present in the list.
-                        if (FindBluetoothLEDeviceDisplay(deviceInfo.Id) == null)
+                        if (string.IsNullOrEmpty(rootPage.SelectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
                         {
-                            if (deviceInfo.Name == "LEGO Move Hub")
-                            {
-                                rootPage.SelectedBleDeviceId = deviceInfo.Id;
-                                rootPage.SelectedBleDeviceName = deviceInfo.Name;
-                                ConnectButton.IsEnabled = true;
-                                Debug.WriteLine(String.Format("Found Move Hub"));
-                                StopBleDeviceWatcher();
-                                ScanButton.Content = "Start scanning";
-                                rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
-                            }
+                            string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
+                            Debug.WriteLine(s);
+                            rootPage.SelectedBleDeviceId = deviceInfo.Id;
+                            rootPage.SelectedBleDeviceName = deviceInfo.Name;
+                            ConnectButton.IsEnabled = true;
+                            Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
+                            StopBleDeviceWatcher();
+                            ScanButton.Content = "Start scanning";
+                            rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
                         }
-
                     }
                 }
             });
@@ -222,25 +196,7 @@ namespace SDKTemplate
                     // Protect against race condition if the task runs after the app stopped the deviceWatcher.
                     if (sender == deviceWatcher)
                     {
-                        BluetoothLEDeviceDisplay bleDeviceDisplay = FindBluetoothLEDeviceDisplay(deviceInfoUpdate.Id);
-                        if (bleDeviceDisplay != null)
-                        {
-                            // Device is already being displayed - update UX.
-                            bleDeviceDisplay.Update(deviceInfoUpdate);
-                            return;
-                        }
-
-                        DeviceInformation deviceInfo = FindUnknownDevices(deviceInfoUpdate.Id);
-                        if (deviceInfo != null)
-                        {
-                            deviceInfo.Update(deviceInfoUpdate);
-                            // If device has been updated with a friendly name it's no longer unknown.
-                            if (deviceInfo.Name != String.Empty)
-                            {
-                                KnownDevices.Add(new BluetoothLEDeviceDisplay(deviceInfo));
-                                UnknownDevices.Remove(deviceInfo);
-                            }
-                        }
+                        // Do we need to do anything?
                     }
                 }
             });
@@ -258,18 +214,7 @@ namespace SDKTemplate
                     // Protect against race condition if the task runs after the app stopped the deviceWatcher.
                     if (sender == deviceWatcher)
                     {
-                        // Find the corresponding DeviceInformation in the collection and remove it.
-                        BluetoothLEDeviceDisplay bleDeviceDisplay = FindBluetoothLEDeviceDisplay(deviceInfoUpdate.Id);
-                        if (bleDeviceDisplay != null)
-                        {
-                            KnownDevices.Remove(bleDeviceDisplay);
-                        }
-
-                        DeviceInformation deviceInfo = FindUnknownDevices(deviceInfoUpdate.Id);
-                        if (deviceInfo != null)
-                        {
-                            UnknownDevices.Remove(deviceInfo);
-                        }
+                        // Do we need to do anything?
                     }
                 }
             });
@@ -283,8 +228,7 @@ namespace SDKTemplate
                 // Protect against race condition if the task runs after the app stopped the deviceWatcher.
                 if (sender == deviceWatcher)
                 {
-                    rootPage.NotifyUser($"{KnownDevices.Count} devices found. Enumeration completed.",
-                        NotifyType.StatusMessage);
+                    // Do we need to do anything?
                 }
             });
         }
@@ -305,7 +249,7 @@ namespace SDKTemplate
         #endregion
 
         #region Enumerating Services
-        private async Task<bool> ClearBluetoothLEDeviceAsync()
+        private async Task<bool> DisconnectBluetoothLEDeviceAsync()
         {
             if (subscribedForNotifications)
             {
@@ -326,11 +270,20 @@ namespace SDKTemplate
             return true;
         }
 
+        private async void DisconnectButton_Click()
+        {
+            if (await DisconnectBluetoothLEDeviceAsync())
+            {
+                ConnectButton.IsEnabled = true;
+                DisconnectButton.IsEnabled = false;
+            }
+        }
+
         private async void ConnectButton_Click()
         {
             ConnectButton.IsEnabled = false;
 
-            if (!await ClearBluetoothLEDeviceAsync())
+            if (!await DisconnectBluetoothLEDeviceAsync())
             {
                 rootPage.NotifyUser("Error: Unable to reset state, try again.", NotifyType.ErrorMessage);
                 ConnectButton.IsEnabled = false;
@@ -374,9 +327,9 @@ namespace SDKTemplate
                             foreach (var characteristic in characteristics.Characteristics)
                             {
                                 moveHubCharacteristic = characteristic;
-                                ConnectButton.Visibility = Visibility.Collapsed;
-                                SetLEDPurpleButton.IsEnabled = true;
-                                SetLEDRedButton.IsEnabled = true;
+                                ConnectButton.IsEnabled = false;
+                                ToggleButtons(true);
+                                DisconnectButton.IsEnabled = true;
                                 EnableCharacteristicPanels(characteristic.CharacteristicProperties);
                             }
                         }
@@ -406,9 +359,8 @@ namespace SDKTemplate
             ValueChangedSubscribeToggle.Content = "Subscribe to value changes";
             if (subscribedForNotifications)
             {
-                //registeredCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                //registeredCharacteristic = null;
-                //subscribedForNotifications = false;
+                moveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                subscribedForNotifications = false;
             }
         }
 
@@ -430,7 +382,7 @@ namespace SDKTemplate
 
         }
 
-        private async void CharacteristicWriteButtonHex_Click()
+        private async void WriteHexButton_Click()
         {
             if (!String.IsNullOrEmpty(CharacteristicWriteValue.Text))
             {
@@ -451,21 +403,27 @@ namespace SDKTemplate
             }
         }
 
-        private async void SetLedPurple_Click()
+        private async void SetLedPurpleButton_Click()
         {
             var command = "0800813211510002";
             await SetHexValue(command);
         }
 
-        private async void SetLedGreen_Click()
+        private async void SetLedGreenButton_Click()
         {
             var command = "0800813211510006";
             await SetHexValue(command);
         }
 
-        private async void SetLedRed_Click()
+        private async void SetLedRedButton_Click()
         {
             var command = "0800813211510009";
+            await SetHexValue(command);
+        }
+
+        private async void EnableButtonNotificationsButton_Click()
+        {
+            var command = "0500010202";
             await SetHexValue(command);
         }
 
@@ -590,9 +548,14 @@ namespace SDKTemplate
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var message = $"Notification value: {ByteArrayToString(output)}";
+            notifications.Add(message);
+            if (notifications.Count > 10)
+            {
+                notifications.RemoveAt(0);
+            }
             Debug.WriteLine(message);
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                () => CharacteristicLatestValue.Text = message);
+                () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, notifications));
         }
 
         public static string ByteArrayToString(byte[] ba)
