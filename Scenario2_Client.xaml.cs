@@ -9,8 +9,10 @@
 //
 //*********************************************************
 
+using SDKTemplate.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -52,10 +54,25 @@ namespace SDKTemplate
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
         #endregion
 
+        ObservableCollection<LEDColor> colors = new ObservableCollection<LEDColor>();
+
         #region UI Code
         public Scenario2_Client()
         {
             InitializeComponent();
+            foreach (var color in LEDColors.All)
+            {
+                colors.Add(color);
+            }
+        }
+
+        private async void LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LEDColorsCombo == null) return;
+            var color = (LEDColor)((ComboBox)sender).SelectedItem;
+            rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
+
+            await SetLEDColor(color);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -95,9 +112,7 @@ namespace SDKTemplate
 
         private void ToggleButtons(bool state)
         {
-            SetLEDPurpleButton.IsEnabled = state;
-            SetLEDRedButton.IsEnabled = state;
-            SetLEDGreenButton.IsEnabled = state;
+            LEDColorsCombo.IsEnabled = state;
             WriteHexButton.IsEnabled = state;
             EnableButtonNotificationsButton.IsEnabled = state;
         }
@@ -267,6 +282,8 @@ namespace SDKTemplate
             }
             bluetoothLeDevice?.Dispose();
             bluetoothLeDevice = null;
+            moveHubService?.Dispose();
+            moveHubService = null;
             return true;
         }
 
@@ -403,22 +420,10 @@ namespace SDKTemplate
             }
         }
 
-        private async void SetLedPurpleButton_Click()
+        private async Task<bool> SetLEDColor(LEDColor color)
         {
-            var command = "0800813211510002";
-            await SetHexValue(command);
-        }
-
-        private async void SetLedGreenButton_Click()
-        {
-            var command = "0800813211510006";
-            await SetHexValue(command);
-        }
-
-        private async void SetLedRedButton_Click()
-        {
-            var command = "0800813211510009";
-            await SetHexValue(command);
+            var command = "08008132115100" + color.Code;
+            return await SetHexValue(command);
         }
 
         private async void EnableButtonNotificationsButton_Click()
