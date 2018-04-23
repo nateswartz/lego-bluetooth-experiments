@@ -432,6 +432,22 @@ namespace SDKTemplate
             await SetHexValue(command);
         }
 
+        private async void RunMotorButton_Click()
+        {
+            await RunMotor();
+        }
+
+        private async Task<bool> RunMotor(string port = "39", int powerPercentage = 100, int timeInMS = 1000)
+        {
+            // Port = A - 37 ; B - 38 ; A+B - 39
+            // For time, LSB first
+            var time = timeInMS.ToString("X").PadLeft(4, '0');
+            time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
+            var power = powerPercentage.ToString("X");
+            var command = $"0c0081{port}1109{time}{power}647f03";
+            return await SetHexValue(command);
+        }
+
         private async Task<bool> SetHexValue(string hex)
         {
             var bytes = Enumerable.Range(0, hex.Length)
