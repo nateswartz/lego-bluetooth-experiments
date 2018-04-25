@@ -102,6 +102,7 @@
     <Compile Include="DispatcherTaskExtensions.cs" />
     <Compile Include="DisplayHelpers.cs" />
     <Compile Include="Models\LEDColors.cs" />
+    <Compile Include="Models\Motors.cs" />
     <Compile Include="PresentationFormats.cs" />
     <Compile Include="SampleConfiguration.cs" />
     <Compile Include="Scenario2_Client.xaml.cs">

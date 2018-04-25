@@ -54,21 +54,18 @@ namespace SDKTemplate
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
         #endregion
 
-        ObservableCollection<LEDColor> colors = new ObservableCollection<LEDColor>();
+        List<LEDColor> colors = LEDColors.All;
+        List<Motor> motors = Motors.All;
 
         #region UI Code
         public Scenario2_Client()
         {
             InitializeComponent();
-            foreach (var color in LEDColors.All)
-            {
-                colors.Add(color);
-            }
         }
 
         private async void LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LEDColorsCombo == null) return;
+            if (sender == null) return;
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
             rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
@@ -115,6 +112,8 @@ namespace SDKTemplate
             LEDColorsCombo.IsEnabled = state;
             WriteHexButton.IsEnabled = state;
             EnableButtonNotificationsButton.IsEnabled = state;
+            MotorsCombo.IsEnabled = state;
+            RunMotorButton.IsEnabled = state;
         }
         #endregion
 
@@ -434,17 +433,23 @@ namespace SDKTemplate
 
         private async void RunMotorButton_Click()
         {
-            await RunMotor();
+            if (MotorsCombo.SelectedItem != null)
+            {
+                await RunMotor((Motor)MotorsCombo.SelectedItem);
+            }
+            else
+            {
+                rootPage.NotifyUser("No motor selected", NotifyType.ErrorMessage);
+            }
         }
 
-        private async Task<bool> RunMotor(string port = "39", int powerPercentage = 100, int timeInMS = 1000)
+        private async Task<bool> RunMotor(Motor motor, int powerPercentage = 100, int timeInMS = 1000)
         {
-            // Port = A - 37 ; B - 38 ; A+B - 39
             // For time, LSB first
             var time = timeInMS.ToString("X").PadLeft(4, '0');
             time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
             var power = powerPercentage.ToString("X");
-            var command = $"0c0081{port}1109{time}{power}647f03";
+            var command = $"0c0081{motor.Code}1109{time}{power}647f03";
             return await SetHexValue(command);
         }
 
