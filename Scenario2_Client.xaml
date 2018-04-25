@@ -56,16 +56,22 @@
                 <Button x:Name="DisconnectButton" Content="Disconnect" Click="{x:Bind DisconnectButton_Click}" Margin="10,10,0,0" RelativePanel.RightOf="ConnectButton"/>
             </RelativePanel>
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="ValueChangedSubscribeToggle" Content="Subscribe to value changes" Click="{x:Bind ValueChangedSubscribeToggle_Click}"
-                        Visibility="Collapsed" Margin="0,10,10,0"/>
+                <Button x:Name="ValueChangedSubscribeToggle" Content="Subscribe to value changes" 
+                        Click="{x:Bind ValueChangedSubscribeToggle_Click}" Visibility="Collapsed" Margin="0,10,10,0"/>
             </StackPanel>
             <StackPanel x:Name="CharacteristicWritePanel" Margin="0,10,0,0" Visibility="Visible">
                 <TextBox x:Name="CharacteristicWriteValue" PlaceholderText="Enter text/number to send"/>
                 <Button x:Name="WriteHexButton" Content="Write Value as Hex" Click="{x:Bind WriteHexButton_Click}" Margin="0,10,0,0"/>
-                <ComboBox x:Name="LEDColorsCombo" Header="Change LED Color:" Height="75" Width="296"
-                        ItemsSource="{x:Bind colors}" SelectionChanged="{x:Bind LEDColorsCombo_SelectionChanged}" Margin="0, 10, 10, 10"/>
-                <ComboBox x:Name="MotorsCombo" Header="Pick Motor:" Height="75" Width="296"
-                        ItemsSource="{x:Bind motors}" Margin="0, 30, 10, 10"/>
+                <ComboBox x:Name="LEDColorsCombo" Header="Change LED Color:" Height="75" Width="296" 
+                          ItemsSource="{x:Bind colors}" SelectionChanged="{x:Bind LEDColorsCombo_SelectionChanged}" Margin="0, 10, 10, 10"/>
+                <RelativePanel Margin="0, 30, 10, 10">
+                    <ComboBox x:Name="MotorsCombo" Header="Pick Motor:" Height="75" Width="296" 
+                              ItemsSource="{x:Bind motors}" Margin="0, 0, 10, 10"/>
+                    <TextBox x:Name="MotorPowerText" PlaceholderText="Enter Motor Power" Height="47" 
+                             RelativePanel.RightOf="MotorsCombo" RelativePanel.AlignBottomWithPanel="True" Margin="0, 0, 10, 10"/>
+                    <TextBox x:Name="RunTimeText" PlaceholderText="Time to Run" Height="47" 
+                             RelativePanel.RightOf="MotorPowerText" RelativePanel.AlignBottomWithPanel="True" Margin="0, 0, 10, 10"/>
+                </RelativePanel>
                 <Button x:Name="RunMotorButton" Content="Run Motor" Click="{x:Bind RunMotorButton_Click}" Margin="0,10,0,0"/>
                 <Button x:Name="EnableButtonNotificationsButton" Content="Enable Button Notifications" Click="{x:Bind EnableButtonNotificationsButton_Click}" Margin="0,10,0,0"/>
             </StackPanel>

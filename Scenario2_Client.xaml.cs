@@ -113,6 +113,8 @@ namespace SDKTemplate
             WriteHexButton.IsEnabled = state;
             EnableButtonNotificationsButton.IsEnabled = state;
             MotorsCombo.IsEnabled = state;
+            RunTimeText.IsEnabled = state;
+            MotorPowerText.IsEnabled = state;
             RunMotorButton.IsEnabled = state;
         }
         #endregion
@@ -433,13 +435,15 @@ namespace SDKTemplate
 
         private async void RunMotorButton_Click()
         {
-            if (MotorsCombo.SelectedItem != null)
+            var hasPower = int.TryParse(MotorPowerText.Text, out int power);
+            var hasRunTime = int.TryParse(RunTimeText.Text, out int runTime);
+            if (MotorsCombo.SelectedItem != null && hasPower && hasRunTime)
             {
-                await RunMotor((Motor)MotorsCombo.SelectedItem);
+                await RunMotor((Motor)MotorsCombo.SelectedItem, power, runTime);
             }
             else
             {
-                rootPage.NotifyUser("No motor selected", NotifyType.ErrorMessage);
+                rootPage.NotifyUser("Motor option missing", NotifyType.ErrorMessage);
             }
         }
 
