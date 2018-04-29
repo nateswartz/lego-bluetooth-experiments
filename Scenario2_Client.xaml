@@ -40,13 +40,7 @@
     </Page.Resources>
     <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,10,12,12">
         <StackPanel>
-            <TextBlock Text="Description:" Style="{StaticResource SampleHeaderTextStyle}"/>
-            <TextBlock Style="{StaticResource ScenarioDescriptionTextStyle}" Text="Query services from GATT server"/>
-            <TextBlock TextWrapping="Wrap" Margin="0,10,0,0">
-                This scenario connects to the Bluetooth Low Energy device
-                selected in the "Discover GATT Servers" scenario
-                and communicates with the device.
-            </TextBlock>
+            <TextBlock Text="LEGO Boost Hub Controller" Style="{StaticResource SampleHeaderTextStyle}"/>
             <Button x:Name="ScanButton" Content="Start scanning" Click="{x:Bind ScanButton_Click}" Margin="0,10,10,0"/>
             <TextBlock Style="{StaticResource ListItemTextStyle}" TextWrapping="Wrap" Margin="0,10,0,0">
                 Selected device: <Run Text="{x:Bind rootPage.SelectedBleDeviceName}" FontWeight="Bold"/>
@@ -57,7 +51,7 @@
             </RelativePanel>
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="ValueChangedSubscribeToggle" Content="Subscribe to value changes" 
-                        Click="{x:Bind ValueChangedSubscribeToggle_Click}" Visibility="Collapsed" Margin="0,10,10,0"/>
+                        Click="{x:Bind ValueChangedSubscribeToggle_Click}" Margin="0,10,10,0"/>
             </StackPanel>
             <StackPanel x:Name="CharacteristicWritePanel" Margin="0,10,0,0" Visibility="Visible">
                 <TextBox x:Name="CharacteristicWriteValue" PlaceholderText="Enter text/number to send" Width="400" HorizontalAlignment="Left"/>
