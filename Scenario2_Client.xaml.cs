@@ -47,6 +47,9 @@ namespace SDKTemplate
 
         private List<string> notifications = new List<string>();
 
+        private string colorDistanceSensorPort;
+        private string externalMotorPort;
+
         #region Error Codes
         readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
         readonly int E_BLUETOOTH_ATT_INVALID_PDU = unchecked((int)0x80650004);
@@ -109,18 +112,20 @@ namespace SDKTemplate
 
         private void ToggleButtons(bool state)
         {
-            ValueChangedSubscribeToggle.IsEnabled = state;
             CharacteristicWriteValue.IsEnabled = state;
             WriteHexButton.IsEnabled = state;
 
             LEDColorsCombo.IsEnabled = state;
             WriteHexButton.IsEnabled = state;
-            EnableButtonNotificationsButton.IsEnabled = state;
             MotorsCombo.IsEnabled = state;
             RunTimeText.IsEnabled = state;
             MotorPowerSlider.IsEnabled = state;
             RunMotorButton.IsEnabled = state;
             DirectionToggle.IsEnabled = state;
+
+            EnableButtonNotificationsButton.IsEnabled = state;
+            EnableColorDistanceNotificationsButton.IsEnabled = state;
+            EnableExternalMotorNotificationsButton.IsEnabled = state;
         }
         #endregion
 
@@ -179,27 +184,25 @@ namespace SDKTemplate
         private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
         {
             // We must update the collection on the UI thread because the collection is databound to a UI element.
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                lock (this)
-                {
-                    Debug.WriteLine(String.Format("Added Called for ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
+                Debug.WriteLine(String.Format("Added Called for ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
 
-                    // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                    if (sender == deviceWatcher)
+                // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+                if (sender == deviceWatcher)
+                {
+                    if (string.IsNullOrEmpty(rootPage.SelectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
                     {
-                        if (string.IsNullOrEmpty(rootPage.SelectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
-                        {
-                            string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
-                            Debug.WriteLine(s);
-                            rootPage.SelectedBleDeviceId = deviceInfo.Id;
-                            rootPage.SelectedBleDeviceName = deviceInfo.Name;
-                            ConnectButton.IsEnabled = true;
-                            Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
-                            StopBleDeviceWatcher();
-                            ScanButton.Content = "Start scanning";
-                            rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
-                        }
+                        string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
+                        Debug.WriteLine(s);
+                        rootPage.SelectedBleDeviceId = deviceInfo.Id;
+                        rootPage.SelectedBleDeviceName = deviceInfo.Name;
+                        ConnectButton.IsEnabled = true;
+                        Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
+                        StopBleDeviceWatcher();
+                        ScanButton.Content = "Start scanning";
+                        rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
+                        await Connect();
                     }
                 }
             });
@@ -305,13 +308,18 @@ namespace SDKTemplate
 
         private async void ConnectButton_Click()
         {
+            await Connect();
+        }
+
+        private async Task<bool> Connect()
+        {
             ConnectButton.IsEnabled = false;
 
             if (!await DisconnectBluetoothLEDeviceAsync())
             {
                 rootPage.NotifyUser("Error: Unable to reset state, try again.", NotifyType.ErrorMessage);
                 ConnectButton.IsEnabled = false;
-                return;
+                return false;
             }
 
             try
@@ -322,11 +330,13 @@ namespace SDKTemplate
                 if (bluetoothLeDevice == null)
                 {
                     rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
+                    return false;
                 }
             }
             catch (Exception ex) when (ex.HResult == E_DEVICE_NOT_AVAILABLE)
             {
                 rootPage.NotifyUser("Bluetooth radio is not on.", NotifyType.ErrorMessage);
+                return false;
             }
 
             if (bluetoothLeDevice != null)
@@ -354,26 +364,29 @@ namespace SDKTemplate
                                 ToggleButtons(true);
                                 DisconnectButton.IsEnabled = true;
                                 ConnectButton.IsEnabled = false;
+                                await ToggleSubscribedForNotifications();
                                 EnableCharacteristicPanels(characteristic.CharacteristicProperties);
                             }
                         }
                     }
+                    return true;
                 }
                 else
                 {
                     rootPage.NotifyUser("Device unreachable", NotifyType.ErrorMessage);
+                    return false;
                 }
             }
             else
             {
                 ConnectButton.IsEnabled = true;
+                return false;
             }
         }
         #endregion
 
         private void AddValueChangedHandler()
         {
-            ValueChangedSubscribeToggle.Content = "Unsubscribe from value changes";
             if (!subscribedForNotifications)
             {
                 moveHubCharacteristic.ValueChanged += Characteristic_ValueChanged;
@@ -383,7 +396,6 @@ namespace SDKTemplate
 
         private void RemoveValueChangedHandler()
         {
-            ValueChangedSubscribeToggle.Content = "Subscribe to value changes";
             if (subscribedForNotifications)
             {
                 moveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
@@ -403,10 +415,6 @@ namespace SDKTemplate
                 properties.HasFlag(GattCharacteristicProperties.Write) ||
                 properties.HasFlag(GattCharacteristicProperties.WriteWithoutResponse));
             CharacteristicWriteValue.Text = "";
-
-            SetVisibility(ValueChangedSubscribeToggle, properties.HasFlag(GattCharacteristicProperties.Indicate) ||
-                                                       properties.HasFlag(GattCharacteristicProperties.Notify));
-
         }
 
         private async void WriteHexButton_Click()
@@ -439,6 +447,24 @@ namespace SDKTemplate
         private async void EnableButtonNotificationsButton_Click()
         {
             var command = "0500010202";
+            await SetHexValue(command);
+        }
+
+        private async void EnableColorDistanceNotificationsButton_Click()
+        {
+            var port = colorDistanceSensorPort;
+            var state = "01"; // 01 - On; 02 - Off;
+            var sensorMode = "08"; 
+            var command = $"0a0041{port}{sensorMode}01000000{state}";
+            await SetHexValue(command);
+        }
+
+        private async void EnableExternalMotorNotificationsButton_Click()
+        {
+            var port = externalMotorPort;
+            var state = "01"; // 01 - On; 02 - Off;
+            var sensorMode = "02";
+            var command = $"0a0041{port}{sensorMode}01000000{state}";
             await SetHexValue(command);
         }
 
@@ -521,43 +547,39 @@ namespace SDKTemplate
         }
 
         private bool subscribedForNotifications = false;
-        private async void ValueChangedSubscribeToggle_Click()
+
+        private async Task<bool> ToggleSubscribedForNotifications()
         {
             if (!subscribedForNotifications)
             {
                 // initialize status
                 GattCommunicationStatus status = GattCommunicationStatus.Unreachable;
-                var cccdValue = GattClientCharacteristicConfigurationDescriptorValue.None;
-                if (moveHubCharacteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Indicate))
-                {
-                    cccdValue = GattClientCharacteristicConfigurationDescriptorValue.Indicate;
-                }
-
-                else if (moveHubCharacteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Notify))
-                {
-                    cccdValue = GattClientCharacteristicConfigurationDescriptorValue.Notify;
-                }
+                var cccdValue = GattClientCharacteristicConfigurationDescriptorValue.Notify;
 
                 try
                 {
+                    AddValueChangedHandler();
                     // BT_Code: Must write the CCCD in order for server to send indications.
                     // We receive them in the ValueChanged event handler.
                     status = await moveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(cccdValue);
 
                     if (status == GattCommunicationStatus.Success)
                     {
-                        AddValueChangedHandler();
                         rootPage.NotifyUser("Successfully subscribed for value changes", NotifyType.StatusMessage);
+                        return true;
                     }
                     else
                     {
+                        RemoveValueChangedHandler();
                         rootPage.NotifyUser($"Error registering for value changes: {status}", NotifyType.ErrorMessage);
+                        return false;
                     }
                 }
                 catch (UnauthorizedAccessException ex)
                 {
                     // This usually happens when a device reports that it support indicate, but it actually doesn't.
                     rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
+                    return false;
                 }
             }
             else
@@ -575,16 +597,19 @@ namespace SDKTemplate
                         subscribedForNotifications = false;
                         RemoveValueChangedHandler();
                         rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
+                        return true;
                     }
                     else
                     {
                         rootPage.NotifyUser($"Error un-registering for notifications: {result}", NotifyType.ErrorMessage);
+                        return false;
                     }
                 }
                 catch (UnauthorizedAccessException ex)
                 {
                     // This usually happens when a device reports that it support notify, but it actually doesn't.
                     rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
+                    return false;
                 }
             }
         }
@@ -594,7 +619,9 @@ namespace SDKTemplate
             byte[] output = new byte[args.CharacteristicValue.Length];
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
-            var message = $"Notification value: {ByteArrayToString(output)}";
+            var notification = ByteArrayToString(output);
+            var message = $"Notification value: {notification}";
+            HandleNotification(notification);
             notifications.Add(message);
             if (notifications.Count > 10)
             {
@@ -603,6 +630,25 @@ namespace SDKTemplate
             Debug.WriteLine(message);
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, notifications));
+        }
+
+        private void HandleNotification(string notification)
+        {
+            if (notification.StartsWith("0f0004"))
+            {
+                var port = notification.Substring(6, 2);
+                var deviceType = notification.Substring(10, 2);
+                if (deviceType == "25")
+                {
+                    colorDistanceSensorPort = port;
+                    Debug.WriteLine($"Color Distance Sensor on port: " + (port == "01" ? "C" : "D"));
+                }
+                else if (deviceType == "26")
+                {
+                    externalMotorPort = port;
+                    Debug.WriteLine("Motor on port: " + (port == "01" ? "C" : "D"));
+                }
+            }// 01 - C ; 02 - D
         }
 
         public static string ByteArrayToString(byte[] ba)
