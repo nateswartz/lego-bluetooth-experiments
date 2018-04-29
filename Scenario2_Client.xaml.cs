@@ -109,13 +109,18 @@ namespace SDKTemplate
 
         private void ToggleButtons(bool state)
         {
+            ValueChangedSubscribeToggle.IsEnabled = state;
+            CharacteristicWriteValue.IsEnabled = state;
+            WriteHexButton.IsEnabled = state;
+
             LEDColorsCombo.IsEnabled = state;
             WriteHexButton.IsEnabled = state;
             EnableButtonNotificationsButton.IsEnabled = state;
             MotorsCombo.IsEnabled = state;
             RunTimeText.IsEnabled = state;
-            MotorPowerText.IsEnabled = state;
+            MotorPowerSlider.IsEnabled = state;
             RunMotorButton.IsEnabled = state;
+            DirectionToggle.IsEnabled = state;
         }
         #endregion
 
@@ -294,6 +299,7 @@ namespace SDKTemplate
             {
                 ConnectButton.IsEnabled = true;
                 DisconnectButton.IsEnabled = false;
+                ToggleButtons(false);
             }
         }
 
@@ -345,9 +351,9 @@ namespace SDKTemplate
                             foreach (var characteristic in characteristics.Characteristics)
                             {
                                 moveHubCharacteristic = characteristic;
-                                ConnectButton.IsEnabled = false;
                                 ToggleButtons(true);
                                 DisconnectButton.IsEnabled = true;
+                                ConnectButton.IsEnabled = false;
                                 EnableCharacteristicPanels(characteristic.CharacteristicProperties);
                             }
                         }
@@ -358,7 +364,10 @@ namespace SDKTemplate
                     rootPage.NotifyUser("Device unreachable", NotifyType.ErrorMessage);
                 }
             }
-            ConnectButton.IsEnabled = true;
+            else
+            {
+                ConnectButton.IsEnabled = true;
+            }
         }
         #endregion
 
@@ -435,11 +444,11 @@ namespace SDKTemplate
 
         private async void RunMotorButton_Click()
         {
-            var hasPower = int.TryParse(MotorPowerText.Text, out int power);
             var hasRunTime = int.TryParse(RunTimeText.Text, out int runTime);
-            if (MotorsCombo.SelectedItem != null && hasPower && hasRunTime)
+            var clockwise = DirectionToggle.IsOn;
+            if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
-                await RunMotor((Motor)MotorsCombo.SelectedItem, power, runTime);
+                await RunMotor((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise);
             }
             else
             {
@@ -447,12 +456,20 @@ namespace SDKTemplate
             }
         }
 
-        private async Task<bool> RunMotor(Motor motor, int powerPercentage = 100, int timeInMS = 1000)
+        private async Task<bool> RunMotor(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
         {
             // For time, LSB first
             var time = timeInMS.ToString("X").PadLeft(4, '0');
             time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
-            var power = powerPercentage.ToString("X");
+            var power = "";
+            if (clockwise)
+            {
+                power = powerPercentage.ToString("X");
+            }
+            else
+            {
+                power = (255 - powerPercentage).ToString("X");
+            }
             var command = $"0c0081{motor.Code}1109{time}{power}647f03";
             return await SetHexValue(command);
         }
