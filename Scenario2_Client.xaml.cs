@@ -128,6 +128,7 @@ namespace SDKTemplate
             EnableButtonNotificationsButton.IsEnabled = state;
             EnableColorDistanceNotificationsButton.IsEnabled = state;
             EnableExternalMotorNotificationsButton.IsEnabled = state;
+            GetHubName.IsEnabled = state;
         }
         #endregion
 
@@ -469,6 +470,11 @@ namespace SDKTemplate
             await SetHexValue(command);
         }
 
+        private async void GetHubNameButton_Click()
+        {
+            await SetHexValue("060001010200");
+        }
+
         private async void RunMotorButton_Click()
         {
             var hasRunTime = int.TryParse(RunTimeText.Text, out int runTime);
@@ -628,8 +634,7 @@ namespace SDKTemplate
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = ByteArrayToString(output);
-            var message = $"Notification value: {notification}";
-            HandleNotification(notification);
+            var message = DecodeNotification(notification);
             notifications.Add(message);
             if (notifications.Count > 10)
             {
@@ -640,31 +645,66 @@ namespace SDKTemplate
                 () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, notifications));
         }
 
-        private void HandleNotification(string notification)
+        private string DecodeNotification(string notification)
         {
-            if (notification.StartsWith("0f0004"))
+            var results = "";
+            var messageType = notification.Substring(4, 2);
+            var deviceType = "";
+            switch (messageType)
             {
-                var port = notification.Substring(6, 2);
-                var deviceType = notification.Substring(10, 2);
-                if (deviceType == "25")
-                {
-                    colorDistanceSensorPort = port;
-                    Debug.WriteLine($"Color Distance Sensor on port: " + (port == "01" ? "C" : "D"));
-                }
-                else if (deviceType == "26")
-                {
-                    externalMotorPort = port;
-                    Debug.WriteLine("Motor on port: " + (port == "01" ? "C" : "D"));
-                }
-            }// 01 - C ; 02 - D
+                case "01": // Device Info
+                    deviceType = notification.Substring(6, 2);
+                    switch (deviceType)
+                    {
+                        case "01":
+                            results = "Hub Name: ";
+                            var data = HexStringToByteArray(notification.Substring(10));
+                            results += Encoding.ASCII.GetString(data);
+                            break;
+                        case "02":
+                            results = "Button State: " + (notification.Substring(10, 2) == "00" ? "Released" : "Pressed");
+                            break;
+                    }
+                    break;
+                case "04": // Port Info
+                    var port = notification.Substring(6, 2);
+                    deviceType = notification.Substring(10, 2);
+                    switch (deviceType)
+                    {
+                        case "17":
+                            results = "LED Notification";
+                            break;
+                        case "25":
+                            colorDistanceSensorPort = port;
+                            results = $"Color Distance Sensor on port: " + (port == "01" ? "C" : "D");
+                            break;
+                        case "26":
+                            externalMotorPort = port;
+                            results = "External Motor on port: " + (port == "01" ? "C" : "D");
+                            break;
+                        case "27":
+                            results = "Internal Motor notification";
+                            break;
+                    }
+                    break;
+            }
+            return results == "" ? $"Notification value: {notification}" : results;
         }
 
-        public static string ByteArrayToString(byte[] ba)
+        private static string ByteArrayToString(byte[] ba)
         {
             StringBuilder hex = new StringBuilder(ba.Length * 2);
             foreach (byte b in ba)
                 hex.AppendFormat("{0:x2}", b);
             return hex.ToString();
+        }
+
+        private static byte[] HexStringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+              .Where(x => x % 2 == 0)
+              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+              .ToArray();
         }
     }
 }
