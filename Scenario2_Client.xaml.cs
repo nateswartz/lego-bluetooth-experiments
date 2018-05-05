@@ -42,6 +42,8 @@ namespace SDKTemplate
 
         private BluetoothLEDevice bluetoothLeDevice = null;
 
+        private string selectedBleDeviceId;
+
         private GattDeviceService moveHubService;
         private GattCharacteristic moveHubCharacteristic;
 
@@ -77,7 +79,7 @@ namespace SDKTemplate
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (string.IsNullOrEmpty(rootPage.SelectedBleDeviceId))
+            if (string.IsNullOrEmpty(selectedBleDeviceId))
             {
                 ConnectButton.IsEnabled = false;
                 DisconnectButton.IsEnabled = false;
@@ -191,12 +193,11 @@ namespace SDKTemplate
                 // Protect against race condition if the task runs after the app stopped the deviceWatcher.
                 if (sender == deviceWatcher)
                 {
-                    if (string.IsNullOrEmpty(rootPage.SelectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
+                    if (string.IsNullOrEmpty(selectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
                         Debug.WriteLine(s);
-                        rootPage.SelectedBleDeviceId = deviceInfo.Id;
-                        rootPage.SelectedBleDeviceName = deviceInfo.Name;
+                        selectedBleDeviceId = deviceInfo.Id;
                         ConnectButton.IsEnabled = true;
                         Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
                         StopBleDeviceWatcher();
@@ -325,7 +326,7 @@ namespace SDKTemplate
             try
             {
                 // BT_Code: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
-                bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(rootPage.SelectedBleDeviceId);
+                bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(selectedBleDeviceId);
 
                 if (bluetoothLeDevice == null)
                 {
@@ -484,6 +485,12 @@ namespace SDKTemplate
 
         private async Task<bool> RunMotor(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
         {
+            string motorToRun = motor.Code;
+            if (motor == Motors.External)
+            {
+                motorToRun = externalMotorPort;
+            }
+
             // For time, LSB first
             var time = timeInMS.ToString("X").PadLeft(4, '0');
             time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
@@ -496,7 +503,8 @@ namespace SDKTemplate
             {
                 power = (255 - powerPercentage).ToString("X");
             }
-            var command = $"0c0081{motor.Code}1109{time}{power}647f03";
+            power = power.PadLeft(2, '0');
+            var command = $"0c0081{motorToRun}1109{time}{power}647f03";
             return await SetHexValue(command);
         }
 

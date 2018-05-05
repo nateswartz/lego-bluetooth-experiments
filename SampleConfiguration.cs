@@ -19,15 +19,12 @@ namespace SDKTemplate
 {
     public partial class MainPage : Page
     {
-        public const string FEATURE_NAME = "Bluetooth Low Energy C# Sample";
+        public const string FEATURE_NAME = "Bluetooth Low Energy Controller";
 
         List<Scenario> scenarios = new List<Scenario>
         {
-            new Scenario() { Title="Client: Connect to a server", ClassType=typeof(Scenario2_Client) },
+            new Scenario() { Title="Lego Boost Move Hub Controller", ClassType=typeof(Scenario2_Client) },
         };
-
-        public string SelectedBleDeviceId;
-        public string SelectedBleDeviceName = "No device selected";
     }
 
     public class Scenario
