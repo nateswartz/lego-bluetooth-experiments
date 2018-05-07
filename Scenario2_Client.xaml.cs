@@ -421,11 +421,16 @@ namespace SDKTemplate
 
         private async void WriteHexButton_Click()
         {
-            if (!String.IsNullOrEmpty(CharacteristicWriteValue.Text))
+            var text = CharacteristicWriteValue.Text;
+            if (!String.IsNullOrEmpty(text))
             {
-                var bytes = Enumerable.Range(0, CharacteristicWriteValue.Text.Length)
+                if (text.Contains(" "))
+                {
+                    text = text.Replace(" ", "");
+                }
+                var bytes = Enumerable.Range(0, text.Length)
                                       .Where(x => x % 2 == 0)
-                                      .Select(x => Convert.ToByte(CharacteristicWriteValue.Text.Substring(x, 2), 16))
+                                      .Select(x => Convert.ToByte(text.Substring(x, 2), 16))
                                       .ToArray();
 
                 var writer = new DataWriter();
@@ -472,7 +477,18 @@ namespace SDKTemplate
 
         private async void GetHubNameButton_Click()
         {
-            await SetHexValue("060001010200");
+            var messageType = "01"; // Device info
+            var infoType = "01"; // Name
+            var action = "05"; // One-time request
+            await SetHexValue($"0600{messageType}{infoType}{action}00");
+        }
+
+        private async void GetHubFirmwareButton_Click()
+        {
+            var messageType = "01"; // Device info
+            var infoType = "03"; // Firmware
+            var action = "05"; // One-time request
+            await SetHexValue($"0600{messageType}{infoType}{action}00");
         }
 
         private async void RunMotorButton_Click()
@@ -664,6 +680,11 @@ namespace SDKTemplate
                         case "02":
                             results = "Button State: " + (notification.Substring(10, 2) == "00" ? "Released" : "Pressed");
                             break;
+                        case "03":
+                            var version = notification.Substring(10);
+                            version = $"{version[6]}.{version[7]}.{version[4]}{version[5]}.{version[2]}{version[3]}{version[0]}{version[1]}";
+                            results = "Firmware Version: " + version;
+                            break;
                     }
                     break;
                 case "04": // Port Info
@@ -686,6 +707,9 @@ namespace SDKTemplate
                             results = "Internal Motor notification";
                             break;
                     }
+                    break;
+                case "05": // Error
+                    results = "Unknown Command (Full Response: " + notification + ")";
                     break;
             }
             return results == "" ? $"Notification value: {notification}" : results;
