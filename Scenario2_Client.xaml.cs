@@ -16,10 +16,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -49,8 +51,12 @@ namespace SDKTemplate
 
         private List<string> notifications = new List<string>();
 
+        private StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+
         private string colorDistanceSensorPort;
         private string externalMotorPort;
+
+        private SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         #region Error Codes
         readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
@@ -650,7 +656,7 @@ namespace SDKTemplate
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = ByteArrayToString(output);
-            var message = DecodeNotification(notification);
+            var message = await DecodeNotification(notification);
             notifications.Add(message);
             if (notifications.Count > 10)
             {
@@ -661,11 +667,14 @@ namespace SDKTemplate
                 () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, notifications));
         }
 
-        private string DecodeNotification(string notification)
+        private async Task<string> DecodeNotification(string notification)
         {
+            StorageFile logFile = await storageFolder.CreateFileAsync("notifications.log", CreationCollisionOption.OpenIfExists);
+
             var results = "";
             var messageType = notification.Substring(4, 2);
             var deviceType = "";
+            var port = "";
             switch (messageType)
             {
                 case "01": // Device Info
@@ -688,12 +697,12 @@ namespace SDKTemplate
                     }
                     break;
                 case "04": // Port Info
-                    var port = notification.Substring(6, 2);
+                    port = notification.Substring(6, 2);
                     deviceType = notification.Substring(10, 2);
                     switch (deviceType)
                     {
                         case "17":
-                            results = "LED Notification";
+                            results = "LED Notification: " + notification;
                             break;
                         case "25":
                             colorDistanceSensorPort = port;
@@ -704,15 +713,43 @@ namespace SDKTemplate
                             results = "External Motor on port: " + (port == "01" ? "C" : "D");
                             break;
                         case "27":
-                            results = "Internal Motor notification";
+                            results = "Internal Motor notification: " + notification;
                             break;
                     }
                     break;
                 case "05": // Error
                     results = "Unknown Command (Full Response: " + notification + ")";
                     break;
+                case "45": // Sensor Data From Port
+                    port = notification.Substring(6, 2);
+                    if (port == colorDistanceSensorPort)
+                    {
+                        var colorCode = notification.Substring(8, 2);
+                        var color = LEDColors.GetByCode(colorCode);
+                        int inches = Convert.ToInt32(notification.Substring(10, 2), 16);
+                        results = $"Color/Distance Sensor Data: Color - {color}; Inches - {inches}: {notification}";
+                    }
+                    if (port == externalMotorPort)
+                    {
+                        results = "External Motor Sensor Data: " + notification;
+                    }
+                    break;
             }
-            return results == "" ? $"Notification value: {notification}" : results;
+            results = results == "" ? $"Notification value: {notification}" : results;
+            await semaphore.WaitAsync();
+
+            try
+            {
+                await FileIO.AppendTextAsync(logFile, $"{DateTime.Now}: {results}{Environment.NewLine}");
+            }
+            catch
+            {}
+            finally
+            {
+                semaphore.Release();
+            }
+
+            return results;
         }
 
         private static string ByteArrayToString(byte[] ba)

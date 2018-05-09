@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SDKTemplate.Models
 {
@@ -38,5 +39,11 @@ namespace SDKTemplate.Models
         {
             None, Pink, Purple, Blue, LightBlue, Cyan, Green, Yellow, Orange, Red, White
         };
+
+        public static LEDColor GetByCode(string code)
+        {
+            return All.Where(l => l.Code == code)
+                      .First();
+        }
     }
 }
