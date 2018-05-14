@@ -133,8 +133,10 @@ namespace SDKTemplate
 
             EnableButtonNotificationsButton.IsEnabled = state;
             EnableColorDistanceNotificationsButton.IsEnabled = state;
-            EnableExternalMotorNotificationsButton.IsEnabled = state;
+            ToggleExternalMotorNotificationsButton.IsEnabled = state;
+            ToggleTiltSensorNotificationsButton.IsEnabled = state;
             GetHubName.IsEnabled = state;
+            GetHubFirmware.IsEnabled = state;
         }
         #endregion
 
@@ -472,11 +474,40 @@ namespace SDKTemplate
             await SetHexValue(command);
         }
 
-        private async void EnableExternalMotorNotificationsButton_Click()
+        private async void ToggleExternalMotorNotificationsButton_Click()
         {
+            string state;
+            if (ToggleExternalMotorNotificationsButton.Content.ToString() == "Enable External Motor Notifications")
+            {
+                state = "01"; // 01 - On; 02 - Off;
+                ToggleExternalMotorNotificationsButton.Content = "Disable External Motor Notifications";
+            }
+            else
+            {
+                state = "00"; // 01 - On; 02 - Off;
+                ToggleExternalMotorNotificationsButton.Content = "Enable External Motor Notifications";
+            }
             var port = externalMotorPort;
-            var state = "01"; // 01 - On; 02 - Off;
             var sensorMode = "02";
+            var command = $"0a0041{port}{sensorMode}01000000{state}";
+            await SetHexValue(command);
+        }
+
+        private async void ToggleTiltSensorNotificationsButton_Click()
+        {
+            string state;
+            if (ToggleTiltSensorNotificationsButton.Content.ToString() == "Enable Tilt Sensor Notifications")
+            {
+                state = "01"; // 01 - On; 02 - Off;
+                ToggleTiltSensorNotificationsButton.Content = "Disable Tilt Sensor Notifications";
+            }
+            else
+            {
+                state = "00"; // 01 - On; 02 - Off;
+                ToggleTiltSensorNotificationsButton.Content = "Enable Tilt Sensor Notifications";
+            }
+            var port = "3a";
+            var sensorMode = "04";
             var command = $"0a0041{port}{sensorMode}01000000{state}";
             await SetHexValue(command);
         }
@@ -669,7 +700,7 @@ namespace SDKTemplate
 
         private async Task<string> DecodeNotification(string notification)
         {
-            StorageFile logFile = await storageFolder.CreateFileAsync("notifications.log", CreationCollisionOption.OpenIfExists);
+            StorageFile logFile = await storageFolder.CreateFileAsync("move-hub-notifications.log", CreationCollisionOption.OpenIfExists);
 
             var results = "";
             var messageType = notification.Substring(4, 2);
@@ -733,7 +764,11 @@ namespace SDKTemplate
                     {
                         results = "External Motor Sensor Data: " + notification;
                     }
-                    break;
+                    if (port == "3a")
+                    {
+                        results = "Tilt Sensor Data: " + notification;
+                    }
+                    break;//0800450206000000
             }
             results = results == "" ? $"Notification value: {notification}" : results;
             await semaphore.WaitAsync();
