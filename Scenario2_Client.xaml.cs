@@ -130,6 +130,7 @@ namespace SDKTemplate
             MotorPowerSlider.IsEnabled = state;
             RunMotorButton.IsEnabled = state;
             DirectionToggle.IsEnabled = state;
+            ExternalMotorNotificationTypeToggle.IsEnabled = state;
 
             EnableButtonNotificationsButton.IsEnabled = state;
             ToggleColorDistanceNotificationsButton.IsEnabled = state;
@@ -472,7 +473,9 @@ namespace SDKTemplate
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", externalMotorPort, "02");
+            // 01 - Speed; 02 - Angle
+            var notificationType = ExternalMotorNotificationTypeToggle.IsOn ? "02" : "01";
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", externalMotorPort, notificationType);
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
@@ -747,7 +750,9 @@ namespace SDKTemplate
                     }
                     if (port == externalMotorPort)
                     {
-                        results = "External Motor Sensor Data: " + notification;
+                        var length = notification.Substring(0, 2);
+                        string type = length == "08" ? "Angle" : "Speed";
+                        results = "External Motor Sensor Data: " + type + " - " + notification;
                     }
                     if (port == "3a")
                     {
