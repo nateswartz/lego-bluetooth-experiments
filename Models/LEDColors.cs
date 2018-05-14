@@ -42,6 +42,10 @@ namespace SDKTemplate.Models
 
         public static LEDColor GetByCode(string code)
         {
+            if (code == "ff")
+            {
+                return None;
+            }
             return All.Where(l => l.Code == code)
                       .First();
         }

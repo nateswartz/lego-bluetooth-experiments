@@ -132,7 +132,7 @@ namespace SDKTemplate
             DirectionToggle.IsEnabled = state;
 
             EnableButtonNotificationsButton.IsEnabled = state;
-            EnableColorDistanceNotificationsButton.IsEnabled = state;
+            ToggleColorDistanceNotificationsButton.IsEnabled = state;
             ToggleExternalMotorNotificationsButton.IsEnabled = state;
             ToggleTiltSensorNotificationsButton.IsEnabled = state;
             GetHubName.IsEnabled = state;
@@ -465,51 +465,36 @@ namespace SDKTemplate
             await SetHexValue(command);
         }
 
-        private async void EnableColorDistanceNotificationsButton_Click()
+        private async void ToggleColorDistanceNotificationsButton_Click()
         {
-            var port = colorDistanceSensorPort;
-            var state = "01"; // 01 - On; 02 - Off;
-            var sensorMode = "08"; 
-            var command = $"0a0041{port}{sensorMode}01000000{state}";
-            await SetHexValue(command);
+            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", colorDistanceSensorPort, "08");
         }
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
-            string state;
-            if (ToggleExternalMotorNotificationsButton.Content.ToString() == "Enable External Motor Notifications")
-            {
-                state = "01"; // 01 - On; 02 - Off;
-                ToggleExternalMotorNotificationsButton.Content = "Disable External Motor Notifications";
-            }
-            else
-            {
-                state = "00"; // 01 - On; 02 - Off;
-                ToggleExternalMotorNotificationsButton.Content = "Enable External Motor Notifications";
-            }
-            var port = externalMotorPort;
-            var sensorMode = "02";
-            var command = $"0a0041{port}{sensorMode}01000000{state}";
-            await SetHexValue(command);
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", externalMotorPort, "02");
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
         {
+            await ToggleNotification(ToggleTiltSensorNotificationsButton, "Tilt Sensor", "3a", "04");
+        }
+
+        private async Task<bool> ToggleNotification(Button button, string sensorType, string port, string sensorMode)
+        {
             string state;
-            if (ToggleTiltSensorNotificationsButton.Content.ToString() == "Enable Tilt Sensor Notifications")
+            if (button.Content.ToString() == $"Enable {sensorType} Notifications")
             {
                 state = "01"; // 01 - On; 02 - Off;
-                ToggleTiltSensorNotificationsButton.Content = "Disable Tilt Sensor Notifications";
+                button.Content = $"Disable {sensorType} Notifications";
             }
             else
             {
                 state = "00"; // 01 - On; 02 - Off;
-                ToggleTiltSensorNotificationsButton.Content = "Enable Tilt Sensor Notifications";
+                button.Content = $"Enable {sensorType} Notifications";
             }
-            var port = "3a";
-            var sensorMode = "04";
             var command = $"0a0041{port}{sensorMode}01000000{state}";
-            await SetHexValue(command);
+            return await SetHexValue(command);
         }
 
         private async void GetHubNameButton_Click()
