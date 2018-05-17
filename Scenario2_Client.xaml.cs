@@ -56,6 +56,8 @@ namespace SDKTemplate
         private string colorDistanceSensorPort;
         private string externalMotorPort;
 
+        private bool syncMotorAndLED = false;
+
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         #region Error Codes
@@ -138,6 +140,7 @@ namespace SDKTemplate
             ToggleTiltSensorNotificationsButton.IsEnabled = state;
             GetHubName.IsEnabled = state;
             GetHubFirmware.IsEnabled = state;
+            SyncLEDMotorButton.IsEnabled = state;
         }
         #endregion
 
@@ -516,6 +519,20 @@ namespace SDKTemplate
             await SetHexValue($"0600{messageType}{infoType}{action}00");
         }
 
+        private async void SyncLEDMotorButton_Click()
+        {
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", externalMotorPort, "01");
+            syncMotorAndLED = !syncMotorAndLED;
+            if (syncMotorAndLED)
+            {
+                SyncLEDMotorButton.Content = "Un-sync LED with Motor";
+            }
+            else
+            {
+                SyncLEDMotorButton.Content = "Sync LED with Motor";
+            }
+        }
+
         private async void RunMotorButton_Click()
         {
             var hasRunTime = int.TryParse(RunTimeText.Text, out int runTime);
@@ -753,6 +770,20 @@ namespace SDKTemplate
                         var length = notification.Substring(0, 2);
                         string type = length == "08" ? "Angle" : "Speed";
                         results = "External Motor Sensor Data: " + type + " - " + notification;
+                        if (syncMotorAndLED && type == "Speed")
+                        {
+                            var speed = Convert.ToInt32(notification.Substring(8, 2), 16);
+                            var color = LEDColors.Red;
+                            if (speed > 30)
+                            {
+                                color = LEDColors.Green;
+                            }
+                            else if (speed > 1)
+                            {
+                                color = LEDColors.Purple;
+                            }
+                            SetLEDColor(color);
+                        }
                     }
                     if (port == "3a")
                     {
