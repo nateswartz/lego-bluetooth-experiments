@@ -103,10 +103,13 @@
     <Compile Include="DisplayHelpers.cs" />
     <Compile Include="Models\LEDColors.cs" />
     <Compile Include="Models\Motors.cs" />
+    <Compile Include="Responses\Response.cs" />
+    <Compile Include="Responses\ResponseProcessor.cs" />
     <Compile Include="SampleConfiguration.cs" />
     <Compile Include="Scenario2_Client.xaml.cs">
       <DependentUpon>Scenario2_Client.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

@@ -10,9 +10,9 @@
 //*********************************************************
 
 using SDKTemplate.Models;
+using SDKTemplate.Responses;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -53,8 +53,7 @@ namespace SDKTemplate
 
         private StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
 
-        private string colorDistanceSensorPort;
-        private string externalMotorPort;
+        private ResponseProcessor _responseProcessor = new ResponseProcessor();
 
         private bool syncMotorAndLED = false;
 
@@ -471,14 +470,14 @@ namespace SDKTemplate
 
         private async void ToggleColorDistanceNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", colorDistanceSensorPort, "08");
+            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", _responseProcessor.CurrentColorDistanceSensorPort, "08");
         }
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
             // 01 - Speed; 02 - Angle
             var notificationType = ExternalMotorNotificationTypeToggle.IsOn ? "02" : "01";
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", externalMotorPort, notificationType);
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _responseProcessor.CurrentExternalMotorPort, notificationType);
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
@@ -521,7 +520,7 @@ namespace SDKTemplate
 
         private async void SyncLEDMotorButton_Click()
         {
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", externalMotorPort, "01");
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _responseProcessor.CurrentExternalMotorPort, "01");
             syncMotorAndLED = !syncMotorAndLED;
             if (syncMotorAndLED)
             {
@@ -552,7 +551,7 @@ namespace SDKTemplate
             string motorToRun = motor.Code;
             if (motor == Motors.External)
             {
-                motorToRun = externalMotorPort;
+                motorToRun = _responseProcessor.CurrentExternalMotorPort;
             }
 
             // For time, LSB first
@@ -691,7 +690,7 @@ namespace SDKTemplate
             byte[] output = new byte[args.CharacteristicValue.Length];
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
-            var notification = ByteArrayToString(output);
+            var notification = DataConverter.ByteArrayToString(output);
             var message = await DecodeNotification(notification);
             notifications.Add(message);
             if (notifications.Count > 10)
@@ -707,96 +706,30 @@ namespace SDKTemplate
         {
             StorageFile logFile = await storageFolder.CreateFileAsync("move-hub-notifications.log", CreationCollisionOption.OpenIfExists);
 
-            var results = "";
-            var messageType = notification.Substring(4, 2);
-            var deviceType = "";
-            var port = "";
-            switch (messageType)
-            {
-                case "01": // Device Info
-                    deviceType = notification.Substring(6, 2);
-                    switch (deviceType)
-                    {
-                        case "01":
-                            results = "Hub Name: ";
-                            var data = HexStringToByteArray(notification.Substring(10));
-                            results += Encoding.ASCII.GetString(data);
-                            break;
-                        case "02":
-                            results = "Button State: " + (notification.Substring(10, 2) == "00" ? "Released" : "Pressed");
-                            break;
-                        case "03":
-                            var version = notification.Substring(10);
-                            version = $"{version[6]}.{version[7]}.{version[4]}{version[5]}.{version[2]}{version[3]}{version[0]}{version[1]}";
-                            results = "Firmware Version: " + version;
-                            break;
-                    }
-                    break;
-                case "04": // Port Info
-                    port = notification.Substring(6, 2);
-                    deviceType = notification.Substring(10, 2);
-                    switch (deviceType)
-                    {
-                        case "17":
-                            results = "LED Notification: " + notification;
-                            break;
-                        case "25":
-                            colorDistanceSensorPort = port;
-                            results = $"Color Distance Sensor on port: " + (port == "01" ? "C" : "D");
-                            break;
-                        case "26":
-                            externalMotorPort = port;
-                            results = "External Motor on port: " + (port == "01" ? "C" : "D");
-                            break;
-                        case "27":
-                            results = "Internal Motor notification: " + notification;
-                            break;
-                    }
-                    break;
-                case "05": // Error
-                    results = "Unknown Command (Full Response: " + notification + ")";
-                    break;
-                case "45": // Sensor Data From Port
-                    port = notification.Substring(6, 2);
-                    if (port == colorDistanceSensorPort)
-                    {
-                        var colorCode = notification.Substring(8, 2);
-                        var color = LEDColors.GetByCode(colorCode);
-                        int inches = Convert.ToInt32(notification.Substring(10, 2), 16);
-                        results = $"Color/Distance Sensor Data: Color - {color}; Inches - {inches}: {notification}";
-                    }
-                    if (port == externalMotorPort)
-                    {
-                        var length = notification.Substring(0, 2);
-                        string type = length == "08" ? "Angle" : "Speed";
-                        results = "External Motor Sensor Data: " + type + " - " + notification;
-                        if (syncMotorAndLED && type == "Speed")
-                        {
-                            var speed = Convert.ToInt32(notification.Substring(8, 2), 16);
-                            var color = LEDColors.Red;
-                            if (speed > 30)
-                            {
-                                color = LEDColors.Green;
-                            }
-                            else if (speed > 1)
-                            {
-                                color = LEDColors.Purple;
-                            }
-                            SetLEDColor(color);
-                        }
-                    }
-                    if (port == "3a")
-                    {
-                        results = "Tilt Sensor Data: " + notification;
-                    }
-                    break;//0800450206000000
-            }
-            results = results == "" ? $"Notification value: {notification}" : results;
-            await semaphore.WaitAsync();
+            var response = _responseProcessor.CreateResponse(notification);
 
+            // TODO: Move this somewhere more appropriate
+            if (syncMotorAndLED && response.GetType() == typeof(SpeedData))
+            {
+                var data = (SpeedData)response;
+                var color = LEDColors.Red;
+                if (data.Speed > 30)
+                {
+                    color = LEDColors.Green;
+                }
+                else if (data.Speed > 1)
+                {
+                    color = LEDColors.Purple;
+                }
+                SetLEDColor(color);
+            }
+
+            var message = response.ToString();
+
+            await semaphore.WaitAsync();
             try
             {
-                await FileIO.AppendTextAsync(logFile, $"{DateTime.Now}: {results}{Environment.NewLine}");
+                await FileIO.AppendTextAsync(logFile, $"{DateTime.Now}: {message}{Environment.NewLine}");
             }
             catch
             {}
@@ -805,23 +738,7 @@ namespace SDKTemplate
                 semaphore.Release();
             }
 
-            return results;
-        }
-
-        private static string ByteArrayToString(byte[] ba)
-        {
-            StringBuilder hex = new StringBuilder(ba.Length * 2);
-            foreach (byte b in ba)
-                hex.AppendFormat("{0:x2}", b);
-            return hex.ToString();
-        }
-
-        private static byte[] HexStringToByteArray(string hex)
-        {
-            return Enumerable.Range(0, hex.Length)
-              .Where(x => x % 2 == 0)
-              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-              .ToArray();
+            return message;
         }
     }
 }
