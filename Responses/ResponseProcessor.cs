@@ -53,9 +53,9 @@
                         var externalMotorData = new ExternalMotorData(notification);
                         switch (externalMotorData.DataType)
                         {
-                            case "Angle":
+                            case MotorDataType.Angle:
                                 return new AngleData(notification);
-                            case "Speed":
+                            case MotorDataType.Speed:
                                 return new SpeedData(notification);
                         }
                         return new ExternalMotorData(notification);

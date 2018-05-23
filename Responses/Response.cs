@@ -175,11 +175,11 @@ namespace SDKTemplate.Responses
 
     public class ExternalMotorData : SensorData
     {
-        public string DataType { get; set; } 
+        public MotorDataType DataType { get; set; } 
 
         public ExternalMotorData(string body) : base(body)
         {
-            DataType = Length == "08" ? "Angle" : "Speed";
+            DataType = (MotorDataType)Convert.ToInt32(Length, 16);
         }
 
         public override string ToString()
@@ -202,11 +202,11 @@ namespace SDKTemplate.Responses
 
     public class SpeedData : SensorData
     {
-        public string Speed { get; set; }
+        public int Speed { get; set; }
 
         public SpeedData(string body) : base(body)
         {
-            Speed = body.Substring(8, 2);
+            Speed = Convert.ToInt32(body.Substring(8, 2), 16);
         }
 
         public override string ToString()
@@ -244,5 +244,11 @@ namespace SDKTemplate.Responses
         ColorDistanceState = 37,
         ExternalMotorState = 38,
         InternalMotorState = 39
+    }
+
+    public enum MotorDataType
+    {
+        Angle = 8,
+        Speed = 5
     }
 }
