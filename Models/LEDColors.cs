@@ -46,7 +46,13 @@ namespace SDKTemplate.Models
             {
                 return None;
             }
-            return All.Where(l => l.Code == code)
+            return All.Where(c => c.Code.ToLower() == code.ToLower())
+                      .First();
+        }
+
+        public static LEDColor GetByName(string name)
+        {
+            return All.Where(c => c.Name.ToLower() == name.ToLower())
                       .First();
         }
     }

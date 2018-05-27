@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
@@ -543,6 +544,40 @@ namespace SDKTemplate
             else
             {
                 rootPage.NotifyUser("Motor option missing", NotifyType.ErrorMessage);
+            }
+        }
+
+        private async void RunCommandsButton_Click()
+        {
+            if (!String.IsNullOrEmpty(CommandsText.Text))
+            {
+                var commands = CommandsText.Text.Split(';');
+                foreach (var command in commands)
+                {
+                    var commandToRun = Regex.Replace(command.ToLower(), @"\s+", "");
+                    if (commandToRun.StartsWith("forward") || commandToRun.StartsWith("back"))
+                    {
+                        Match m = Regex.Match(commandToRun, @"\((\d+),(\d+)\)");
+                        if (m.Groups.Count == 3)
+                        {
+                            var speed = Convert.ToInt32(m.Groups[1].Value);
+                            var time = Convert.ToInt32(m.Groups[2].Value);
+                            var forward = commandToRun.StartsWith("forward") ? true : false;
+                            await RunMotor(Motors.A_B, speed, time, forward);
+                        }
+                    }
+                    else if (commandToRun.StartsWith("led"))
+                    {
+                        Match m = Regex.Match(commandToRun, @"\((\w+)\)");
+                        if (m.Groups.Count == 2)
+                        {
+                            var color = m.Groups[1].Value;
+
+                            await SetLEDColor(LEDColors.GetByName(color));
+                        }
+                    }
+                    await Task.Delay(500);
+                }
             }
         }
 
