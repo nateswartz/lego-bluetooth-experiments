@@ -566,6 +566,38 @@ namespace SDKTemplate
                             await RunMotor(Motors.A_B, speed, time, forward);
                         }
                     }
+                    else if (commandToRun.StartsWith("spin"))
+                    {
+                        Match m = Regex.Match(commandToRun, @"\((\d+),(\d+),(\w+)\)");
+                        if (m.Groups.Count == 4)
+                        {
+                            var speed = Convert.ToInt32(m.Groups[1].Value);
+                            var time = Convert.ToInt32(m.Groups[2].Value);
+                            var direction = m.Groups[3].Value;
+                            var motor = direction == "clockwise" ? Motors.A : Motors.B;
+                            await RunMotor(motor, speed, time, true);
+                        }
+                    }
+                    else if (commandToRun.StartsWith("raise"))
+                    {
+                        Match m = Regex.Match(commandToRun, @"\((\d+)\)");
+                        if (m.Groups.Count == 2)
+                        {
+                            var speed = Convert.ToInt32(m.Groups[1].Value);
+                            var time = 21500 / speed;
+                            await RunMotor(Motors.External, speed, time, true);
+                        }
+                    }
+                    else if (commandToRun.StartsWith("lower"))
+                    {
+                        Match m = Regex.Match(commandToRun, @"\((\d+)\)");
+                        if (m.Groups.Count == 2)
+                        {
+                            var speed = Convert.ToInt32(m.Groups[1].Value);
+                            var time = 19500 / speed;
+                            await RunMotor(Motors.External, speed, time, false);
+                        }              
+                    }
                     else if (commandToRun.StartsWith("led"))
                     {
                         Match m = Regex.Match(commandToRun, @"\((\w+)\)");
