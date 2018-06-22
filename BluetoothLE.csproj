@@ -94,6 +94,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BoostController.cs" />
+    <Compile Include="Commands\RoverCommands.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -103,6 +105,7 @@
     <Compile Include="DisplayHelpers.cs" />
     <Compile Include="Models\LEDColors.cs" />
     <Compile Include="Models\Motors.cs" />
+    <Compile Include="PortState.cs" />
     <Compile Include="Responses\Response.cs" />
     <Compile Include="Responses\ResponseProcessor.cs" />
     <Compile Include="SampleConfiguration.cs" />

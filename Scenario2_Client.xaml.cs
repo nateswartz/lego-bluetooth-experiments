@@ -9,6 +9,7 @@
 //
 //*********************************************************
 
+using SDKTemplate.Commands;
 using SDKTemplate.Models;
 using SDKTemplate.Responses;
 using System;
@@ -48,13 +49,19 @@ namespace SDKTemplate
         private string selectedBleDeviceId;
 
         private GattDeviceService moveHubService;
-        private GattCharacteristic moveHubCharacteristic;
 
         private List<string> notifications = new List<string>();
 
         private StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
 
-        private ResponseProcessor _responseProcessor = new ResponseProcessor();
+        private PortState _portState;
+        private ResponseProcessor _responseProcessor;
+        private BoostController _controller;
+
+        private List<ICommand> _commands = 
+            new List<ICommand> {
+                new MoveCommand(),
+                new SpinCommand() };
 
         private bool syncMotorAndLED = false;
 
@@ -73,6 +80,9 @@ namespace SDKTemplate
         #region UI Code
         public Scenario2_Client()
         {
+            _portState = new PortState();
+            _responseProcessor = new ResponseProcessor(_portState);
+            _controller = new BoostController(_portState);
             InitializeComponent();
         }
 
@@ -292,14 +302,14 @@ namespace SDKTemplate
             if (subscribedForNotifications)
             {
                 // Need to clear the CCCD from the remote device so we stop receiving notifications
-                var result = await moveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
+                var result = await _controller.MoveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
                 if (result != GattCommunicationStatus.Success)
                 {
                     return false;
                 }
                 else
                 {
-                    moveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                    _controller.MoveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
                     subscribedForNotifications = false;
                 }
             }
@@ -374,7 +384,7 @@ namespace SDKTemplate
                             var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid("00001624-1212-efde-1623-785feabcd123"));
                             foreach (var characteristic in characteristics.Characteristics)
                             {
-                                moveHubCharacteristic = characteristic;
+                                _controller.MoveHubCharacteristic = characteristic;
                                 ToggleButtons(true);
                                 DisconnectButton.IsEnabled = true;
                                 ConnectButton.IsEnabled = false;
@@ -403,7 +413,7 @@ namespace SDKTemplate
         {
             if (!subscribedForNotifications)
             {
-                moveHubCharacteristic.ValueChanged += Characteristic_ValueChanged;
+                _controller.MoveHubCharacteristic.ValueChanged += Characteristic_ValueChanged;
                 subscribedForNotifications = true;
             }
         }
@@ -412,7 +422,7 @@ namespace SDKTemplate
         {
             if (subscribedForNotifications)
             {
-                moveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                _controller.MoveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
                 subscribedForNotifications = false;
             }
         }
@@ -449,7 +459,7 @@ namespace SDKTemplate
                 writer.ByteOrder = ByteOrder.LittleEndian;
                 writer.WriteBytes(bytes);
 
-                var writeSuccessful = await WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
+                var writeSuccessful = _controller.WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
             }
             else
             {
@@ -460,25 +470,25 @@ namespace SDKTemplate
         private async Task<bool> SetLEDColor(LEDColor color)
         {
             var command = "08008132115100" + color.Code;
-            return await SetHexValue(command);
+            return await _controller.SetHexValue(command);
         }
 
         private async void EnableButtonNotificationsButton_Click()
         {
             var command = "0500010202";
-            await SetHexValue(command);
+            await _controller.SetHexValue(command);
         }
 
         private async void ToggleColorDistanceNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", _responseProcessor.CurrentColorDistanceSensorPort, "08");
+            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", _portState.CurrentColorDistanceSensorPort, "08");
         }
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
             // 01 - Speed; 02 - Angle
             var notificationType = ExternalMotorNotificationTypeToggle.IsOn ? "02" : "01";
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _responseProcessor.CurrentExternalMotorPort, notificationType);
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, notificationType);
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
@@ -500,7 +510,7 @@ namespace SDKTemplate
                 button.Content = $"Enable {sensorType} Notifications";
             }
             var command = $"0a0041{port}{sensorMode}01000000{state}";
-            return await SetHexValue(command);
+            return await _controller.SetHexValue(command);
         }
 
         private async void GetHubNameButton_Click()
@@ -508,7 +518,7 @@ namespace SDKTemplate
             var messageType = "01"; // Device info
             var infoType = "01"; // Name
             var action = "05"; // One-time request
-            await SetHexValue($"0600{messageType}{infoType}{action}00");
+            await _controller.SetHexValue($"0600{messageType}{infoType}{action}00");
         }
 
         private async void GetHubFirmwareButton_Click()
@@ -516,12 +526,12 @@ namespace SDKTemplate
             var messageType = "01"; // Device info
             var infoType = "03"; // Firmware
             var action = "05"; // One-time request
-            await SetHexValue($"0600{messageType}{infoType}{action}00");
+            await _controller.SetHexValue($"0600{messageType}{infoType}{action}00");
         }
 
         private async void SyncLEDMotorButton_Click()
         {
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _responseProcessor.CurrentExternalMotorPort, "01");
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, "01");
             syncMotorAndLED = !syncMotorAndLED;
             if (syncMotorAndLED)
             {
@@ -539,7 +549,7 @@ namespace SDKTemplate
             var clockwise = DirectionToggle.IsOn;
             if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
-                await RunMotor((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise);
+                await _controller.RunMotor((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise);
             }
             else
             {
@@ -551,41 +561,26 @@ namespace SDKTemplate
         {
             if (!String.IsNullOrEmpty(CommandsText.Text))
             {
-                var commands = CommandsText.Text.Split(';');
-                foreach (var command in commands)
+                var statements = CommandsText.Text.Split(';');
+                foreach (var statement in statements)
                 {
-                    var commandToRun = Regex.Replace(command.ToLower(), @"\s+", "");
-                    if (commandToRun.StartsWith("forward") || commandToRun.StartsWith("back"))
+                    var commandToRun = Regex.Replace(statement.ToLower(), @"\s+", "");
+                    var keyword = commandToRun.Split('(')[0];
+                    foreach (var command in _commands)
                     {
-                        Match m = Regex.Match(commandToRun, @"\((\d+),(\d+)\)");
-                        if (m.Groups.Count == 3)
+                        if (command.Keywords.Any(k => k == keyword))
                         {
-                            var speed = Convert.ToInt32(m.Groups[1].Value);
-                            var time = Convert.ToInt32(m.Groups[2].Value);
-                            var forward = commandToRun.StartsWith("forward") ? true : false;
-                            await RunMotor(Motors.A_B, speed, time, forward);
+                            await command.RunAsync(_controller, commandToRun);
                         }
                     }
-                    else if (commandToRun.StartsWith("spin"))
-                    {
-                        Match m = Regex.Match(commandToRun, @"\((\d+),(\d+),(\w+)\)");
-                        if (m.Groups.Count == 4)
-                        {
-                            var speed = Convert.ToInt32(m.Groups[1].Value);
-                            var time = Convert.ToInt32(m.Groups[2].Value);
-                            var direction = m.Groups[3].Value;
-                            var motor = direction == "clockwise" ? Motors.A : Motors.B;
-                            await RunMotor(motor, speed, time, true);
-                        }
-                    }
-                    else if (commandToRun.StartsWith("raise"))
+                    if (commandToRun.StartsWith("raise"))
                     {
                         Match m = Regex.Match(commandToRun, @"\((\d+)\)");
                         if (m.Groups.Count == 2)
                         {
                             var speed = Convert.ToInt32(m.Groups[1].Value);
                             var time = 21500 / speed;
-                            await RunMotor(Motors.External, speed, time, true);
+                            await _controller.RunMotor(Motors.External, speed, time, true);
                         }
                     }
                     else if (commandToRun.StartsWith("lower"))
@@ -595,7 +590,7 @@ namespace SDKTemplate
                         {
                             var speed = Convert.ToInt32(m.Groups[1].Value);
                             var time = 19500 / speed;
-                            await RunMotor(Motors.External, speed, time, false);
+                            await _controller.RunMotor(Motors.External, speed, time, false);
                         }              
                     }
                     else if (commandToRun.StartsWith("led"))
@@ -613,76 +608,6 @@ namespace SDKTemplate
             }
         }
 
-        private async Task<bool> RunMotor(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
-        {
-            string motorToRun = motor.Code;
-            if (motor == Motors.External)
-            {
-                motorToRun = _responseProcessor.CurrentExternalMotorPort;
-            }
-
-            // For time, LSB first
-            var time = timeInMS.ToString("X").PadLeft(4, '0');
-            time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
-            var power = "";
-            if (clockwise)
-            {
-                power = powerPercentage.ToString("X");
-            }
-            else
-            {
-                power = (255 - powerPercentage).ToString("X");
-            }
-            power = power.PadLeft(2, '0');
-            var command = $"0c0081{motorToRun}1109{time}{power}647f03";
-            return await SetHexValue(command);
-        }
-
-        private async Task<bool> SetHexValue(string hex)
-        {
-            var bytes = Enumerable.Range(0, hex.Length)
-                          .Where(x => x % 2 == 0)
-                          .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-                          .ToArray();
-
-            var writer = new DataWriter();
-            writer.ByteOrder = ByteOrder.LittleEndian;
-            writer.WriteBytes(bytes);
-
-            var writeSuccessful = await WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
-            return writeSuccessful;
-        }
-
-        private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)
-        {
-            try
-            {
-                // BT_Code: Writes the value from the buffer to the characteristic.
-                var result = await moveHubCharacteristic.WriteValueWithResultAsync(buffer);
-
-                if (result.Status == GattCommunicationStatus.Success)
-                {
-                    rootPage.NotifyUser("Successfully wrote value to device", NotifyType.StatusMessage);
-                    return true;
-                }
-                else
-                {
-                    rootPage.NotifyUser($"Write failed: {result.Status}", NotifyType.ErrorMessage);
-                    return false;
-                }
-            }
-            catch (Exception ex) when (ex.HResult == E_BLUETOOTH_ATT_INVALID_PDU)
-            {
-                rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-                return false;
-            }
-            catch (Exception ex) when (ex.HResult == E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED || ex.HResult == E_ACCESSDENIED)
-            {
-                // This usually happens when a device reports that it support writing, but it actually doesn't.
-                rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-                return false;
-            }
-        }
 
         private bool subscribedForNotifications = false;
 
@@ -699,7 +624,7 @@ namespace SDKTemplate
                     AddValueChangedHandler();
                     // BT_Code: Must write the CCCD in order for server to send indications.
                     // We receive them in the ValueChanged event handler.
-                    status = await moveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(cccdValue);
+                    status = await _controller.MoveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(cccdValue);
 
                     if (status == GattCommunicationStatus.Success)
                     {
@@ -728,7 +653,7 @@ namespace SDKTemplate
                     // We receive them in the ValueChanged event handler.
                     // Note that this sample configures either Indicate or Notify, but not both.
                     var result = await
-                            moveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+                            _controller.MoveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
                                 GattClientCharacteristicConfigurationDescriptorValue.None);
                     if (result == GattCommunicationStatus.Success)
                     {

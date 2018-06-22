@@ -2,9 +2,12 @@
 {
     public class ResponseProcessor
     {
-        public string CurrentColorDistanceSensorPort;
-        public string CurrentExternalMotorPort;
+        PortState _state;
 
+        public ResponseProcessor(PortState portState)
+        {
+            _state = portState;
+        }
         const string TILT_SENSOR_PORT = "3a";
 
         public Response CreateResponse(string notification)
@@ -31,10 +34,10 @@
                         case DeviceType.LEDState:
                             return new LEDState(notification);
                         case DeviceType.ColorDistanceState:
-                            CurrentColorDistanceSensorPort = portInfo.Port;
+                            _state.CurrentColorDistanceSensorPort = portInfo.Port;
                             return new ColorDistanceState(notification);
                         case DeviceType.ExternalMotorState:
-                            CurrentExternalMotorPort = portInfo.Port;
+                            _state.CurrentExternalMotorPort = portInfo.Port;
                             return new ExternalMotorState(notification);
                         case DeviceType.InternalMotorState:
                             return new InternalMotorState(notification);
@@ -44,11 +47,11 @@
                     return new Error(notification);
                 case MessageType.SensorData:
                     var sensorData = new SensorData(notification);
-                    if (sensorData.Port == CurrentColorDistanceSensorPort)
+                    if (sensorData.Port == _state.CurrentColorDistanceSensorPort)
                     {
                         return new ColorDistanceData(notification);
                     }
-                    if (sensorData.Port == CurrentExternalMotorPort)
+                    if (sensorData.Port == _state.CurrentExternalMotorPort)
                     {
                         var externalMotorData = new ExternalMotorData(notification);
                         switch (externalMotorData.DataType)
