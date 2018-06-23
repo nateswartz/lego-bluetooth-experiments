@@ -1,8 +1,6 @@
 ﻿using SDKTemplate.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
@@ -41,6 +39,12 @@ namespace SDKTemplate
             }
             power = power.PadLeft(2, '0');
             var command = $"0c0081{motorToRun}1109{time}{power}647f03";
+            return await SetHexValue(command);
+        }
+
+        public async Task<bool> SetLEDColor(LEDColor color)
+        {
+            var command = "08008132115100" + color.Code;
             return await SetHexValue(command);
         }
 

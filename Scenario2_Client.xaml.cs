@@ -61,7 +61,10 @@ namespace SDKTemplate
         private List<ICommand> _commands = 
             new List<ICommand> {
                 new MoveCommand(),
-                new SpinCommand() };
+                new SpinCommand(),
+                new RaiseCommand(),
+                new LowerCommand(),
+                new LEDCommand()};
 
         private bool syncMotorAndLED = false;
 
@@ -92,7 +95,7 @@ namespace SDKTemplate
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
             rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
-            await SetLEDColor(color);
+            await _controller.SetLEDColor(color);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -459,18 +462,12 @@ namespace SDKTemplate
                 writer.ByteOrder = ByteOrder.LittleEndian;
                 writer.WriteBytes(bytes);
 
-                var writeSuccessful = _controller.WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
+                var writeSuccessful = await _controller.WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
             }
             else
             {
                 rootPage.NotifyUser("No data to write to device", NotifyType.ErrorMessage);
             }
-        }
-
-        private async Task<bool> SetLEDColor(LEDColor color)
-        {
-            var command = "08008132115100" + color.Code;
-            return await _controller.SetHexValue(command);
         }
 
         private async void EnableButtonNotificationsButton_Click()
@@ -571,36 +568,6 @@ namespace SDKTemplate
                         if (command.Keywords.Any(k => k == keyword))
                         {
                             await command.RunAsync(_controller, commandToRun);
-                        }
-                    }
-                    if (commandToRun.StartsWith("raise"))
-                    {
-                        Match m = Regex.Match(commandToRun, @"\((\d+)\)");
-                        if (m.Groups.Count == 2)
-                        {
-                            var speed = Convert.ToInt32(m.Groups[1].Value);
-                            var time = 21500 / speed;
-                            await _controller.RunMotor(Motors.External, speed, time, true);
-                        }
-                    }
-                    else if (commandToRun.StartsWith("lower"))
-                    {
-                        Match m = Regex.Match(commandToRun, @"\((\d+)\)");
-                        if (m.Groups.Count == 2)
-                        {
-                            var speed = Convert.ToInt32(m.Groups[1].Value);
-                            var time = 19500 / speed;
-                            await _controller.RunMotor(Motors.External, speed, time, false);
-                        }              
-                    }
-                    else if (commandToRun.StartsWith("led"))
-                    {
-                        Match m = Regex.Match(commandToRun, @"\((\w+)\)");
-                        if (m.Groups.Count == 2)
-                        {
-                            var color = m.Groups[1].Value;
-
-                            await SetLEDColor(LEDColors.GetByName(color));
                         }
                     }
                     await Task.Delay(500);
@@ -713,7 +680,7 @@ namespace SDKTemplate
                 {
                     color = LEDColors.Purple;
                 }
-                SetLEDColor(color);
+                await _controller.SetLEDColor(color);
             }
 
             var message = response.ToString();

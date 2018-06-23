@@ -46,6 +46,54 @@ namespace SDKTemplate.Commands
             }
         }
     }
+
+    public class RaiseCommand : ICommand
+    {
+        public IEnumerable<string> Keywords { get => new List<string> { "raise" }; }
+
+        public async Task RunAsync(BoostController controller, string commandText)
+        {
+            Match m = Regex.Match(commandText, @"\((\d+)\)");
+            if (m.Groups.Count == 2)
+            {
+                var speed = Convert.ToInt32(m.Groups[1].Value);
+                var time = 21500 / speed;
+                await controller.RunMotor(Motors.External, speed, time, true);
+            }
+        }
+    }
+
+    public class LowerCommand : ICommand
+    {
+        public IEnumerable<string> Keywords { get => new List<string> { "lower" }; }
+
+        public async Task RunAsync(BoostController controller, string commandText)
+        {
+            Match m = Regex.Match(commandText, @"\((\d+)\)");
+            if (m.Groups.Count == 2)
+            {
+                var speed = Convert.ToInt32(m.Groups[1].Value);
+                var time = 19500 / speed;
+                await controller.RunMotor(Motors.External, speed, time, false);
+            }
+        }
+    }
+
+    public class LEDCommand : ICommand
+    {
+        public IEnumerable<string> Keywords { get => new List<string> { "led" }; }
+
+        public async Task RunAsync(BoostController controller, string commandText)
+        {
+            Match m = Regex.Match(commandText, @"\((\w+)\)");
+            if (m.Groups.Count == 2)
+            {
+                var color = m.Groups[1].Value;
+
+                await controller.SetLEDColor(LEDColors.GetByName(color));
+            }
+        }
+    }
 }
 
 
