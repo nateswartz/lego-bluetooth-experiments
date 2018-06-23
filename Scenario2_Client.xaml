@@ -95,9 +95,9 @@
                     <LineBreak/>
                     Spin(Speed, Time, Direction)
                     <LineBreak/>
-                    Raise(Speed)
+                    Raise(Speed, Time)
                     <LineBreak/>
-                    Lower(Speed)
+                    Lower(Speed, Time)
                 </TextBlock>
                 <TextBox x:Name="CommandsText" AcceptsReturn="True" TextWrapping="Wrap" Height="400" Width="300" Header="Commands" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,30,0,0"/>
                 <RelativePanel>

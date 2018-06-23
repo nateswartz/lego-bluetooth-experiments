@@ -11,8 +11,7 @@ namespace SDKTemplate.Commands
             {
                 new MoveCommand(),
                 new SpinCommand(),
-                new RaiseCommand(),
-                new LowerCommand(),
+                new ArmCommand(),
                 new LEDCommand()
             };
 

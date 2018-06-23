@@ -49,35 +49,19 @@ namespace SDKTemplate.Commands
         }
     }
 
-    public class RaiseCommand : ICommand
+    public class ArmCommand : ICommand
     {
-        public IEnumerable<string> Keywords { get => new List<string> { "raise" }; }
+        public IEnumerable<string> Keywords { get => new List<string> { "raise", "lower" }; }
 
         public async Task RunAsync(BoostController controller, string commandText)
         {
-            Match m = Regex.Match(commandText, @"\((\d+)\)");
-            if (m.Groups.Count == 2)
+            Match m = Regex.Match(commandText, @"\((\d+),(\d+)\)");
+            if (m.Groups.Count == 3)
             {
                 var speed = Convert.ToInt32(m.Groups[1].Value);
-                var time = 21500 / speed;
-                await controller.RunMotor(Motors.External, speed, time, true);
-                await Task.Delay(time);
-            }
-        }
-    }
-
-    public class LowerCommand : ICommand
-    {
-        public IEnumerable<string> Keywords { get => new List<string> { "lower" }; }
-
-        public async Task RunAsync(BoostController controller, string commandText)
-        {
-            Match m = Regex.Match(commandText, @"\((\d+)\)");
-            if (m.Groups.Count == 2)
-            {
-                var speed = Convert.ToInt32(m.Groups[1].Value);
-                var time = 19500 / speed;
-                await controller.RunMotor(Motors.External, speed, time, false);
+                var time = Convert.ToInt32(m.Groups[2].Value);
+                var raise = commandText.StartsWith("raise") ? true : false;
+                await controller.RunMotor(Motors.External, speed, time, raise);
                 await Task.Delay(time);
             }
         }
