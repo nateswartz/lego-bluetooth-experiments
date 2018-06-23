@@ -15,6 +15,7 @@ using SDKTemplate.Responses;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -60,7 +61,7 @@ namespace SDKTemplate
 
         private bool syncMotorAndLED = false;
 
-        private SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        private SemaphoreSlim _logSemaphore = new SemaphoreSlim(1);
 
         #region Error Codes
         readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
@@ -550,7 +551,7 @@ namespace SDKTemplate
         {
             if (!String.IsNullOrEmpty(CommandsText.Text))
             {
-                var statements = CommandsText.Text.Split(';');
+                var statements = CommandsText.Text.Split(';').Where(c => !string.IsNullOrEmpty(c));
                 foreach (var statement in statements)
                 {
                     var commandToRun = Regex.Replace(statement.ToLower(), @"\s+", "");
@@ -562,6 +563,24 @@ namespace SDKTemplate
             }
         }
 
+        private async void SaveCommandsButton_Click()
+        {
+            var saveFile = await storageFolder.CreateFileAsync("savedCommands.txt", CreationCollisionOption.OpenIfExists);
+            await FileIO.WriteTextAsync(saveFile, CommandsText.Text);
+        }
+
+        private async void LoadCommandsButton_Click()
+        {
+            try
+            {
+                var saveFile = await storageFolder.GetFileAsync("savedCommands.txt");
+                CommandsText.Text = await FileIO.ReadTextAsync(saveFile);
+            }
+            catch (IOException)
+            {
+                rootPage.NotifyUser("Failed to load commands", NotifyType.ErrorMessage);
+            }
+        }
 
         private bool subscribedForNotifications = false;
 
@@ -633,7 +652,7 @@ namespace SDKTemplate
 
         private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            byte[] output = new byte[args.CharacteristicValue.Length];
+            var output = new byte[args.CharacteristicValue.Length];
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
@@ -650,7 +669,7 @@ namespace SDKTemplate
 
         private async Task<string> DecodeNotification(string notification)
         {
-            StorageFile logFile = await storageFolder.CreateFileAsync("move-hub-notifications.log", CreationCollisionOption.OpenIfExists);
+            var logFile = await storageFolder.CreateFileAsync("move-hub-notifications.log", CreationCollisionOption.OpenIfExists);
 
             var response = _responseProcessor.CreateResponse(notification);
 
@@ -672,7 +691,7 @@ namespace SDKTemplate
 
             var message = response.ToString();
 
-            await semaphore.WaitAsync();
+            await _logSemaphore.WaitAsync();
             try
             {
                 await FileIO.AppendTextAsync(logFile, $"{DateTime.Now}: {message}{Environment.NewLine}");
@@ -681,7 +700,7 @@ namespace SDKTemplate
             {}
             finally
             {
-                semaphore.Release();
+                _logSemaphore.Release();
             }
 
             return message;
