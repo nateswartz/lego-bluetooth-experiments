@@ -58,14 +58,6 @@ namespace SDKTemplate
         private ResponseProcessor _responseProcessor;
         private BoostController _controller;
 
-        private List<ICommand> _commands = 
-            new List<ICommand> {
-                new MoveCommand(),
-                new SpinCommand(),
-                new RaiseCommand(),
-                new LowerCommand(),
-                new LEDCommand()};
-
         private bool syncMotorAndLED = false;
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
@@ -563,13 +555,8 @@ namespace SDKTemplate
                 {
                     var commandToRun = Regex.Replace(statement.ToLower(), @"\s+", "");
                     var keyword = commandToRun.Split('(')[0];
-                    foreach (var command in _commands)
-                    {
-                        if (command.Keywords.Any(k => k == keyword))
-                        {
-                            await command.RunAsync(_controller, commandToRun);
-                        }
-                    }
+                    var command = CommandFactory.GetCommand(keyword);
+                    await command.RunAsync(_controller, commandToRun);
                     await Task.Delay(500);
                 }
             }
