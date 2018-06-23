@@ -25,6 +25,7 @@ namespace SDKTemplate.Commands
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var forward = commandText.StartsWith("forward") ? true : false;
                 await controller.RunMotor(Motors.A_B, speed, time, forward);
+                await Task.Delay(time);
             }
         }
     }
@@ -43,6 +44,7 @@ namespace SDKTemplate.Commands
                 var direction = m.Groups[3].Value;
                 var motor = direction == "clockwise" ? Motors.A : Motors.B;
                 await controller.RunMotor(motor, speed, time, true);
+                await Task.Delay(time);
             }
         }
     }
@@ -59,6 +61,7 @@ namespace SDKTemplate.Commands
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = 21500 / speed;
                 await controller.RunMotor(Motors.External, speed, time, true);
+                await Task.Delay(time);
             }
         }
     }
@@ -75,6 +78,7 @@ namespace SDKTemplate.Commands
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = 19500 / speed;
                 await controller.RunMotor(Motors.External, speed, time, false);
+                await Task.Delay(time);
             }
         }
     }
@@ -89,7 +93,6 @@ namespace SDKTemplate.Commands
             if (m.Groups.Count == 2)
             {
                 var color = m.Groups[1].Value;
-
                 await controller.SetLEDColor(LEDColors.GetByName(color));
             }
         }
