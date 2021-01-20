@@ -51,10 +51,10 @@
                     <TextBox x:Name="CharacteristicWriteValue" PlaceholderText="Enter text/number to send" Width="400" HorizontalAlignment="Left"/>
                     <Button x:Name="WriteHexButton" Content="Write Value as Hex" Click="{x:Bind WriteHexButton_Click}" Margin="0,10,0,0"/>
                     <ComboBox x:Name="LEDColorsCombo" Header="Change LED Color:" Height="75" Width="296" 
-                          ItemsSource="{x:Bind colors}" SelectionChanged="{x:Bind LEDColorsCombo_SelectionChanged}" Margin="0, 10, 10, 10"/>
+                          ItemsSource="{x:Bind _colors}" SelectionChanged="{x:Bind LEDColorsCombo_SelectionChanged}" Margin="0, 10, 10, 10"/>
                     <RelativePanel Margin="0, 30, 10, 10">
                         <ComboBox x:Name="MotorsCombo" Header="Pick Motor:" Height="75" Width="296" 
-                              ItemsSource="{x:Bind motors}" Margin="0, 0, 10, 10"/>
+                              ItemsSource="{x:Bind _motors}" Margin="0, 0, 10, 10"/>
                         <Slider x:Name="MotorPowerSlider" Header="Select Motor Power" Width="300" Maximum="100" TickFrequency="10" SnapsTo="Ticks"
                             RelativePanel.Below="MotorsCombo" Margin="0, 0, 10, 10"/>
                         <TextBox x:Name="RunTimeText" PlaceholderText="Time to Run" Height="47" 

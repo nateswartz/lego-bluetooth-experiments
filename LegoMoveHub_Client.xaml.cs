@@ -40,26 +40,26 @@ namespace SDKTemplate
     // a specific characteristic.
     public sealed partial class LegoMoveHub_Client : Page
     {
-        private MainPage rootPage = MainPage.Current;
+        private MainPage _rootPage = MainPage.Current;
 
-        private DeviceWatcher deviceWatcher;
+        private DeviceWatcher _deviceWatcher;
 
-        private BluetoothLEDevice bluetoothLeDevice = null;
+        private BluetoothLEDevice _bluetoothLeDevice = null;
 
-        private string selectedBleDeviceId;
+        private string _selectedBleDeviceId;
 
-        private GattDeviceService moveHubService;
+        private GattDeviceService _moveHubService;
 
-        private List<string> notifications = new List<string>();
+        private List<string> _notifications = new List<string>();
 
-        private StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+        private StorageFolder _storageFolder = ApplicationData.Current.LocalFolder;
 
         private PortState _portState;
         private ResponseProcessor _responseProcessor;
         private BoostController _controller;
         private NotificationManager _notificationManager;
 
-        private bool syncMotorAndLED = false;
+        private bool _syncMotorAndLED = false;
 
         #region Error Codes
         readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
@@ -68,8 +68,8 @@ namespace SDKTemplate
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
         #endregion
 
-        List<LEDColor> colors = LEDColors.All;
-        List<Motor> motors = Motors.All;
+        List<LEDColor> _colors = LEDColors.All;
+        List<Motor> _motors = Motors.All;
 
         #region UI Code
         public LegoMoveHub_Client()
@@ -85,14 +85,14 @@ namespace SDKTemplate
         {
             if (sender == null) return;
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
-            rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
+            _rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
             await _controller.SetLEDColor(color);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (string.IsNullOrEmpty(selectedBleDeviceId))
+            if (string.IsNullOrEmpty(_selectedBleDeviceId))
             {
                 ConnectButton.IsEnabled = false;
                 DisconnectButton.IsEnabled = false;
@@ -105,23 +105,23 @@ namespace SDKTemplate
             var success = await DisconnectBluetoothLEDeviceAsync();
             if (!success)
             {
-                rootPage.NotifyUser("Error: Unable to reset app state", NotifyType.ErrorMessage);
+                _rootPage.NotifyUser("Error: Unable to reset app state", NotifyType.ErrorMessage);
             }
         }
 
         private void ScanButton_Click()
         {
-            if (deviceWatcher == null)
+            if (_deviceWatcher == null)
             {
                 StartBleDeviceWatcher();
                 ScanButton.Content = "Stop scanning";
-                rootPage.NotifyUser($"Device watcher started.", NotifyType.StatusMessage);
+                _rootPage.NotifyUser($"Device watcher started.", NotifyType.StatusMessage);
             }
             else
             {
                 StopBleDeviceWatcher();
                 ScanButton.Content = "Start scanning";
-                rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
+                _rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
             }
         }
 
@@ -164,21 +164,21 @@ namespace SDKTemplate
             // BT_Code: Example showing paired and non-paired in a single query.
             string aqsAllBluetoothLEDevices = "(System.Devices.Aep.ProtocolId:=\"{bb7bb05e-5972-42b5-94fc-76eaa7084d49}\")";
 
-            deviceWatcher =
+            _deviceWatcher =
                     DeviceInformation.CreateWatcher(
                         aqsAllBluetoothLEDevices,
                         requestedProperties,
                         DeviceInformationKind.AssociationEndpoint);
 
             // Register event handlers before starting the watcher.
-            deviceWatcher.Added += DeviceWatcher_Added;
-            deviceWatcher.Updated += DeviceWatcher_Updated;
-            deviceWatcher.Removed += DeviceWatcher_Removed;
-            deviceWatcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
-            deviceWatcher.Stopped += DeviceWatcher_Stopped;
+            _deviceWatcher.Added += DeviceWatcher_Added;
+            _deviceWatcher.Updated += DeviceWatcher_Updated;
+            _deviceWatcher.Removed += DeviceWatcher_Removed;
+            _deviceWatcher.EnumerationCompleted += DeviceWatcher_EnumerationCompleted;
+            _deviceWatcher.Stopped += DeviceWatcher_Stopped;
 
             // Start the watcher.
-            deviceWatcher.Start();
+            _deviceWatcher.Start();
         }
 
         /// <summary>
@@ -186,18 +186,18 @@ namespace SDKTemplate
         /// </summary>
         private void StopBleDeviceWatcher()
         {
-            if (deviceWatcher != null)
+            if (_deviceWatcher != null)
             {
                 // Unregister the event handlers.
-                deviceWatcher.Added -= DeviceWatcher_Added;
-                deviceWatcher.Updated -= DeviceWatcher_Updated;
-                deviceWatcher.Removed -= DeviceWatcher_Removed;
-                deviceWatcher.EnumerationCompleted -= DeviceWatcher_EnumerationCompleted;
-                deviceWatcher.Stopped -= DeviceWatcher_Stopped;
+                _deviceWatcher.Added -= DeviceWatcher_Added;
+                _deviceWatcher.Updated -= DeviceWatcher_Updated;
+                _deviceWatcher.Removed -= DeviceWatcher_Removed;
+                _deviceWatcher.EnumerationCompleted -= DeviceWatcher_EnumerationCompleted;
+                _deviceWatcher.Stopped -= DeviceWatcher_Stopped;
 
                 // Stop the watcher.
-                deviceWatcher.Stop();
-                deviceWatcher = null;
+                _deviceWatcher.Stop();
+                _deviceWatcher = null;
             }
         }
 
@@ -209,18 +209,18 @@ namespace SDKTemplate
                 Debug.WriteLine(String.Format("Added Called for ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
 
                 // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                if (sender == deviceWatcher)
+                if (sender == _deviceWatcher)
                 {
-                    if (string.IsNullOrEmpty(selectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
+                    if (string.IsNullOrEmpty(_selectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
                         Debug.WriteLine(s);
-                        selectedBleDeviceId = deviceInfo.Id;
+                        _selectedBleDeviceId = deviceInfo.Id;
                         ConnectButton.IsEnabled = true;
                         Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
                         StopBleDeviceWatcher();
                         ScanButton.Content = "Start scanning";
-                        rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
+                        _rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
                         await Connect();
                     }
                 }
@@ -237,7 +237,7 @@ namespace SDKTemplate
                     Debug.WriteLine(String.Format("Updated {0}{1}", deviceInfoUpdate.Id, ""));
 
                     // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                    if (sender == deviceWatcher)
+                    if (sender == _deviceWatcher)
                     {
                         // Do we need to do anything?
                     }
@@ -255,7 +255,7 @@ namespace SDKTemplate
                     Debug.WriteLine(String.Format("Removed {0}{1}", deviceInfoUpdate.Id, ""));
 
                     // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                    if (sender == deviceWatcher)
+                    if (sender == _deviceWatcher)
                     {
                         // Do we need to do anything?
                     }
@@ -269,7 +269,7 @@ namespace SDKTemplate
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                if (sender == deviceWatcher)
+                if (sender == _deviceWatcher)
                 {
                     // Do we need to do anything?
                 }
@@ -282,9 +282,9 @@ namespace SDKTemplate
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                if (sender == deviceWatcher)
+                if (sender == _deviceWatcher)
                 {
-                    rootPage.NotifyUser($"No longer watching for devices.",
+                    _rootPage.NotifyUser($"No longer watching for devices.",
                             sender.Status == DeviceWatcherStatus.Aborted ? NotifyType.ErrorMessage : NotifyType.StatusMessage);
                 }
             });
@@ -294,7 +294,7 @@ namespace SDKTemplate
         #region Enumerating Services
         private async Task<bool> DisconnectBluetoothLEDeviceAsync()
         {
-            if (subscribedForNotifications)
+            if (_subscribedForNotifications)
             {
                 // Need to clear the CCCD from the remote device so we stop receiving notifications
                 var result = await _controller.MoveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
@@ -305,13 +305,13 @@ namespace SDKTemplate
                 else
                 {
                     _controller.MoveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    subscribedForNotifications = false;
+                    _subscribedForNotifications = false;
                 }
             }
-            bluetoothLeDevice?.Dispose();
-            bluetoothLeDevice = null;
-            moveHubService?.Dispose();
-            moveHubService = null;
+            _bluetoothLeDevice?.Dispose();
+            _bluetoothLeDevice = null;
+            _moveHubService?.Dispose();
+            _moveHubService = null;
             return true;
         }
 
@@ -336,7 +336,7 @@ namespace SDKTemplate
 
             if (!await DisconnectBluetoothLEDeviceAsync())
             {
-                rootPage.NotifyUser("Error: Unable to reset state, try again.", NotifyType.ErrorMessage);
+                _rootPage.NotifyUser("Error: Unable to reset state, try again.", NotifyType.ErrorMessage);
                 ConnectButton.IsEnabled = false;
                 return false;
             }
@@ -344,38 +344,38 @@ namespace SDKTemplate
             try
             {
                 // BT_Code: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
-                bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(selectedBleDeviceId);
+                _bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId);
 
-                if (bluetoothLeDevice == null)
+                if (_bluetoothLeDevice == null)
                 {
-                    rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
+                    _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
                     return false;
                 }
             }
             catch (Exception ex) when (ex.HResult == E_DEVICE_NOT_AVAILABLE)
             {
-                rootPage.NotifyUser("Bluetooth radio is not on.", NotifyType.ErrorMessage);
+                _rootPage.NotifyUser("Bluetooth radio is not on.", NotifyType.ErrorMessage);
                 return false;
             }
 
-            if (bluetoothLeDevice != null)
+            if (_bluetoothLeDevice != null)
             {
                 // Note: BluetoothLEDevice.GattServices property will return an empty list for unpaired devices. For all uses we recommend using the GetGattServicesAsync method.
                 // BT_Code: GetGattServicesAsync returns a list of all the supported services of the device (even if it's not paired to the system).
                 // If the services supported by the device are expected to change during BT usage, subscribe to the GattServicesChanged event.
-                GattDeviceServicesResult result = await bluetoothLeDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
+                GattDeviceServicesResult result = await _bluetoothLeDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
 
                 if (result.Status == GattCommunicationStatus.Success)
                 {
                     var services = result.Services;
-                    rootPage.NotifyUser(String.Format("Found {0} services", services.Count), NotifyType.StatusMessage);
+                    _rootPage.NotifyUser(String.Format("Found {0} services", services.Count), NotifyType.StatusMessage);
                     Debug.WriteLine(String.Format("Found {0} services", services.Count));
 
                     foreach (var service in services)
                     {
                         if (service.Uuid == new Guid("00001623-1212-efde-1623-785feabcd123"))
                         {
-                            moveHubService = service;
+                            _moveHubService = service;
                             var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid("00001624-1212-efde-1623-785feabcd123"));
                             foreach (var characteristic in characteristics.Characteristics)
                             {
@@ -392,7 +392,7 @@ namespace SDKTemplate
                 }
                 else
                 {
-                    rootPage.NotifyUser("Device unreachable", NotifyType.ErrorMessage);
+                    _rootPage.NotifyUser("Device unreachable", NotifyType.ErrorMessage);
                     return false;
                 }
             }
@@ -406,19 +406,19 @@ namespace SDKTemplate
 
         private void AddValueChangedHandler()
         {
-            if (!subscribedForNotifications)
+            if (!_subscribedForNotifications)
             {
                 _controller.MoveHubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                subscribedForNotifications = true;
+                _subscribedForNotifications = true;
             }
         }
 
         private void RemoveValueChangedHandler()
         {
-            if (subscribedForNotifications)
+            if (_subscribedForNotifications)
             {
                 _controller.MoveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                subscribedForNotifications = false;
+                _subscribedForNotifications = false;
             }
         }
 
@@ -458,7 +458,7 @@ namespace SDKTemplate
             }
             else
             {
-                rootPage.NotifyUser("No data to write to device", NotifyType.ErrorMessage);
+                _rootPage.NotifyUser("No data to write to device", NotifyType.ErrorMessage);
             }
         }
 
@@ -521,8 +521,8 @@ namespace SDKTemplate
         private async void SyncLEDMotorButton_Click()
         {
             await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, "01");
-            syncMotorAndLED = !syncMotorAndLED;
-            if (syncMotorAndLED)
+            _syncMotorAndLED = !_syncMotorAndLED;
+            if (_syncMotorAndLED)
             {
                 SyncLEDMotorButton.Content = "Un-sync LED with Motor";
             }
@@ -542,7 +542,7 @@ namespace SDKTemplate
             }
             else
             {
-                rootPage.NotifyUser("Motor option missing", NotifyType.ErrorMessage);
+                _rootPage.NotifyUser("Motor option missing", NotifyType.ErrorMessage);
             }
         }
 
@@ -564,7 +564,7 @@ namespace SDKTemplate
 
         private async void SaveCommandsButton_Click()
         {
-            var saveFile = await storageFolder.CreateFileAsync("savedCommands.txt", CreationCollisionOption.OpenIfExists);
+            var saveFile = await _storageFolder.CreateFileAsync("savedCommands.txt", CreationCollisionOption.OpenIfExists);
             await FileIO.WriteTextAsync(saveFile, CommandsText.Text);
         }
 
@@ -572,20 +572,20 @@ namespace SDKTemplate
         {
             try
             {
-                var saveFile = await storageFolder.GetFileAsync("savedCommands.txt");
+                var saveFile = await _storageFolder.GetFileAsync("savedCommands.txt");
                 CommandsText.Text = await FileIO.ReadTextAsync(saveFile);
             }
             catch (IOException)
             {
-                rootPage.NotifyUser("Failed to load commands", NotifyType.ErrorMessage);
+                _rootPage.NotifyUser("Failed to load commands", NotifyType.ErrorMessage);
             }
         }
 
-        private bool subscribedForNotifications = false;
+        private bool _subscribedForNotifications = false;
 
         private async Task<bool> ToggleSubscribedForNotifications()
         {
-            if (!subscribedForNotifications)
+            if (!_subscribedForNotifications)
             {
                 // initialize status
                 GattCommunicationStatus status = GattCommunicationStatus.Unreachable;
@@ -600,20 +600,20 @@ namespace SDKTemplate
 
                     if (status == GattCommunicationStatus.Success)
                     {
-                        rootPage.NotifyUser("Successfully subscribed for value changes", NotifyType.StatusMessage);
+                        _rootPage.NotifyUser("Successfully subscribed for value changes", NotifyType.StatusMessage);
                         return true;
                     }
                     else
                     {
                         RemoveValueChangedHandler();
-                        rootPage.NotifyUser($"Error registering for value changes: {status}", NotifyType.ErrorMessage);
+                        _rootPage.NotifyUser($"Error registering for value changes: {status}", NotifyType.ErrorMessage);
                         return false;
                     }
                 }
                 catch (UnauthorizedAccessException ex)
                 {
                     // This usually happens when a device reports that it support indicate, but it actually doesn't.
-                    rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
+                    _rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
                     return false;
                 }
             }
@@ -629,21 +629,21 @@ namespace SDKTemplate
                                 GattClientCharacteristicConfigurationDescriptorValue.None);
                     if (result == GattCommunicationStatus.Success)
                     {
-                        subscribedForNotifications = false;
+                        _subscribedForNotifications = false;
                         RemoveValueChangedHandler();
-                        rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
+                        _rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
                         return true;
                     }
                     else
                     {
-                        rootPage.NotifyUser($"Error un-registering for notifications: {result}", NotifyType.ErrorMessage);
+                        _rootPage.NotifyUser($"Error un-registering for notifications: {result}", NotifyType.ErrorMessage);
                         return false;
                     }
                 }
                 catch (UnauthorizedAccessException ex)
                 {
                     // This usually happens when a device reports that it support notify, but it actually doesn't.
-                    rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
+                    _rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
                     return false;
                 }
             }
@@ -655,16 +655,16 @@ namespace SDKTemplate
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            await _notificationManager.ProcessNotification(storageFolder, notification, syncMotorAndLED, _controller);
+            await _notificationManager.ProcessNotification(_storageFolder, notification, _syncMotorAndLED, _controller);
             var message = _notificationManager.DecodeNotification(notification);
-            notifications.Add(message);
-            if (notifications.Count > 10)
+            _notifications.Add(message);
+            if (_notifications.Count > 10)
             {
-                notifications.RemoveAt(0);
+                _notifications.RemoveAt(0);
             }
             Debug.WriteLine(message);
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, notifications));
+                () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, _notifications));
         }
     }
 }
