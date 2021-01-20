@@ -108,8 +108,8 @@
     <Compile Include="Responses\Response.cs" />
     <Compile Include="Responses\ResponseProcessor.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="Scenario2_Client.xaml.cs">
-      <DependentUpon>Scenario2_Client.xaml</DependentUpon>
+    <Compile Include="LegoMoveHub_Client.xaml.cs">
+      <DependentUpon>LegoMoveHub_Client.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\DataConverter.cs" />
   </ItemGroup>
@@ -131,7 +131,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Scenario2_Client.xaml">
+    <Page Include="LegoMoveHub_Client.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
