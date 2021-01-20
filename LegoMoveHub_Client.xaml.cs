@@ -12,13 +12,13 @@
 using SDKTemplate.Commands;
 using SDKTemplate.Models;
 using SDKTemplate.Responses;
+using SDKTemplate.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -57,10 +57,9 @@ namespace SDKTemplate
         private PortState _portState;
         private ResponseProcessor _responseProcessor;
         private BoostController _controller;
+        private NotificationManager _notificationManager;
 
         private bool syncMotorAndLED = false;
-
-        private SemaphoreSlim _logSemaphore = new SemaphoreSlim(1);
 
         #region Error Codes
         readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
@@ -78,6 +77,7 @@ namespace SDKTemplate
             _portState = new PortState();
             _responseProcessor = new ResponseProcessor(_portState);
             _controller = new BoostController(_portState);
+            _notificationManager = new NotificationManager(_responseProcessor);
             InitializeComponent();
         }
 
@@ -655,7 +655,8 @@ namespace SDKTemplate
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            var message = await DecodeNotification(notification);
+            await _notificationManager.ProcessNotification(storageFolder, notification, syncMotorAndLED, _controller);
+            var message = _notificationManager.DecodeNotification(notification);
             notifications.Add(message);
             if (notifications.Count > 10)
             {
@@ -664,45 +665,6 @@ namespace SDKTemplate
             Debug.WriteLine(message);
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, notifications));
-        }
-
-        private async Task<string> DecodeNotification(string notification)
-        {
-            var logFile = await storageFolder.CreateFileAsync("move-hub-notifications.log", CreationCollisionOption.OpenIfExists);
-
-            var response = _responseProcessor.CreateResponse(notification);
-
-            // TODO: Move this somewhere more appropriate
-            if (syncMotorAndLED && response.GetType() == typeof(SpeedData))
-            {
-                var data = (SpeedData)response;
-                var color = LEDColors.Red;
-                if (data.Speed > 30)
-                {
-                    color = LEDColors.Green;
-                }
-                else if (data.Speed > 1)
-                {
-                    color = LEDColors.Purple;
-                }
-                await _controller.SetLEDColor(color);
-            }
-
-            var message = response.ToString();
-
-            await _logSemaphore.WaitAsync();
-            try
-            {
-                await FileIO.AppendTextAsync(logFile, $"{DateTime.Now}: {message}{Environment.NewLine}");
-            }
-            catch
-            { }
-            finally
-            {
-                _logSemaphore.Release();
-            }
-
-            return message;
         }
     }
 }

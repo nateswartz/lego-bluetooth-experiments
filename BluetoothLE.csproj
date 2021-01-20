@@ -112,6 +112,7 @@
       <DependentUpon>LegoMoveHub_Client.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\DataConverter.cs" />
+    <Compile Include="Util\NotificationManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
