@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace SDKTemplate
     // with an unknown service with unknown characteristics.
     // In practice, your app will be interested in a specific service with
     // a specific characteristic.
-    public sealed partial class Scenario2_Client : Page
+    public sealed partial class LegoMoveHub_Client : Page
     {
         private MainPage rootPage = MainPage.Current;
 
@@ -74,7 +73,7 @@ namespace SDKTemplate
         List<Motor> motors = Motors.All;
 
         #region UI Code
-        public Scenario2_Client()
+        public LegoMoveHub_Client()
         {
             _portState = new PortState();
             _responseProcessor = new ResponseProcessor(_portState);
@@ -697,7 +696,7 @@ namespace SDKTemplate
                 await FileIO.AppendTextAsync(logFile, $"{DateTime.Now}: {message}{Environment.NewLine}");
             }
             catch
-            {}
+            { }
             finally
             {
                 _logSemaphore.Release();

@@ -11,8 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using Windows.ApplicationModel.Background;
-using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 
 namespace SDKTemplate
@@ -23,7 +21,7 @@ namespace SDKTemplate
 
         List<Scenario> scenarios = new List<Scenario>
         {
-            new Scenario() { Title="Lego Boost Move Hub Controller", ClassType=typeof(Scenario2_Client) },
+            new Scenario() { Title="Lego Boost Move Hub Controller", ClassType=typeof(LegoMoveHub_Client) },
         };
     }
 
