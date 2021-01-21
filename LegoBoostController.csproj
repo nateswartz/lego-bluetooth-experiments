@@ -104,6 +104,8 @@
     <Compile Include="Responses\ButtonState.cs" />
     <Compile Include="Responses\FirmwareVersion.cs" />
     <Compile Include="Responses\HubName.cs" />
+    <Compile Include="Responses\PortInfo.cs" />
+    <Compile Include="Responses\LEDState.cs" />
     <Compile Include="Responses\ResponseMonolith.cs" />
     <Compile Include="Responses\Response.cs" />
     <Compile Include="Util\DisplayHelpers.cs" />

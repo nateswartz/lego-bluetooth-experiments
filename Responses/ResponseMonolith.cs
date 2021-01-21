@@ -3,30 +3,6 @@ using System;
 
 namespace SDKTemplate.Responses
 {
-    public class PortInfo : Response
-    {
-        public string Port { get; set; }
-        public DeviceType DeviceType { get; set; }
-
-        public PortInfo(string body) : base(body)
-        {
-            Port = body.Substring(6, 2);
-            DeviceType = (DeviceType)Convert.ToInt32(body.Substring(10, 2), 16);
-        }
-    }
-
-    public class LEDState : PortInfo
-    {
-        public LEDState(string body) : base(body)
-        {
-        }
-
-        public override string ToString()
-        {
-            return "LED Notification: " + Body;
-        }
-    }
-
     public class ColorDistanceState : PortInfo
     {
         public ColorDistanceState(string body) : base(body)
