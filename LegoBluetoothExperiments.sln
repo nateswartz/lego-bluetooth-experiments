@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluetoothLE", "BluetoothLE.csproj", "{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoBoostController", "LegoBoostController.csproj", "{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -29,7 +29,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <SplitView x:Name="Splitter" IsPaneOpen="True" Grid.Column="1" DisplayMode="Inline" Grid.Row="1">
+        <SplitView x:Name="Splitter" IsPaneOpen="False" Grid.Column="1" DisplayMode="Inline" Grid.Row="1">
             <SplitView.Pane>
                 <RelativePanel Margin="10,0,0,0">
                     <TextBlock x:Name="SampleTitle" Text="Sample Title Here" Style="{StaticResource SampleHeaderTextStyle}" TextWrapping="Wrap" Margin="0,10,0,0"/>
@@ -71,8 +71,7 @@
             <!-- Use AutomationProperties.AccessibilityView to let a screen reader know that the image is purely decorative.
                  (If the Image conveyed useful information we'd not use AccessibilityView, but instead provide a localized 
                  name for the Image to convey its purpose.) -->
-            <Image x:Name="WindowsLogo" Stretch="None" Source="Assets/windows-sdk.png" Margin="0,15,0,0" AutomationProperties.AccessibilityView="Raw" />
-            <TextBlock x:Name="Header" Text="Universal Windows Platform sample" Style="{StaticResource TagLineTextStyle}" Margin="0,15,0,0" />
+            <TextBlock x:Name="Header" Text="Lego Boost Controller" Style="{StaticResource TagLineTextStyle}" Margin="0,15,0,0" />
         </StackPanel>
     </Grid>
 </Page>
