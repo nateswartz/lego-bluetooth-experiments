@@ -106,7 +106,16 @@
     <Compile Include="Responses\HubName.cs" />
     <Compile Include="Responses\PortInfo.cs" />
     <Compile Include="Responses\LEDState.cs" />
-    <Compile Include="Responses\ResponseMonolith.cs" />
+    <Compile Include="Responses\InternalMotorState.cs" />
+    <Compile Include="Responses\ExternalMotorState.cs" />
+    <Compile Include="Responses\ColorDistanceState.cs" />
+    <Compile Include="Responses\AngleData.cs" />
+    <Compile Include="Responses\SpeedData.cs" />
+    <Compile Include="Responses\TiltData.cs" />
+    <Compile Include="Responses\SensorData.cs" />
+    <Compile Include="Responses\ColorDistanceData.cs" />
+    <Compile Include="Responses\Error.cs" />
+    <Compile Include="Responses\ExternalMotorData.cs" />
     <Compile Include="Responses\Response.cs" />
     <Compile Include="Util\DisplayHelpers.cs" />
     <Compile Include="Models\LEDColors.cs" />
