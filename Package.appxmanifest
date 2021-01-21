@@ -14,7 +14,7 @@
     <mp:PhoneIdentity PhoneProductId="a2214a83-6d31-41dd-b75f-0b8e56be182d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
     <Properties>
-        <DisplayName>Bluetooth Low Energy C# Sample</DisplayName>
+        <DisplayName>Lego Boost Controller</DisplayName>
         <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
         <Logo>Assets\StoreLogo-sdk.png</Logo>
     </Properties>
@@ -32,7 +32,7 @@
           Executable="$targetnametoken$.exe"
           EntryPoint="BluetoothLE.App">
             <uap:VisualElements
-              DisplayName="Bluetooth Low Energy C# sample"
+              DisplayName="Lego Boost Controller"
               Square150x150Logo="Assets\squareTile-sdk.png"
               Square44x44Logo="Assets\SmallTile-sdk.png"
               Description="Bluetooth Low Energy C# sample"

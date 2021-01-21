@@ -17,7 +17,7 @@ namespace SDKTemplate
 {
     public partial class MainPage : Page
     {
-        public const string FEATURE_NAME = "Bluetooth Low Energy Controller";
+        public const string FEATURE_NAME = "Lego Boost Move Hub Controller";
 
         List<Scenario> scenarios = new List<Scenario>
         {
