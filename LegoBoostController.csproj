@@ -101,11 +101,16 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Models\Constants.cs" />
     <Compile Include="DispatcherTaskExtensions.cs" />
+    <Compile Include="Responses\ButtonState.cs" />
+    <Compile Include="Responses\FirmwareVersion.cs" />
+    <Compile Include="Responses\HubName.cs" />
+    <Compile Include="Responses\ResponseMonolith.cs" />
+    <Compile Include="Responses\Response.cs" />
     <Compile Include="Util\DisplayHelpers.cs" />
     <Compile Include="Models\LEDColors.cs" />
     <Compile Include="Models\Motors.cs" />
     <Compile Include="Models\PortState.cs" />
-    <Compile Include="Responses\Response.cs" />
+    <Compile Include="Responses\DeviceInfo.cs" />
     <Compile Include="Responses\ResponseProcessor.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="LegoMoveHub_Client.xaml.cs">
