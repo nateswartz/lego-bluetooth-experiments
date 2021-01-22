@@ -94,6 +94,8 @@
     </Compile>
     <Compile Include="Commands\ICommandFactory.cs" />
     <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\CatCommandFactory.cs" />
+    <Compile Include="Commands\CatMoveCommand.cs" />
     <Compile Include="Commands\RoverMoveCommand.cs" />
     <Compile Include="Commands\LEDCommand.cs" />
     <Compile Include="Commands\RoverSpinCommand.cs" />
