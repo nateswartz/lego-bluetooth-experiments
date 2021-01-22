@@ -404,6 +404,21 @@ namespace SDKTemplate
         }
         #endregion
 
+        private void ToggleControls_Click()
+        {
+            var showAdvanced = ToggleControls.IsOn;
+            if (showAdvanced)
+            {
+                NotificationControlsPanel.Visibility = Visibility.Collapsed;
+                FreeformCommandsPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                NotificationControlsPanel.Visibility = Visibility.Visible;
+                FreeformCommandsPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void AddValueChangedHandler()
         {
             if (!_subscribedForNotifications)
