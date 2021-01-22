@@ -34,6 +34,10 @@ namespace SDKTemplate
             {
                 _commandFactory = new RoverCommandFactory();
             }
+            else if (SelectedRobot == Robot.Cat)
+            {
+                _commandFactory = new CatCommandFactory();
+            }
 
             if (!string.IsNullOrEmpty(commands))
             {

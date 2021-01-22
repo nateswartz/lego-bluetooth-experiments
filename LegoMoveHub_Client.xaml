@@ -86,19 +86,21 @@
             </StackPanel>
             <StackPanel x:Name="FreeformCommandsPanel" Visibility="Collapsed" RelativePanel.RightOf="ControlsPanel" Margin="100, 60, 0, 0">
                 <TextBlock x:Name="SampleCommands" Margin="0,20,0,0">
-                    Sample Commands:
+                    Sample Commands (Generic):
                     <LineBreak/>
-                    Forward(Speed, Time)
+                    LED(Color) [Color Options - Green, Blue, Red, Purple]
                     <LineBreak/>
-                    Back(Speed, Time)
+                    Rover:
                     <LineBreak/>
-                    LED(Color) [Color Options - Green, Blue, Red]
+                    Forward[Back](Speed, Time)
                     <LineBreak/>
                     Spin(Speed, Time, Direction)
                     <LineBreak/>
-                    Raise(Speed, Time)
+                    Raise[Lower](Speed, Time)
                     <LineBreak/>
-                    Lower(Speed, Time)
+                    Cat:
+                    <LineBreak/>
+                    Up/Down(Speed, Time)
                 </TextBlock>
                 <TextBox x:Name="CommandsText" AcceptsReturn="True" TextWrapping="Wrap" Height="256" Width="300" Header="Commands" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,30,0,0"/>
                 <RelativePanel>
