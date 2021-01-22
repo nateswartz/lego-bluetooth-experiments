@@ -18,7 +18,7 @@ namespace SDKTemplate.Commands
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var forward = commandText.StartsWith("up");
-                await controller.RunMotor(Motors.A_B, speed, time, forward);
+                await controller.RunMotor(Motors.B, speed, time, forward);
                 await Task.Delay(time);
             }
         }
