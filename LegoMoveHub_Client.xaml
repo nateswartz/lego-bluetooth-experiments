@@ -85,7 +85,7 @@
                         Margin="0,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </StackPanel>
             <StackPanel x:Name="FreeformCommandsPanel" Visibility="Collapsed" RelativePanel.RightOf="ControlsPanel" Margin="100, 60, 0, 0">
-                <TextBlock Margin="0,20,0,0">
+                <TextBlock x:Name="SampleCommands" Margin="0,20,0,0">
                     Sample Commands:
                     <LineBreak/>
                     Forward(Speed, Time)

@@ -9,7 +9,6 @@
 //
 //*********************************************************
 
-using SDKTemplate.Commands;
 using SDKTemplate.Models;
 using SDKTemplate.Responses;
 using SDKTemplate.Util;
@@ -18,7 +17,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -58,6 +56,7 @@ namespace SDKTemplate
         private ResponseProcessor _responseProcessor;
         private BoostController _controller;
         private NotificationManager _notificationManager;
+        private TextCommandsController _textCommandsController;
 
         private bool _syncMotorAndLED = false;
 
@@ -78,6 +77,7 @@ namespace SDKTemplate
             _responseProcessor = new ResponseProcessor(_portState);
             _controller = new BoostController(_portState);
             _notificationManager = new NotificationManager(_responseProcessor);
+            _textCommandsController = new TextCommandsController(_controller);
             InitializeComponent();
         }
 
@@ -561,20 +561,9 @@ namespace SDKTemplate
             }
         }
 
-        private async void RunCommandsButton_Click()
+        private async Task RunCommandsButton_Click()
         {
-            if (!String.IsNullOrEmpty(CommandsText.Text))
-            {
-                var statements = CommandsText.Text.Split(';').Where(c => !string.IsNullOrEmpty(c));
-                foreach (var statement in statements)
-                {
-                    var commandToRun = Regex.Replace(statement.ToLower(), @"\s+", "");
-                    var keyword = commandToRun.Split('(')[0];
-                    var command = CommandFactory.GetCommand(keyword);
-                    await command.RunAsync(_controller, commandToRun);
-                    await Task.Delay(500);
-                }
-            }
+            await _textCommandsController.RunCommandsAsync(CommandsText.Text);
         }
 
         private async void SaveCommandsButton_Click()
