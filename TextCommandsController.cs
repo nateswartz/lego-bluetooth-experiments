@@ -12,12 +12,14 @@ namespace SDKTemplate
     {
         private readonly BoostController _controller;
         private readonly StorageFolder _storageFolder;
+        private readonly CommandFactory _commandFactory;
         private const string _saveFile = "savedCommands.txt";
 
         public TextCommandsController(BoostController controller, StorageFolder storageFolder)
         {
             _controller = controller;
             _storageFolder = storageFolder;
+            _commandFactory = new CommandFactory();
         }
 
         public async Task RunCommandsAsync(string commands)
@@ -29,7 +31,7 @@ namespace SDKTemplate
                 {
                     var commandToRun = Regex.Replace(statement.ToLower(), @"\s+", "");
                     var keyword = commandToRun.Split('(')[0];
-                    var command = CommandFactory.GetCommand(keyword);
+                    var command = _commandFactory.GetCommand(keyword);
                     await command.RunAsync(_controller, commandToRun);
                     await Task.Delay(500);
                 }

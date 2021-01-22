@@ -93,7 +93,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controllers\BoostController.cs" />
-    <Compile Include="Commands\CommandFactory.cs" />
+    <Compile Include="Commands\RoverCommandFactory.cs" />
     <Compile Include="Commands\RoverCommands.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

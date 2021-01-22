@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace SDKTemplate.Commands
 {
-    public static class CommandFactory
+    public class CommandFactory
     {
-        private static IEnumerable<ICommand> _commands =
+        private IEnumerable<ICommand> _commands =
             new List<ICommand>
             {
                 new MoveCommand(),
@@ -15,7 +15,7 @@ namespace SDKTemplate.Commands
                 new LEDCommand()
             };
 
-        public static ICommand GetCommand(string keyword)
+        public ICommand GetCommand(string keyword)
         {
             foreach (var command in _commands)
             {

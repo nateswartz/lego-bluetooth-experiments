@@ -23,7 +23,7 @@ namespace SDKTemplate.Commands
             {
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
-                var forward = commandText.StartsWith("forward") ? true : false;
+                var forward = commandText.StartsWith("forward");
                 await controller.RunMotor(Motors.A_B, speed, time, forward);
                 await Task.Delay(time);
             }
@@ -60,7 +60,7 @@ namespace SDKTemplate.Commands
             {
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
-                var raise = commandText.StartsWith("raise") ? true : false;
+                var raise = commandText.StartsWith("raise");
                 await controller.RunMotor(Motors.External, speed, time, raise);
                 await Task.Delay(time);
             }
