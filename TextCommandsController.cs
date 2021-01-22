@@ -1,18 +1,23 @@
 ﻿using SDKTemplate.Commands;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace SDKTemplate
 {
     public class TextCommandsController
     {
         private readonly BoostController _controller;
+        private readonly StorageFolder _storageFolder;
+        private const string _saveFile = "savedCommands.txt";
 
-        public TextCommandsController(BoostController controller)
+        public TextCommandsController(BoostController controller, StorageFolder storageFolder)
         {
             _controller = controller;
+            _storageFolder = storageFolder;
         }
 
         public async Task RunCommandsAsync(string commands)
@@ -29,6 +34,26 @@ namespace SDKTemplate
                     await Task.Delay(500);
                 }
             }
+        }
+
+        public async Task SaveCommandsAsync(string commands)
+        {
+            var saveFile = await _storageFolder.CreateFileAsync(_saveFile, CreationCollisionOption.OpenIfExists);
+            await FileIO.WriteTextAsync(saveFile, commands);
+        }
+
+        public async Task<string> LoadCommandsAsync()
+        {
+            try
+            {
+                var saveFile = await _storageFolder.GetFileAsync(_saveFile);
+                return await FileIO.ReadTextAsync(saveFile);
+            }
+            catch (IOException)
+            {
+                return "";
+            }
+
         }
     }
 }

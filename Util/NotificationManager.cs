@@ -11,17 +11,18 @@ namespace SDKTemplate.Util
     {
         private SemaphoreSlim _logSemaphore = new SemaphoreSlim(1);
         private readonly ResponseProcessor _responseProcessor;
+        private readonly StorageFolder _storageFolder;
         private const string _logFile = "move-hub-notifications.log";
 
-        public NotificationManager(ResponseProcessor responseProcessor)
+        public NotificationManager(ResponseProcessor responseProcessor, StorageFolder storageFolder)
         {
             _responseProcessor = responseProcessor;
+            _storageFolder = storageFolder;
         }
 
-        public async Task ProcessNotification(StorageFolder storageFolder,
-                                                      string notification,
-                                                      bool syncMotorAndLED,
-                                                      BoostController controller)
+        public async Task ProcessNotification(string notification,
+                                              bool syncMotorAndLED,
+                                              BoostController controller)
         {
 
             var response = _responseProcessor.CreateResponse(notification);
@@ -30,7 +31,7 @@ namespace SDKTemplate.Util
 
             var message = DecodeNotification(notification);
 
-            await StoreNotification(storageFolder, message);
+            await StoreNotification(_storageFolder, message);
         }
 
         public string DecodeNotification(string notification)

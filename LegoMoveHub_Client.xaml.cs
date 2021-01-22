@@ -15,7 +15,6 @@ using SDKTemplate.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
@@ -50,8 +49,6 @@ namespace SDKTemplate
 
         private List<string> _notifications = new List<string>();
 
-        private StorageFolder _storageFolder = ApplicationData.Current.LocalFolder;
-
         private PortState _portState;
         private ResponseProcessor _responseProcessor;
         private BoostController _controller;
@@ -73,11 +70,12 @@ namespace SDKTemplate
         #region UI Code
         public LegoMoveHub_Client()
         {
+            var storageFolder = ApplicationData.Current.LocalFolder;
             _portState = new PortState();
             _responseProcessor = new ResponseProcessor(_portState);
             _controller = new BoostController(_portState);
-            _notificationManager = new NotificationManager(_responseProcessor);
-            _textCommandsController = new TextCommandsController(_controller);
+            _notificationManager = new NotificationManager(_responseProcessor, storageFolder);
+            _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
         }
 
@@ -568,20 +566,19 @@ namespace SDKTemplate
 
         private async void SaveCommandsButton_Click()
         {
-            var saveFile = await _storageFolder.CreateFileAsync("savedCommands.txt", CreationCollisionOption.OpenIfExists);
-            await FileIO.WriteTextAsync(saveFile, CommandsText.Text);
+            await _textCommandsController.SaveCommandsAsync(CommandsText.Text);
         }
 
         private async void LoadCommandsButton_Click()
         {
-            try
-            {
-                var saveFile = await _storageFolder.GetFileAsync("savedCommands.txt");
-                CommandsText.Text = await FileIO.ReadTextAsync(saveFile);
-            }
-            catch (IOException)
+            var savedCommands = await _textCommandsController.LoadCommandsAsync();
+            if (string.IsNullOrEmpty(savedCommands))
             {
                 _rootPage.NotifyUser("Failed to load commands", NotifyType.ErrorMessage);
+            }
+            else
+            {
+                CommandsText.Text = savedCommands;
             }
         }
 
@@ -659,7 +656,7 @@ namespace SDKTemplate
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            await _notificationManager.ProcessNotification(_storageFolder, notification, _syncMotorAndLED, _controller);
+            await _notificationManager.ProcessNotification(notification, _syncMotorAndLED, _controller);
             var message = _notificationManager.DecodeNotification(notification);
             _notifications.Add(message);
             if (_notifications.Count > 10)
