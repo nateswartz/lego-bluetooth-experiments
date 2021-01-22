@@ -8,23 +8,34 @@ using Windows.Storage;
 
 namespace SDKTemplate
 {
+    public enum Robot
+    {
+        Rover = 1,
+        Cat = 2
+    }
+
     public class TextCommandsController
     {
         private readonly BoostController _controller;
         private readonly StorageFolder _storageFolder;
-        private readonly CommandFactory _commandFactory;
+        private ICommandFactory _commandFactory;
         private const string _saveFile = "savedCommands.txt";
+        public Robot SelectedRobot { get; set; }
 
         public TextCommandsController(BoostController controller, StorageFolder storageFolder)
         {
             _controller = controller;
             _storageFolder = storageFolder;
-            _commandFactory = new CommandFactory();
         }
 
         public async Task RunCommandsAsync(string commands)
         {
-            if (!String.IsNullOrEmpty(commands))
+            if (SelectedRobot == Robot.Rover)
+            {
+                _commandFactory = new RoverCommandFactory();
+            }
+
+            if (!string.IsNullOrEmpty(commands))
             {
                 var statements = commands.Split(';').Where(c => !string.IsNullOrEmpty(c));
                 foreach (var statement in statements)

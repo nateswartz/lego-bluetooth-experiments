@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace SDKTemplate.Commands
 {
-    public class CommandFactory
+    public class RoverCommandFactory : ICommandFactory
     {
         private IEnumerable<ICommand> _commands =
             new List<ICommand>
             {
-                new MoveCommand(),
-                new SpinCommand(),
-                new ArmCommand(),
+                new RoverMoveCommand(),
+                new RoverSpinCommand(),
+                new RoverArmCommand(),
                 new LEDCommand()
             };
 
