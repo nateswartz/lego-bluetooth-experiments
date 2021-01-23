@@ -20,7 +20,7 @@ namespace LegoBoostController.Controllers
         private readonly StorageFolder _storageFolder;
         private ICommandFactory _commandFactory;
         private const string _saveFile = "savedCommands.txt";
-        public Robot SelectedRobot { get; set; }
+        public Robot SelectedRobot { get; set; } = Robot.Rover;
 
         public TextCommandsController(BoostController controller, StorageFolder storageFolder)
         {

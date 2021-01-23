@@ -67,6 +67,7 @@ namespace LegoBoostController
 
         List<LEDColor> _colors = LEDColors.All;
         List<Motor> _motors = Motors.All;
+        List<Robot> _robots = Enum.GetValues(typeof(Robot)).Cast<Robot>().ToList();
 
         #region UI Code
         public LegoMoveHub_Client()
@@ -80,13 +81,22 @@ namespace LegoBoostController
             InitializeComponent();
         }
 
-        private async void LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async Task LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null) return;
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
             _rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
             await _controller.SetLEDColor(color);
+        }
+
+        private void RobotSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender == null) return;
+            var robot = (Robot)((ComboBox)sender).SelectedItem;
+            _rootPage.NotifyUser($"The selected robot is {Enum.GetName(typeof(Robot), robot)}", NotifyType.StatusMessage);
+
+            _textCommandsController.SelectedRobot = robot;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
