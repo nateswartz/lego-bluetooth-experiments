@@ -79,6 +79,7 @@ namespace LegoBoostController
             _notificationManager = new NotificationManager(_responseProcessor, storageFolder);
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
+            SampleCommands.Text = $"Sample Commands (Generic):{Environment.NewLine}LED(Color)[Color Options - Green, Blue, Red, Purple]";
         }
 
         private async Task LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -95,6 +96,15 @@ namespace LegoBoostController
             if (sender == null) return;
             var robot = (Robot)((ComboBox)sender).SelectedItem;
             _rootPage.NotifyUser($"The selected robot is {Enum.GetName(typeof(Robot), robot)}", NotifyType.StatusMessage);
+
+            if (robot == Robot.Rover)
+            {
+                SampleCommands.Text = $"Rover:{Environment.NewLine}Forward[Back](Speed, Time){Environment.NewLine}Spin(Speed, Time, Direction){Environment.NewLine}Raise[Lower](Speed, Time)";
+            }
+            else if (robot == Robot.Cat)
+            {
+                SampleCommands.Text = $"Cat:{Environment.NewLine}Up/Down(Speed, Time)";
+            }
 
             _textCommandsController.SelectedRobot = robot;
         }

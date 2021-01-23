@@ -67,7 +67,7 @@
                 </StackPanel>
             </StackPanel>
             <ToggleSwitch x:Name="ToggleControls" OnContent="Advanced" OffContent="Simple" Toggled="{x:Bind ToggleControls_Click}" RelativePanel.RightOf="ControlsPanel" Margin="100, 20, 0, 0"/>
-            <StackPanel x:Name="NotificationControlsPanel" Visibility="Visible" RelativePanel.RightOf="ControlsPanel" Margin="100, 60, 0, 0">
+            <StackPanel x:Name="NotificationControlsPanel" Visibility="Collapsed" RelativePanel.RightOf="ControlsPanel" Margin="100, 60, 0, 0">
                 <Button x:Name="EnableButtonNotificationsButton" Content="Enable Button Notifications" Click="{x:Bind EnableButtonNotificationsButton_Click}" Margin="0,30,0,0"/>
                 <Button x:Name="ToggleColorDistanceNotificationsButton" Content="Enable Color/Distance Notifications" 
                         Click="{x:Bind ToggleColorDistanceNotificationsButton_Click}" Margin="0,10,0,0"/>
@@ -84,8 +84,8 @@
                 <Button x:Name="SyncLEDMotorButton" Content="Sync LED with Motor" Click="{x:Bind SyncLEDMotorButton_Click}"
                         Margin="0,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </StackPanel>
-            <StackPanel x:Name="FreeformCommandsPanel" Visibility="Collapsed" RelativePanel.RightOf="ControlsPanel" Margin="100, 60, 0, 0">
-                <ComboBox x:Name="RobotSelectionCombo" Header="SelectRobotType:" Height="75" Width="296" 
+            <StackPanel x:Name="FreeformCommandsPanel" Visibility="Visible" RelativePanel.RightOf="ControlsPanel" Margin="100, 60, 0, 0">
+                <ComboBox x:Name="RobotSelectionCombo" Header="Select Robot Type:" Height="75" Width="296" 
                           ItemsSource="{x:Bind _robots}" SelectionChanged="{x:Bind RobotSelectionCombo_SelectionChanged}" Margin="0, 10, 10, 10"/>
                 <TextBlock x:Name="SampleCommands" Margin="0,20,0,0">
                     Sample Commands (Generic):
