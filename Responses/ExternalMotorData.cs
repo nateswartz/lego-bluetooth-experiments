@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SDKTemplate.Responses
+namespace LegoBoostController.Responses
 {
     public enum MotorDataType
     {

@@ -1,4 +1,6 @@
-﻿namespace SDKTemplate.Responses
+﻿using LegoBoostController.Models;
+
+namespace LegoBoostController.Responses
 {
     public class ResponseProcessor
     {

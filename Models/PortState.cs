@@ -1,4 +1,4 @@
-﻿namespace SDKTemplate
+﻿namespace LegoBoostController.Models
 {
     public class PortState
     {

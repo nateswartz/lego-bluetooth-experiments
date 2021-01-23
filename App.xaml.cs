@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
-namespace SDKTemplate
+namespace LegoBoostController
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -96,7 +96,7 @@ namespace SDKTemplate
                 // Set the default language
                 rootFrame.Language = Windows.Globalization.ApplicationLanguages.Languages[0];
                 rootFrame.NavigationFailed += OnNavigationFailed;
-                
+
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SDKTemplate.Models
+namespace LegoBoostController.Models
 {
     public class Motors
     {

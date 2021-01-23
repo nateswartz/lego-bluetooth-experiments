@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SDKTemplate.Commands
+namespace LegoBoostController.Commands
 {
     public class RoverCommandFactory : ICommandFactory
     {

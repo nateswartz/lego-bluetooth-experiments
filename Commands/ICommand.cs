@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using LegoBoostController.Controllers;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SDKTemplate.Commands
+namespace LegoBoostController.Commands
 {
     public interface ICommand
     {

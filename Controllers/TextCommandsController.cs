@@ -1,4 +1,4 @@
-﻿using SDKTemplate.Commands;
+﻿using LegoBoostController.Commands;
 using System;
 using System.IO;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace SDKTemplate
+namespace LegoBoostController.Controllers
 {
     public enum Robot
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace SDKTemplate
+namespace LegoBoostController.Util
 {
     public static class DataConverter
     {

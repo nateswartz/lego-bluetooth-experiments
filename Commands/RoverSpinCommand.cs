@@ -1,10 +1,11 @@
-﻿using SDKTemplate.Models;
+﻿using LegoBoostController.Controllers;
+using LegoBoostController.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SDKTemplate.Commands
+namespace LegoBoostController.Commands
 {
     public class RoverSpinCommand : ICommand
     {

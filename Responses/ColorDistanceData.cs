@@ -1,7 +1,7 @@
-﻿using SDKTemplate.Models;
+﻿using LegoBoostController.Models;
 using System;
 
-namespace SDKTemplate.Responses
+namespace LegoBoostController.Responses
 {
     public class ColorDistanceData : SensorData
     {

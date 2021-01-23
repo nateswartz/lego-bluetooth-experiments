@@ -9,9 +9,10 @@
 //
 //*********************************************************
 
-using SDKTemplate.Models;
-using SDKTemplate.Responses;
-using SDKTemplate.Util;
+using LegoBoostController.Controllers;
+using LegoBoostController.Models;
+using LegoBoostController.Responses;
+using LegoBoostController.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,7 +28,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace SDKTemplate
+namespace LegoBoostController
 {
     // This scenario connects to the device selected in the "Discover
     // GATT Servers" scenario and communicates with it.

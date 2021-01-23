@@ -1,8 +1,9 @@
-﻿using SDKTemplate.Models;
+﻿using LegoBoostController.Controllers;
+using LegoBoostController.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SDKTemplate.Commands
+namespace LegoBoostController.Commands
 {
     public class RoverMoveCommand : MotorCommand, ICommand
     {

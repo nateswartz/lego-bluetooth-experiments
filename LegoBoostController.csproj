@@ -125,7 +125,7 @@
     <Compile Include="Responses\Error.cs" />
     <Compile Include="Responses\ExternalMotorData.cs" />
     <Compile Include="Responses\Response.cs" />
-    <Compile Include="TextCommandsController.cs" />
+    <Compile Include="Controllers\TextCommandsController.cs" />
     <Compile Include="Util\DisplayHelpers.cs" />
     <Compile Include="Models\LEDColors.cs" />
     <Compile Include="Models\Motors.cs" />

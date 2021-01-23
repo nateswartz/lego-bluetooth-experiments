@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SDKTemplate.Models
+namespace LegoBoostController.Models
 {
     public class LEDColor
     {

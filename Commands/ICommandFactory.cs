@@ -1,4 +1,4 @@
-﻿namespace SDKTemplate.Commands
+﻿namespace LegoBoostController.Commands
 {
     public interface ICommandFactory
     {

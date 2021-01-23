@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using LegoBoostController.Util;
+using System.Text;
 
-namespace SDKTemplate.Responses
+namespace LegoBoostController.Responses
 {
     public class HubName : DeviceInfo
     {

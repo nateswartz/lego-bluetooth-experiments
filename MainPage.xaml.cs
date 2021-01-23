@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace SDKTemplate
+namespace LegoBoostController
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -129,13 +129,13 @@ namespace SDKTemplate
                 StatusPanel.Visibility = Visibility.Collapsed;
             }
 
-			// Raise an event if necessary to enable a screen reader to announce the status update.
-			var peer = FrameworkElementAutomationPeer.FromElement(StatusBlock);
-			if (peer != null)
-			{
-				peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
-			}
-		}
+            // Raise an event if necessary to enable a screen reader to announce the status update.
+            var peer = FrameworkElementAutomationPeer.FromElement(StatusBlock);
+            if (peer != null)
+            {
+                peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
+            }
+        }
 
         async void Footer_Click(object sender, RoutedEventArgs e)
         {

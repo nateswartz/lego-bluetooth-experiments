@@ -1,11 +1,12 @@
-﻿using SDKTemplate.Models;
-using SDKTemplate.Responses;
+﻿using LegoBoostController.Controllers;
+using LegoBoostController.Models;
+using LegoBoostController.Responses;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace SDKTemplate.Util
+namespace LegoBoostController.Util
 {
     public class NotificationManager
     {

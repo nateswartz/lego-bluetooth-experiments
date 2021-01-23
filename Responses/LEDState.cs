@@ -1,4 +1,4 @@
-﻿namespace SDKTemplate.Responses
+﻿namespace LegoBoostController.Responses
 {
     public class LEDState : PortInfo
     {

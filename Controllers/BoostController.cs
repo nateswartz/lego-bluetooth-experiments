@@ -1,11 +1,11 @@
-﻿using SDKTemplate.Models;
+﻿using LegoBoostController.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
 
-namespace SDKTemplate
+namespace LegoBoostController.Controllers
 {
     public class BoostController
     {
