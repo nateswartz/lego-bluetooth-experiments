@@ -97,16 +97,8 @@ namespace LegoBoostController
             var robot = (Robot)((ComboBox)sender).SelectedItem;
             _rootPage.NotifyUser($"The selected robot is {Enum.GetName(typeof(Robot), robot)}", NotifyType.StatusMessage);
 
-            if (robot == Robot.Rover)
-            {
-                SampleCommands.Text = $"Rover:{Environment.NewLine}Forward[Back](Speed, Time){Environment.NewLine}Spin(Speed, Time, Direction){Environment.NewLine}Raise[Lower](Speed, Time)";
-            }
-            else if (robot == Robot.Cat)
-            {
-                SampleCommands.Text = $"Cat:{Environment.NewLine}Up/Down(Speed, Time)";
-            }
-
             _textCommandsController.SelectedRobot = robot;
+            SampleCommands.Text = _textCommandsController.SampleCommandsText;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

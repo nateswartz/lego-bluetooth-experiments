@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace LegoBoostController.Commands
 {
-    public class CatMoveCommand : MotorCommand, ICommand
+    public class CatSitStandCommand : MotorCommand, ICommand
     {
-        public IEnumerable<string> Keywords { get => new List<string> { "up", "down" }; }
+        public IEnumerable<string> Keywords { get => new List<string> { "sit", "stand" }; }
 
         public async Task RunAsync(BoostController controller, string commandText)
         {
-            await RunAsync(controller, commandText, "down", Motors.B);
+            await RunAsync(controller, $"{commandText.TrimEnd(new char[2] { '(', ')' })}(20,500)", "sit", Motors.B);
         }
     }
 }

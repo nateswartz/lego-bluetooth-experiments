@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 
 namespace LegoBoostController.Controllers
 {
@@ -20,7 +21,20 @@ namespace LegoBoostController.Controllers
         private readonly StorageFolder _storageFolder;
         private ICommandFactory _commandFactory;
         private const string _saveFile = "savedCommands.txt";
-        public Robot SelectedRobot { get; set; } = Robot.Rover;
+        private Robot selectedRobot;
+        public Robot SelectedRobot 
+        {
+            get { return selectedRobot; }
+            set 
+            {
+                selectedRobot = value;
+                if (selectedRobot == Robot.Rover)
+                    SampleCommandsText = $"Rover:{Environment.NewLine}Forward[Back](Speed, Time){Environment.NewLine}Spin(Speed, Time, Direction){Environment.NewLine}Raise[Lower](Speed, Time)";
+                if (selectedRobot == Robot.Cat)
+                    SampleCommandsText = $"Cat:{Environment.NewLine}Up/Down(Speed, Time){Environment.NewLine}Sit/Stand()";
+            }
+        }
+        public string SampleCommandsText { get; set; }
 
         public TextCommandsController(BoostController controller, StorageFolder storageFolder)
         {

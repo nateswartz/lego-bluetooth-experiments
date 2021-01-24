@@ -9,9 +9,9 @@ namespace LegoBoostController.Commands
         private IEnumerable<ICommand> _commands =
             new List<ICommand>
             {
-                // TODO: Add some more commands
+                new LEDCommand(),
                 new CatMoveCommand(),
-                new LEDCommand()
+                new CatSitStandCommand()
             };
 
         public ICommand GetCommand(string keyword)
