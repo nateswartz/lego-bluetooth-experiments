@@ -88,21 +88,6 @@
                 <ComboBox x:Name="RobotSelectionCombo" Header="Select Robot Type:" Height="75" Width="296" 
                           ItemsSource="{x:Bind _robots}" SelectionChanged="{x:Bind RobotSelectionCombo_SelectionChanged}" Margin="0, 10, 10, 10"/>
                 <TextBlock x:Name="SampleCommands" Margin="0,20,0,0">
-                    Sample Commands (Generic):
-                    <LineBreak/>
-                    LED(Color) [Color Options - Green, Blue, Red, Purple]
-                    <LineBreak/>
-                    Rover:
-                    <LineBreak/>
-                    Forward[Back](Speed, Time)
-                    <LineBreak/>
-                    Spin(Speed, Time, Direction)
-                    <LineBreak/>
-                    Raise[Lower](Speed, Time)
-                    <LineBreak/>
-                    Cat:
-                    <LineBreak/>
-                    Up/Down(Speed, Time)
                 </TextBlock>
                 <TextBox x:Name="CommandsText" AcceptsReturn="True" TextWrapping="Wrap" Height="256" Width="300" Header="Commands" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,30,0,0"/>
                 <RelativePanel>

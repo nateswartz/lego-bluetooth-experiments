@@ -79,7 +79,7 @@ namespace LegoBoostController
             _notificationManager = new NotificationManager(_responseProcessor, storageFolder);
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
-            SampleCommands.Text = $"Sample Commands (Generic):{Environment.NewLine}LED(Color)[Color Options - Green, Blue, Red, Purple]";
+            SampleCommands.Text = "Sample Commands:";
         }
 
         private async Task LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -396,6 +396,7 @@ namespace LegoBoostController
                                 ConnectButton.IsEnabled = false;
                                 await ToggleSubscribedForNotifications();
                                 EnableCharacteristicPanels(characteristic.CharacteristicProperties);
+                                await _controller.GetHubFirmware();
                             }
                         }
                     }
@@ -538,10 +539,7 @@ namespace LegoBoostController
 
         private async void GetHubFirmwareButton_Click()
         {
-            var messageType = "01"; // Device info
-            var infoType = "03"; // Firmware
-            var action = "05"; // One-time request
-            await _controller.SetHexValue($"0600{messageType}{infoType}{action}00");
+            await _controller.GetHubFirmware();
         }
 
         private async void SyncLEDMotorButton_Click()

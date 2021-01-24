@@ -29,9 +29,9 @@ namespace LegoBoostController.Controllers
             {
                 selectedRobot = value;
                 if (selectedRobot == Robot.Rover)
-                    SampleCommandsText = $"Rover:{Environment.NewLine}Forward[Back](Speed, Time){Environment.NewLine}Spin(Speed, Time, Direction){Environment.NewLine}Raise[Lower](Speed, Time)";
+                    SampleCommandsText = new RoverCommandFactory().GetCommandExamples();
                 if (selectedRobot == Robot.Cat)
-                    SampleCommandsText = $"Cat:{Environment.NewLine}Up/Down(Speed, Time){Environment.NewLine}Sit/Stand(){Environment.NewLine}ShakeTail(Speed, Time, Direction[Left/Right])";
+                    SampleCommandsText = new CatCommandFactory().GetCommandExamples();
             }
         }
         public string SampleCommandsText { get; set; }

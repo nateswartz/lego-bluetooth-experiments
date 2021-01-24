@@ -26,5 +26,15 @@ namespace LegoBoostController.Commands
             }
             throw new Exception($"No command matching keyword: {keyword}");
         }
+
+        public string GetCommandExamples()
+        {
+            var examples = $"Rover:";
+            foreach (var command in _commands)
+            {
+                examples += $"{Environment.NewLine}{command.Description}";
+            }
+            return examples;
+        }
     }
 }

@@ -3,5 +3,7 @@
     public interface ICommandFactory
     {
         ICommand GetCommand(string keyword);
+
+        string GetCommandExamples();
     }
 }

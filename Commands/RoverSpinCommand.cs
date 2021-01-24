@@ -11,6 +11,8 @@ namespace LegoBoostController.Commands
     {
         public IEnumerable<string> Keywords { get => new List<string> { "spin" }; }
 
+        public string Description { get => "Spin(Speed, Time, Direction[Clockwise/CounterClockwise])"; }
+
         public async Task RunAsync(BoostController controller, string commandText)
         {
             Match m = Regex.Match(commandText, @"\((\d+),(\d+),(\w+)\)");

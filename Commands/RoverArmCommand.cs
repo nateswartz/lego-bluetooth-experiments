@@ -9,6 +9,8 @@ namespace LegoBoostController.Commands
     {
         public IEnumerable<string> Keywords { get => new List<string> { "raise", "lower" }; }
 
+        public string Description { get => "Raise/Lower(Speed, Time)"; }
+
         public async Task RunAsync(BoostController controller, string commandText)
         {
             await RunAsync(controller, commandText, "raise", Motors.External);

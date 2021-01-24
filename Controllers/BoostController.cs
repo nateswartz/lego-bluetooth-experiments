@@ -48,6 +48,14 @@ namespace LegoBoostController.Controllers
             return await SetHexValue(command);
         }
 
+        public async Task<bool> GetHubFirmware()
+        {
+            var messageType = "01"; // Device info
+            var infoType = "03"; // Firmware
+            var action = "05"; // One-time request
+            return await SetHexValue($"0600{messageType}{infoType}{action}00");
+        }
+
         public async Task<bool> SetHexValue(string hex)
         {
             var bytes = Enumerable.Range(0, hex.Length)

@@ -10,6 +10,8 @@ namespace LegoBoostController.Commands
     {
         public IEnumerable<string> Keywords { get => new List<string> { "led" }; }
 
+        public string Description { get => "LED(Color[Green, Blue, Red, Purple])"; }
+
         public async Task RunAsync(BoostController controller, string commandText)
         {
             Match m = Regex.Match(commandText, @"\((\w+)\)");
