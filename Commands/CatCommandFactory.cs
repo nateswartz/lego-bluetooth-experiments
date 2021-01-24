@@ -10,8 +10,9 @@ namespace LegoBoostController.Commands
             new List<ICommand>
             {
                 new LEDCommand(),
-                new CatMoveCommand(),
-                new CatSitStandCommand()
+                new CatMoveLegsCommand(),
+                new CatSitStandCommand(),
+                new CatMoveTailCommand()
             };
 
         public ICommand GetCommand(string keyword)

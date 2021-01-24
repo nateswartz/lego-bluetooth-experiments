@@ -31,7 +31,7 @@ namespace LegoBoostController.Controllers
                 if (selectedRobot == Robot.Rover)
                     SampleCommandsText = $"Rover:{Environment.NewLine}Forward[Back](Speed, Time){Environment.NewLine}Spin(Speed, Time, Direction){Environment.NewLine}Raise[Lower](Speed, Time)";
                 if (selectedRobot == Robot.Cat)
-                    SampleCommandsText = $"Cat:{Environment.NewLine}Up/Down(Speed, Time){Environment.NewLine}Sit/Stand()";
+                    SampleCommandsText = $"Cat:{Environment.NewLine}Up/Down(Speed, Time){Environment.NewLine}Sit/Stand(){Environment.NewLine}ShakeTail(Speed, Time, Direction[Left/Right])";
             }
         }
         public string SampleCommandsText { get; set; }

@@ -92,8 +92,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\CatMoveTailCommand.cs" />
     <Compile Include="Commands\CatSitStandCommand.cs" />
-    <Compile Include="Commands\CatMoveCommand.cs" />
+    <Compile Include="Commands\CatMoveLegsCommand.cs" />
     <Compile Include="Commands\ICommandFactory.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\CatCommandFactory.cs" />

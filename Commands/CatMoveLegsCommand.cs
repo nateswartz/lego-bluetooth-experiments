@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LegoBoostController.Commands
 {
-    public class CatMoveCommand : MotorCommand, ICommand
+    public class CatMoveLegsCommand : MotorCommand, ICommand
     {
         public IEnumerable<string> Keywords { get => new List<string> { "up", "down" }; }
 
