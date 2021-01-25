@@ -72,7 +72,7 @@ namespace LegoBoostController.Util
                 {
                     color = LEDColors.Purple;
                 }
-                await controller.SetLEDColor(color);
+                await controller.SetLEDColorAsync(color);
             }
         }
     }

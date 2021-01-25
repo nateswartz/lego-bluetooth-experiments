@@ -17,7 +17,7 @@ namespace LegoBoostController.Controllers
             _state = portState;
         }
 
-        public async Task<bool> RunMotor(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
+        public async Task<bool> RunMotorAsync(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
         {
             string motorToRun = motor.Code;
             if (motor == Motors.External)
@@ -39,25 +39,50 @@ namespace LegoBoostController.Controllers
             }
             power = power.PadLeft(2, '0');
             var command = $"0c0081{motorToRun}1109{time}{power}647f03";
-            return await SetHexValue(command);
+            return await SetHexValueAsync(command);
         }
 
-        public async Task<bool> SetLEDColor(LEDColor color)
+        public async Task<bool> SetLEDColorAsync(LEDColor color)
         {
             var command = "08008132115100" + color.Code;
-            return await SetHexValue(command);
+            return await SetHexValueAsync(command);
         }
 
-        public async Task<bool> GetHubFirmware()
+        public async Task<bool> GetHubFirmwareAsync()
         {
             var messageType = "01"; // Device info
             var infoType = "03"; // Firmware
             var action = "05"; // One-time request
-            return await SetHexValue($"0600{messageType}{infoType}{action}00");
+            return await SetHexValueAsync($"0600{messageType}{infoType}{action}00");
         }
 
-        public async Task<bool> SetHexValue(string hex)
+        public async Task<bool> GetHubNameAsync()
         {
+            var messageType = "01"; // Device info
+            var infoType = "01"; // Name
+            var action = "05"; // One-time request
+            return await SetHexValueAsync($"0600{messageType}{infoType}{action}00");
+        }
+
+        public async Task<bool> EnableButtonNotificationsAsync()
+        {
+            var command = "0500010202";
+            return await SetHexValueAsync(command);
+        }
+
+        public async Task<bool> ToggleNotificationsAsync(bool notificationsEnabled, string port, string sensorMode)
+        {
+            var state = notificationsEnabled ? "00" : "01"; // 01 - On; 00 - Off
+            var command = $"0a0041{port}{sensorMode}01000000{state}";
+            return await SetHexValueAsync(command);
+        }
+
+        public async Task<bool> SetHexValueAsync(string hex)
+        {
+            if (hex.Contains(" "))
+            {
+                hex = hex.Replace(" ", "");
+            }
             var bytes = Enumerable.Range(0, hex.Length)
                             .Where(x => x % 2 == 0)
                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
@@ -71,7 +96,7 @@ namespace LegoBoostController.Controllers
             return writeSuccessful;
         }
 
-        public async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)
+        private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)
         {
             try
             {

@@ -22,7 +22,7 @@ namespace LegoBoostController.Commands
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var direction = m.Groups[3].Value;
                 var motor = direction == "clockwise" ? Motors.A : Motors.B;
-                await controller.RunMotor(motor, speed, time, true);
+                await controller.RunMotorAsync(motor, speed, time, true);
                 await Task.Delay(time);
             }
         }

@@ -92,7 +92,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Commands\CatMoveHeadComand.cs" />
+    <Compile Include="Commands\CatMoveEyesComand.cs" />
     <Compile Include="Commands\CatMoveTailCommand.cs" />
     <Compile Include="Commands\CatSitStandCommand.cs" />
     <Compile Include="Commands\CatMoveLegsCommand.cs" />

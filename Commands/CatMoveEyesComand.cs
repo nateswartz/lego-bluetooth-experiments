@@ -21,7 +21,7 @@ namespace LegoBoostController.Commands
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var direction = m.Groups[3].Value;
-                await controller.RunMotor(Motors.External, speed, time, direction == "left");
+                await controller.RunMotorAsync(Motors.External, speed, time, direction == "left");
                 await Task.Delay(time);
             }
         }

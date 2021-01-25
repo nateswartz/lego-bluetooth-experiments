@@ -16,7 +16,7 @@ namespace LegoBoostController.Commands
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var clockWise = commandText.StartsWith(clockwiseKeyword);
-                await controller.RunMotor(motor, speed, time, clockWise);
+                await controller.RunMotorAsync(motor, speed, time, clockWise);
                 await Task.Delay(time);
             }
         }

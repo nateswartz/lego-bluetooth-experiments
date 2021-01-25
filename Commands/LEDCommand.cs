@@ -18,7 +18,7 @@ namespace LegoBoostController.Commands
             if (m.Groups.Count == 2)
             {
                 var color = m.Groups[1].Value;
-                await controller.SetLEDColor(LEDColors.GetByName(color));
+                await controller.SetLEDColorAsync(LEDColors.GetByName(color));
             }
         }
     }

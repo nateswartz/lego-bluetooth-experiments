@@ -88,7 +88,7 @@ namespace LegoBoostController
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
             _rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
-            await _controller.SetLEDColor(color);
+            await _controller.SetLEDColorAsync(color);
         }
 
         private void RobotSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -396,7 +396,7 @@ namespace LegoBoostController
                                 ConnectButton.IsEnabled = false;
                                 await ToggleSubscribedForNotifications();
                                 EnableCharacteristicPanels(characteristic.CharacteristicProperties);
-                                await _controller.GetHubFirmware();
+                                await _controller.GetHubFirmwareAsync();
                             }
                         }
                     }
@@ -466,22 +466,9 @@ namespace LegoBoostController
         private async void WriteHexButton_Click()
         {
             var text = CharacteristicWriteValue.Text;
-            if (!String.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text))
             {
-                if (text.Contains(" "))
-                {
-                    text = text.Replace(" ", "");
-                }
-                var bytes = Enumerable.Range(0, text.Length)
-                                      .Where(x => x % 2 == 0)
-                                      .Select(x => Convert.ToByte(text.Substring(x, 2), 16))
-                                      .ToArray();
-
-                var writer = new DataWriter();
-                writer.ByteOrder = ByteOrder.LittleEndian;
-                writer.WriteBytes(bytes);
-
-                var writeSuccessful = await _controller.WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
+                await _controller.SetHexValueAsync(text);
             }
             else
             {
@@ -491,8 +478,7 @@ namespace LegoBoostController
 
         private async void EnableButtonNotificationsButton_Click()
         {
-            var command = "0500010202";
-            await _controller.SetHexValue(command);
+            await _controller.EnableButtonNotificationsAsync();
         }
 
         private async void ToggleColorDistanceNotificationsButton_Click()
@@ -514,32 +500,28 @@ namespace LegoBoostController
 
         private async Task<bool> ToggleNotification(Button button, string sensorType, string port, string sensorMode)
         {
-            string state;
+            bool notificationsEnabled;
             if (button.Content.ToString() == $"Enable {sensorType} Notifications")
             {
-                state = "01"; // 01 - On; 02 - Off;
+                notificationsEnabled = false;
                 button.Content = $"Disable {sensorType} Notifications";
             }
             else
             {
-                state = "00"; // 01 - On; 02 - Off;
+                notificationsEnabled = true;
                 button.Content = $"Enable {sensorType} Notifications";
             }
-            var command = $"0a0041{port}{sensorMode}01000000{state}";
-            return await _controller.SetHexValue(command);
+            return await _controller.ToggleNotificationsAsync(notificationsEnabled, port, sensorMode);
         }
 
         private async void GetHubNameButton_Click()
         {
-            var messageType = "01"; // Device info
-            var infoType = "01"; // Name
-            var action = "05"; // One-time request
-            await _controller.SetHexValue($"0600{messageType}{infoType}{action}00");
+            await _controller.GetHubNameAsync();
         }
 
         private async void GetHubFirmwareButton_Click()
         {
-            await _controller.GetHubFirmware();
+            await _controller.GetHubFirmwareAsync();
         }
 
         private async void SyncLEDMotorButton_Click()
@@ -562,7 +544,7 @@ namespace LegoBoostController
             var clockwise = DirectionToggle.IsOn;
             if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
-                await _controller.RunMotor((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise);
+                await _controller.RunMotorAsync((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise);
             }
             else
             {
