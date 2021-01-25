@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Commands
+namespace LegoBoostController.Commands.Robot
 {
-    public interface ICommand
+    public interface IRobotCommand
     {
         IEnumerable<string> Keywords { get; }
         string Description { get; }

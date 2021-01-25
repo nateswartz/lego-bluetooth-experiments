@@ -1,4 +1,4 @@
-﻿using LegoBoostController.Commands;
+﻿using LegoBoostController.Commands.Boost;
 using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using LegoBoostController.Responses;

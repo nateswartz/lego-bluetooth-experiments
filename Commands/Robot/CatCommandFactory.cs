@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LegoBoostController.Commands
+namespace LegoBoostController.Commands.Robot
 {
     public class CatCommandFactory : ICommandFactory
     {
-        private IEnumerable<ICommand> _commands =
-            new List<ICommand>
+        private IEnumerable<IRobotCommand> _commands =
+            new List<IRobotCommand>
             {
                 new LEDCommand(),
                 new CatMoveLegsCommand(),
@@ -16,7 +16,7 @@ namespace LegoBoostController.Commands
                 new CatMoveEyesCommand()
             };
 
-        public ICommand GetCommand(string keyword)
+        public IRobotCommand GetCommand(string keyword)
         {
             foreach (var command in _commands)
             {

@@ -1,13 +1,14 @@
-﻿using LegoBoostController.Controllers;
+﻿using LegoBoostController.Commands.Boost;
+using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Commands
+namespace LegoBoostController.Commands.Robot
 {
-    public class CatMoveEyesCommand : ICommand
+    public class CatMoveEyesCommand : IRobotCommand
     {
         public IEnumerable<string> Keywords { get => new List<string> { "moveeyes" }; }
 
@@ -21,7 +22,8 @@ namespace LegoBoostController.Commands
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var direction = m.Groups[3].Value;
-                await controller.RunMotorAsync(Motors.External, speed, time, direction == "left");
+                var command = new MotorBoostCommand(Motors.External, speed, time, direction == "left", controller.GetCurrentExternalMotorPort());
+                await controller.SetHexValueAsync(command);
                 await Task.Delay(time);
             }
         }

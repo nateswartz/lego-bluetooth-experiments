@@ -1,10 +1,11 @@
-﻿using LegoBoostController.Controllers;
+﻿using LegoBoostController.Commands.Boost;
+using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Commands
+namespace LegoBoostController.Commands.Robot
 {
     public abstract class MotorCommand
     {
@@ -16,7 +17,8 @@ namespace LegoBoostController.Commands
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var clockWise = commandText.StartsWith(clockwiseKeyword);
-                await controller.RunMotorAsync(motor, speed, time, clockWise);
+                var command = new MotorBoostCommand(Motors.External, speed, time, clockWise, controller.GetCurrentExternalMotorPort());
+                await controller.SetHexValueAsync(command);
                 await Task.Delay(time);
             }
         }

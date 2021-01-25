@@ -92,20 +92,23 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Commands\CatMoveEyesComand.cs" />
-    <Compile Include="Commands\CatMoveTailCommand.cs" />
-    <Compile Include="Commands\CatSitStandCommand.cs" />
-    <Compile Include="Commands\CatMoveLegsCommand.cs" />
-    <Compile Include="Commands\ICommandFactory.cs" />
-    <Compile Include="Commands\ICommand.cs" />
-    <Compile Include="Commands\CatCommandFactory.cs" />
-    <Compile Include="Commands\MotorCommand.cs" />
-    <Compile Include="Commands\RoverMoveCommand.cs" />
-    <Compile Include="Commands\LEDCommand.cs" />
-    <Compile Include="Commands\RoverSpinCommand.cs" />
+    <Compile Include="Commands\Robot\CatMoveEyesComand.cs" />
+    <Compile Include="Commands\Robot\CatMoveTailCommand.cs" />
+    <Compile Include="Commands\Robot\CatSitStandCommand.cs" />
+    <Compile Include="Commands\Robot\CatMoveLegsCommand.cs" />
+    <Compile Include="Commands\Robot\ICommandFactory.cs" />
+    <Compile Include="Commands\Robot\IRobotCommand.cs" />
+    <Compile Include="Commands\Robot\CatCommandFactory.cs" />
+    <Compile Include="Commands\Boost\IBoostCommand.cs" />
+    <Compile Include="Commands\Boost\MotorBoostCommand.cs" />
+    <Compile Include="Commands\Boost\LEDBoostCommand.cs" />
+    <Compile Include="Commands\Robot\MotorCommand.cs" />
+    <Compile Include="Commands\Robot\RoverMoveCommand.cs" />
+    <Compile Include="Commands\Robot\LEDCommand.cs" />
+    <Compile Include="Commands\Robot\RoverSpinCommand.cs" />
     <Compile Include="Controllers\BoostController.cs" />
-    <Compile Include="Commands\RoverCommandFactory.cs" />
-    <Compile Include="Commands\RoverArmCommand.cs" />
+    <Compile Include="Commands\Robot\RoverCommandFactory.cs" />
+    <Compile Include="Commands\Robot\RoverArmCommand.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -183,6 +186,7 @@
       <Version>5.0.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

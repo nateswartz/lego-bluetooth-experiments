@@ -3,9 +3,9 @@ using LegoBoostController.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Commands
+namespace LegoBoostController.Commands.Robot
 {
-    public class CatMoveLegsCommand : MotorCommand, ICommand
+    public class CatMoveLegsCommand : MotorCommand, IRobotCommand
     {
         public IEnumerable<string> Keywords { get => new List<string> { "up", "down" }; }
 

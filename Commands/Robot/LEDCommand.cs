@@ -1,12 +1,13 @@
-﻿using LegoBoostController.Controllers;
+﻿using LegoBoostController.Commands.Boost;
+using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Commands
+namespace LegoBoostController.Commands.Robot
 {
-    public class LEDCommand : ICommand
+    public class LEDCommand : IRobotCommand
     {
         public IEnumerable<string> Keywords { get => new List<string> { "led" }; }
 
@@ -19,18 +20,8 @@ namespace LegoBoostController.Commands
             {
                 var color = m.Groups[1].Value;
                 var command = new LEDBoostCommand(LEDColors.GetByName(color));
-                await controller.SetHexValueAsync(command.HexCommand);
+                await controller.SetHexValueAsync(command);
             }
-        }
-    }
-
-    public class LEDBoostCommand
-    {
-        public string HexCommand { get; set; }
-
-        public LEDBoostCommand(LEDColor color)
-        {
-            HexCommand = $"08008132115100{color.Code}";
         }
     }
 }

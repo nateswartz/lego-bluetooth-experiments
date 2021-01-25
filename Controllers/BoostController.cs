@@ -1,4 +1,5 @@
-﻿using LegoBoostController.Models;
+﻿using LegoBoostController.Commands.Boost;
+using LegoBoostController.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,29 +18,9 @@ namespace LegoBoostController.Controllers
             _state = portState;
         }
 
-        public async Task<bool> RunMotorAsync(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
+        public string GetCurrentExternalMotorPort()
         {
-            string motorToRun = motor.Code;
-            if (motor == Motors.External)
-            {
-                motorToRun = _state.CurrentExternalMotorPort;
-            }
-
-            // For time, LSB first
-            var time = timeInMS.ToString("X").PadLeft(4, '0');
-            time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
-            var power = "";
-            if (clockwise)
-            {
-                power = powerPercentage.ToString("X");
-            }
-            else
-            {
-                power = (255 - powerPercentage).ToString("X");
-            }
-            power = power.PadLeft(2, '0');
-            var command = $"0c0081{motorToRun}1109{time}{power}647f03";
-            return await SetHexValueAsync(command);
+            return _state.CurrentExternalMotorPort;
         }
 
         public async Task<bool> GetHubFirmwareAsync()
@@ -69,6 +50,11 @@ namespace LegoBoostController.Controllers
             var state = notificationsEnabled ? "00" : "01"; // 01 - On; 00 - Off
             var command = $"0a0041{port}{sensorMode}01000000{state}";
             return await SetHexValueAsync(command);
+        }
+
+        public async Task<bool> SetHexValueAsync(IBoostCommand command)
+        {
+            return await SetHexValueAsync(command.HexCommand);
         }
 
         public async Task<bool> SetHexValueAsync(string hex)

@@ -1,11 +1,10 @@
-﻿using LegoBoostController.Commands;
+﻿using LegoBoostController.Commands.Robot;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.UI.Xaml.Controls;
 
 namespace LegoBoostController.Controllers
 {
@@ -22,10 +21,10 @@ namespace LegoBoostController.Controllers
         private ICommandFactory _commandFactory;
         private const string _saveFile = "savedCommands.txt";
         private Robot selectedRobot;
-        public Robot SelectedRobot 
+        public Robot SelectedRobot
         {
             get { return selectedRobot; }
-            set 
+            set
             {
                 selectedRobot = value;
                 if (selectedRobot == Robot.Rover)

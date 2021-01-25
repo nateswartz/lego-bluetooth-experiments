@@ -9,7 +9,7 @@
 //
 //*********************************************************
 
-using LegoBoostController.Commands;
+using LegoBoostController.Commands.Boost;
 using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using LegoBoostController.Responses;
@@ -546,7 +546,8 @@ namespace LegoBoostController
             var clockwise = DirectionToggle.IsOn;
             if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
-                await _controller.RunMotorAsync((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise);
+                var command = new MotorBoostCommand((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise, _controller.GetCurrentExternalMotorPort());
+                await _controller.SetHexValueAsync(command.HexCommand);
             }
             else
             {
