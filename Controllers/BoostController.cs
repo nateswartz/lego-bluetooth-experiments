@@ -23,19 +23,6 @@ namespace LegoBoostController.Controllers
             return _state.CurrentExternalMotorPort;
         }
 
-        public async Task<bool> EnableButtonNotificationsAsync()
-        {
-            var command = "0500010202";
-            return await SetHexValueAsync(command);
-        }
-
-        public async Task<bool> ToggleNotificationsAsync(bool notificationsEnabled, string port, string sensorMode)
-        {
-            var state = notificationsEnabled ? "00" : "01"; // 01 - On; 00 - Off
-            var command = $"0a0041{port}{sensorMode}01000000{state}";
-            return await SetHexValueAsync(command);
-        }
-
         public async Task<bool> ExecuteCommandAsync(IBoostCommand command)
         {
             return await SetHexValueAsync(command.HexCommand);

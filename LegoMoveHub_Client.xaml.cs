@@ -480,7 +480,8 @@ namespace LegoBoostController
 
         private async void EnableButtonNotificationsButton_Click()
         {
-            await _controller.EnableButtonNotificationsAsync();
+            var command = new EnableButtonNotificationsCommand();
+            await _controller.ExecuteCommandAsync(command);
         }
 
         private async void ToggleColorDistanceNotificationsButton_Click()
@@ -513,7 +514,8 @@ namespace LegoBoostController
                 notificationsEnabled = true;
                 button.Content = $"Enable {sensorType} Notifications";
             }
-            return await _controller.ToggleNotificationsAsync(notificationsEnabled, port, sensorMode);
+            var command = new ToggleNotificationsCommand(notificationsEnabled, port, sensorMode);
+            return await _controller.ExecuteCommandAsync(command);
         }
 
         private async void GetHubNameButton_Click()

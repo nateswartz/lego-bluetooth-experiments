@@ -92,6 +92,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\Boost\EnableButtonNotificationsCommand.cs" />
+    <Compile Include="Commands\Boost\ToggleNotificationsCommand.cs" />
+    <Compile Include="Commands\Boost\HubNameCommand.cs" />
+    <Compile Include="Commands\Boost\HubFirmwareCommand.cs" />
     <Compile Include="Commands\Robot\CatMoveEyesComand.cs" />
     <Compile Include="Commands\Robot\CatMoveTailCommand.cs" />
     <Compile Include="Commands\Robot\CatSitStandCommand.cs" />
