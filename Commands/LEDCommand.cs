@@ -18,8 +18,19 @@ namespace LegoBoostController.Commands
             if (m.Groups.Count == 2)
             {
                 var color = m.Groups[1].Value;
-                await controller.SetLEDColorAsync(LEDColors.GetByName(color));
+                var command = new LEDBoostCommand(LEDColors.GetByName(color));
+                await controller.SetHexValueAsync(command.HexCommand);
             }
+        }
+    }
+
+    public class LEDBoostCommand
+    {
+        public string HexCommand { get; set; }
+
+        public LEDBoostCommand(LEDColor color)
+        {
+            HexCommand = $"08008132115100{color.Code}";
         }
     }
 }

@@ -42,12 +42,6 @@ namespace LegoBoostController.Controllers
             return await SetHexValueAsync(command);
         }
 
-        public async Task<bool> SetLEDColorAsync(LEDColor color)
-        {
-            var command = "08008132115100" + color.Code;
-            return await SetHexValueAsync(command);
-        }
-
         public async Task<bool> GetHubFirmwareAsync()
         {
             var messageType = "01"; // Device info

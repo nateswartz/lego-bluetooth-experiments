@@ -9,6 +9,7 @@
 //
 //*********************************************************
 
+using LegoBoostController.Commands;
 using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using LegoBoostController.Responses;
@@ -88,7 +89,8 @@ namespace LegoBoostController
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
             _rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
-            await _controller.SetLEDColorAsync(color);
+            var command = new LEDBoostCommand(color);
+            await _controller.SetHexValueAsync(command.HexCommand);
         }
 
         private void RobotSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

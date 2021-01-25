@@ -1,4 +1,5 @@
-﻿using LegoBoostController.Controllers;
+﻿using LegoBoostController.Commands;
+using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using LegoBoostController.Responses;
 using System;
@@ -72,7 +73,8 @@ namespace LegoBoostController.Util
                 {
                     color = LEDColors.Purple;
                 }
-                await controller.SetLEDColorAsync(color);
+                var command = new LEDBoostCommand(color);
+                await controller.SetHexValueAsync(command.HexCommand);
             }
         }
     }
