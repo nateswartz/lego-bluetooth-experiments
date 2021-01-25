@@ -20,7 +20,7 @@ namespace LegoBoostController.Commands.Robot
             {
                 var color = m.Groups[1].Value;
                 var command = new LEDBoostCommand(LEDColors.GetByName(color));
-                await controller.SetHexValueAsync(command);
+                await controller.ExecuteCommandAsync(command);
             }
         }
     }

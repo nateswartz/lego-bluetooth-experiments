@@ -18,7 +18,7 @@ namespace LegoBoostController.Commands.Robot
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var clockWise = commandText.StartsWith(clockwiseKeyword);
                 var command = new MotorBoostCommand(Motors.External, speed, time, clockWise, controller.GetCurrentExternalMotorPort());
-                await controller.SetHexValueAsync(command);
+                await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);
             }
         }

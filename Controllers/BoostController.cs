@@ -23,22 +23,6 @@ namespace LegoBoostController.Controllers
             return _state.CurrentExternalMotorPort;
         }
 
-        public async Task<bool> GetHubFirmwareAsync()
-        {
-            var messageType = "01"; // Device info
-            var infoType = "03"; // Firmware
-            var action = "05"; // One-time request
-            return await SetHexValueAsync($"0600{messageType}{infoType}{action}00");
-        }
-
-        public async Task<bool> GetHubNameAsync()
-        {
-            var messageType = "01"; // Device info
-            var infoType = "01"; // Name
-            var action = "05"; // One-time request
-            return await SetHexValueAsync($"0600{messageType}{infoType}{action}00");
-        }
-
         public async Task<bool> EnableButtonNotificationsAsync()
         {
             var command = "0500010202";
@@ -52,7 +36,7 @@ namespace LegoBoostController.Controllers
             return await SetHexValueAsync(command);
         }
 
-        public async Task<bool> SetHexValueAsync(IBoostCommand command)
+        public async Task<bool> ExecuteCommandAsync(IBoostCommand command)
         {
             return await SetHexValueAsync(command.HexCommand);
         }

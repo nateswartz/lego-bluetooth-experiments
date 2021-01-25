@@ -398,7 +398,7 @@ namespace LegoBoostController
                                 ConnectButton.IsEnabled = false;
                                 await ToggleSubscribedForNotifications();
                                 EnableCharacteristicPanels(characteristic.CharacteristicProperties);
-                                await _controller.GetHubFirmwareAsync();
+                                await _controller.ExecuteCommandAsync(new HubFirmwareCommand());
                             }
                         }
                     }
@@ -518,12 +518,12 @@ namespace LegoBoostController
 
         private async void GetHubNameButton_Click()
         {
-            await _controller.GetHubNameAsync();
+            await _controller.ExecuteCommandAsync(new HubNameCommand());
         }
 
         private async void GetHubFirmwareButton_Click()
         {
-            await _controller.GetHubFirmwareAsync();
+            await _controller.ExecuteCommandAsync(new HubFirmwareCommand());
         }
 
         private async void SyncLEDMotorButton_Click()
