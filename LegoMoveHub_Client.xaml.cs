@@ -11,6 +11,7 @@
 
 using LegoBoostController.Commands.Boost;
 using LegoBoostController.Controllers;
+using LegoBoostController.EventHandlers;
 using LegoBoostController.Models;
 using LegoBoostController.Responses;
 using LegoBoostController.Util;
@@ -56,8 +57,6 @@ namespace LegoBoostController
         private BoostController _controller;
         private NotificationManager _notificationManager;
         private TextCommandsController _textCommandsController;
-
-        private bool _syncMotorAndLED = false;
 
         #region Error Codes
         readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
@@ -531,8 +530,8 @@ namespace LegoBoostController
         private async void SyncLEDMotorButton_Click()
         {
             await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, "01");
-            _syncMotorAndLED = !_syncMotorAndLED;
-            if (_syncMotorAndLED)
+
+            if (_notificationManager.EventHandlers.Count == 0)
             {
                 SyncLEDMotorButton.Content = "Un-sync LED with Motor";
             }
@@ -540,6 +539,8 @@ namespace LegoBoostController
             {
                 SyncLEDMotorButton.Content = "Sync LED with Motor";
             }
+
+            _notificationManager.EventHandlers.Add(new SpeedDataEventHandler(_controller));
         }
 
         private async void RunMotorButton_Click()
@@ -654,7 +655,7 @@ namespace LegoBoostController
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            await _notificationManager.ProcessNotification(notification, _syncMotorAndLED, _controller);
+            await _notificationManager.ProcessNotification(notification);
             var message = _notificationManager.DecodeNotification(notification);
             _notifications.Add(message);
             if (_notifications.Count > 10)

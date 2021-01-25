@@ -1,8 +1,7 @@
-﻿using LegoBoostController.Commands.Boost;
-using LegoBoostController.Controllers;
-using LegoBoostController.Models;
+﻿using LegoBoostController.EventHandlers;
 using LegoBoostController.Responses;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -15,21 +14,20 @@ namespace LegoBoostController.Util
         private readonly ResponseProcessor _responseProcessor;
         private readonly StorageFolder _storageFolder;
         private const string _logFile = "move-hub-notifications.log";
+        public List<IEventHandler> EventHandlers { get; set; }
 
         public NotificationManager(ResponseProcessor responseProcessor, StorageFolder storageFolder)
         {
             _responseProcessor = responseProcessor;
             _storageFolder = storageFolder;
+            EventHandlers = new List<IEventHandler>();
         }
 
-        public async Task ProcessNotification(string notification,
-                                              bool syncMotorAndLED,
-                                              BoostController controller)
+        public async Task ProcessNotification(string notification)
         {
-
             var response = _responseProcessor.CreateResponse(notification);
 
-            await TriggerActionsFromNotification(syncMotorAndLED, response, controller);
+            await TriggerActionsFromNotification(response);
 
             var message = DecodeNotification(notification);
 
@@ -59,22 +57,11 @@ namespace LegoBoostController.Util
             }
         }
 
-        private async Task TriggerActionsFromNotification(bool syncMotorAndLED, Response response, BoostController controller)
+        private async Task TriggerActionsFromNotification(Response response)
         {
-            if (syncMotorAndLED && response.GetType() == typeof(SpeedData))
+            foreach (var handler in EventHandlers)
             {
-                var data = (SpeedData)response;
-                var color = LEDColors.Red;
-                if (data.Speed > 30)
-                {
-                    color = LEDColors.Green;
-                }
-                else if (data.Speed > 1)
-                {
-                    color = LEDColors.Purple;
-                }
-                var command = new LEDBoostCommand(color);
-                await controller.SetHexValueAsync(command.HexCommand);
+                await handler.HandleEventAsync(response);
             }
         }
     }
