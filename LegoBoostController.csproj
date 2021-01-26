@@ -113,7 +113,8 @@
     <Compile Include="Controllers\BoostController.cs" />
     <Compile Include="Commands\Robot\RoverCommandFactory.cs" />
     <Compile Include="Commands\Robot\RoverArmCommand.cs" />
-    <Compile Include="EventHandlers\EventHandler.cs" />
+    <Compile Include="EventHandlers\IEventHandler.cs" />
+    <Compile Include="EventHandlers\SpeedDataEventHandler.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

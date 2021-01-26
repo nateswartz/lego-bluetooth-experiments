@@ -2,18 +2,16 @@
 using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using LegoBoostController.Responses;
+using System;
 using System.Threading.Tasks;
 
 namespace LegoBoostController.EventHandlers
 {
-    public interface IEventHandler
-    {
-        Task HandleEventAsync(Response response);
-    }
-
     public class SpeedDataEventHandler : IEventHandler
     {
         private readonly BoostController _controller;
+
+        public Type HandledEvent { get; } = typeof(SpeedData);
 
         public SpeedDataEventHandler(BoostController controller)
         {

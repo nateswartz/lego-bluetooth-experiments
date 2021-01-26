@@ -14,13 +14,13 @@ namespace LegoBoostController.Util
         private readonly ResponseProcessor _responseProcessor;
         private readonly StorageFolder _storageFolder;
         private const string _logFile = "move-hub-notifications.log";
-        public List<IEventHandler> EventHandlers { get; set; }
+        private Dictionary<Type, List<IEventHandler>> _eventHandlers { get; set; }
 
         public NotificationManager(ResponseProcessor responseProcessor, StorageFolder storageFolder)
         {
             _responseProcessor = responseProcessor;
             _storageFolder = storageFolder;
-            EventHandlers = new List<IEventHandler>();
+            _eventHandlers = new Dictionary<Type, List<IEventHandler>>();
         }
 
         public async Task ProcessNotification(string notification)
@@ -41,6 +41,20 @@ namespace LegoBoostController.Util
             return message;
         }
 
+        public void AddEventHandler(IEventHandler eventHandler)
+        {
+            if (!_eventHandlers.ContainsKey(eventHandler.HandledEvent))
+            {
+                _eventHandlers[eventHandler.HandledEvent] = new List<IEventHandler>();
+            }
+            _eventHandlers[eventHandler.HandledEvent].Add(eventHandler);
+        }
+
+        public List<IEventHandler> GetEventHandlers(Type eventType)
+        {
+            return _eventHandlers[eventType] ?? new List<IEventHandler>();
+        }
+
         private async Task StoreNotification(StorageFolder storageFolder, string notification)
         {
             var logFile = await storageFolder.CreateFileAsync(_logFile, CreationCollisionOption.OpenIfExists);
@@ -59,7 +73,8 @@ namespace LegoBoostController.Util
 
         private async Task TriggerActionsFromNotification(Response response)
         {
-            foreach (var handler in EventHandlers)
+            var handlers = _eventHandlers[response.GetType()];
+            foreach (var handler in handlers)
             {
                 await handler.HandleEventAsync(response);
             }
