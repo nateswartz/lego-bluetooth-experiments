@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace LegoBoostController.EventHandlers
 {
-    public class SpeedDataEventHandler : IEventHandler
+    public class MotorToLEDEventHandler : IEventHandler
     {
         private readonly BoostController _controller;
 
         public Type HandledEvent { get; } = typeof(SpeedData);
 
-        public SpeedDataEventHandler(BoostController controller)
+        public MotorToLEDEventHandler(BoostController controller)
         {
             _controller = controller;
         }
