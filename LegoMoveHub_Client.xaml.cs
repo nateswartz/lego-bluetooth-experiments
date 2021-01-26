@@ -527,6 +527,11 @@ namespace LegoBoostController
             await _controller.ExecuteCommandAsync(new HubFirmwareCommand());
         }
 
+        private async void GetHubBatteryStatusButton_Click()
+        {
+            await _controller.ExecuteCommandAsync(new HubVoltageCommand());
+        }
+
         private async void SyncLEDMotorButton_Click()
         {
             await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, "01");

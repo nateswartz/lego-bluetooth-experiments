@@ -81,6 +81,7 @@
                         Click="{x:Bind ToggleTiltSensorNotificationsButton_Click}" Margin="0,10,0,0"/>
                 <Button x:Name="GetHubName" Content="Trigger Move Hub Name Notification" Click="{x:Bind GetHubNameButton_Click}" Margin="0,10,0,0"/>
                 <Button x:Name="GetHubFirmware" Content="Trigger Move Hub Firmware Notification" Click="{x:Bind GetHubFirmwareButton_Click}" Margin="0,10,0,0"/>
+                <Button x:Name="GetHubBatteryStatus" Content="Trigger Move Hub Firmware Notification" Click="{x:Bind GetHubBatteryStatusButton_Click}" Margin="0,10,0,0"/>
                 <Button x:Name="SyncLEDMotorButton" Content="Sync LED with Motor" Click="{x:Bind SyncLEDMotorButton_Click}"
                         Margin="0,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <Button x:Name="SyncLEDButtonButton" Content="Sync LED with Button" Click="{x:Bind SyncLEDButtonButton_Click}"
