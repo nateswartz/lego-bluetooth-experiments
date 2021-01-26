@@ -7,26 +7,26 @@ using System.Threading.Tasks;
 
 namespace LegoBoostController.EventHandlers
 {
-    public class MotorToLEDEventHandler : IEventHandler
+    public class ButtonToLEDEventHandler : IEventHandler
     {
         private readonly BoostController _controller;
 
-        public Type HandledEvent { get; } = typeof(SpeedData);
+        public Type HandledEvent { get; } = typeof(ButtonStateMessage);
 
-        public MotorToLEDEventHandler(BoostController controller)
+        public ButtonToLEDEventHandler(BoostController controller)
         {
             _controller = controller;
         }
 
         public async Task HandleEventAsync(Response response)
         {
-            var data = (SpeedData)response;
-            var color = LEDColors.Red;
-            if (data.Speed > 30)
+            var data = (ButtonStateMessage)response;
+            LEDColor color = LEDColors.Red;
+            if (data.State == ButtonState.Pressed)
             {
-                color = LEDColors.Green;
+                color = LEDColors.Yellow;
             }
-            else if (data.Speed > 1)
+            else if (data.State == ButtonState.Released)
             {
                 color = LEDColors.Purple;
             }

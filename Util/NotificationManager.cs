@@ -55,6 +55,22 @@ namespace LegoBoostController.Util
             return _eventHandlers[eventType] ?? new List<IEventHandler>();
         }
 
+        public bool IsHandlerRegistered(Type eventType, Type eventHandlerType)
+        {
+            var hasHandlers = _eventHandlers[eventType] != null && _eventHandlers[eventType].Count > 0;
+            if (!hasHandlers)
+                return false;
+            return _eventHandlers[eventType].Exists(x => x.GetType() == eventHandlerType);
+        }
+
+        public void RemoveEventHandler(IEventHandler eventHandler)
+        {
+            if (_eventHandlers.ContainsKey(eventHandler.HandledEvent))
+            {
+                _eventHandlers[eventHandler.HandledEvent].RemoveAll(x => x.GetType() == eventHandler.GetType());
+            }
+        }
+
         private async Task StoreNotification(StorageFolder storageFolder, string notification)
         {
             var logFile = await storageFolder.CreateFileAsync(_logFile, CreationCollisionOption.OpenIfExists);

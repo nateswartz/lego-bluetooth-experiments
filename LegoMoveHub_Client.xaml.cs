@@ -531,16 +531,31 @@ namespace LegoBoostController
         {
             await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, "01");
 
-            if (_notificationManager.GetEventHandlers(new MotorToLEDEventHandler(_controller).HandledEvent).Count == 0)
+            if (!_notificationManager.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {
                 SyncLEDMotorButton.Content = "Un-sync LED with Motor";
+                _notificationManager.AddEventHandler(new MotorToLEDEventHandler(_controller));
             }
             else
             {
                 SyncLEDMotorButton.Content = "Sync LED with Motor";
+                _notificationManager.RemoveEventHandler(new MotorToLEDEventHandler(_controller));
             }
+        }
 
-            _notificationManager.AddEventHandler(new MotorToLEDEventHandler(_controller));
+        private async void SyncLEDButtonButton_Click()
+        {
+            if (!_notificationManager.IsHandlerRegistered(typeof(ButtonStateMessage), typeof(ButtonToLEDEventHandler)))
+            {
+                SyncLEDMotorButton.Content = "Un-sync LED with Motor";
+                _notificationManager.AddEventHandler(new ButtonToLEDEventHandler(_controller));
+
+            }
+            else
+            {
+                SyncLEDMotorButton.Content = "Sync LED with Motor";
+                _notificationManager.RemoveEventHandler(new ButtonToLEDEventHandler(_controller));
+            }
         }
 
         private async void RunMotorButton_Click()

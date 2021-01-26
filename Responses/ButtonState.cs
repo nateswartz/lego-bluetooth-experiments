@@ -1,14 +1,22 @@
-﻿namespace LegoBoostController.Responses
-{
-    public class ButtonState : DeviceInfo
-    {
-        public string State { get; set; }
+﻿using System;
 
-        public ButtonState(string body) : base(body)
+namespace LegoBoostController.Responses
+{
+    public enum ButtonState
+    {
+        Released = 0,
+        Pressed = 1
+    }
+
+    public class ButtonStateMessage : DeviceInfo
+    {
+        public ButtonState State { get; set; }
+
+        public ButtonStateMessage(string body) : base(body)
         {
-            State = (Body.Substring(10, 2) == "00" ? "Released" : "Pressed");
+            State = (Body.Substring(10, 2) == "00" ? ButtonState.Released : ButtonState.Pressed);
         }
 
-        public override string ToString() => $"Button State: {State}";
+        public override string ToString() => $"Button State: {Enum.GetName(typeof(ButtonState), State)}";
     }
 }

@@ -24,7 +24,7 @@ namespace LegoBoostController.Responses
                         case DeviceType.HubName:
                             return new HubName(notification);
                         case DeviceType.ButtonState:
-                            return new ButtonState(notification);
+                            return new ButtonStateMessage(notification);
                         case DeviceType.FirmwareVersion:
                             return new FirmwareVersion(notification);
                     }
