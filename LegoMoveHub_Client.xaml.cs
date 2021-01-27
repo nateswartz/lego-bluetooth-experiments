@@ -53,15 +53,11 @@ namespace LegoBoostController
 
         private HubController _controller;
         private string _selectedBleDeviceId;
-        private GattDeviceService _moveHubService;
-        private BluetoothLEDevice _bluetoothLeDevice = null;
         private PortState _portState;
         private bool _subscribedForNotifications = false;
 
         private HubController _controller2;
         private string _selectedBleDeviceId2;
-        private GattDeviceService _twoPortHubService;
-        private BluetoothLEDevice _bluetoothLeDevice2 = null;
         private PortState _portState2;
         private bool _subscribedForNotifications2 = false;
 
@@ -343,10 +339,20 @@ namespace LegoBoostController
                     _subscribedForNotifications = false;
                 }
             }
-            _bluetoothLeDevice?.Dispose();
-            _bluetoothLeDevice = null;
-            _moveHubService?.Dispose();
-            _moveHubService = null;
+            if (_subscribedForNotifications2)
+            {
+                // Need to clear the CCCD from the remote device so we stop receiving notifications
+                var result = await _controller2.MoveHubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
+                if (result != GattCommunicationStatus.Success)
+                {
+                    return false;
+                }
+                else
+                {
+                    _controller2.MoveHubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                    _subscribedForNotifications2 = false;
+                }
+            }
             return true;
         }
 
@@ -368,6 +374,7 @@ namespace LegoBoostController
         private async Task<bool> Connect(bool secondHub = false)
         {
             ConnectButton.IsEnabled = false;
+            BluetoothLEDevice bluetoothLEDevice;
 
             //if (!await DisconnectBluetoothLEDeviceAsync())
             //{
@@ -380,8 +387,8 @@ namespace LegoBoostController
             {
                 if (secondHub)
                 {
-                    _bluetoothLeDevice2 = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId2);
-                    if (_bluetoothLeDevice2 == null)
+                    bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId2);
+                    if (bluetoothLEDevice == null)
                     {
                         _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
                         return false;
@@ -389,8 +396,8 @@ namespace LegoBoostController
                 }
                 else
                 {
-                    _bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId);
-                    if (_bluetoothLeDevice == null)
+                    bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId);
+                    if (bluetoothLEDevice == null)
                     {
                         _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
                         return false;
@@ -403,9 +410,9 @@ namespace LegoBoostController
                 return false;
             }
 
-            if (!secondHub && _bluetoothLeDevice != null)
+            if (!secondHub && bluetoothLEDevice != null)
             {
-                GattDeviceServicesResult result = await _bluetoothLeDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
+                GattDeviceServicesResult result = await bluetoothLEDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
 
                 if (result.Status == GattCommunicationStatus.Success)
                 {
@@ -417,7 +424,6 @@ namespace LegoBoostController
                     {
                         if (service.Uuid == new Guid(LegoHubService))
                         {
-                            _moveHubService = service;
                             var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(LegoHubCharacteristic));
                             foreach (var characteristic in characteristics.Characteristics)
                             {
@@ -439,9 +445,9 @@ namespace LegoBoostController
                     return false;
                 }
             }
-            else if (secondHub && _bluetoothLeDevice2 != null)
+            else if (secondHub && bluetoothLEDevice != null)
             {
-                GattDeviceServicesResult result = await _bluetoothLeDevice2.GetGattServicesAsync(BluetoothCacheMode.Uncached);
+                GattDeviceServicesResult result = await bluetoothLEDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
 
                 if (result.Status == GattCommunicationStatus.Success)
                 {
@@ -453,7 +459,6 @@ namespace LegoBoostController
                     {
                         if (service.Uuid == new Guid(LegoHubService))
                         {
-                            _twoPortHubService = service;
                             var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(LegoHubCharacteristic));
                             foreach (var characteristic in characteristics.Characteristics)
                             {
