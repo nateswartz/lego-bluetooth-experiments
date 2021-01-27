@@ -18,6 +18,8 @@ namespace LegoBoostController.Responses
 
         public MessageType MessageType { get; set; }
 
+        public string NotificationType { get; set; } = "";
+
         public Response(string body)
         {
             Body = body;

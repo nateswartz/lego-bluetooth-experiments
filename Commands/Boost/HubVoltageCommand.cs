@@ -1,5 +1,9 @@
 ﻿namespace LegoBoostController.Commands.Boost
 {
+    /*
+     * [Len] [Unused] [Hub Prop] [Update] [Battery Voltage] [%]
+     * 06 00 01 06 06 64
+     */
     public class HubVoltageCommand : IBoostCommand
     {
         public string HexCommand { get; set; }

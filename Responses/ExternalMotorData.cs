@@ -15,6 +15,7 @@ namespace LegoBoostController.Responses
         public ExternalMotorData(string body) : base(body)
         {
             DataType = (MotorDataType)Convert.ToInt32(Length, 16);
+            NotificationType = GetType().Name;
         }
 
         public override string ToString()

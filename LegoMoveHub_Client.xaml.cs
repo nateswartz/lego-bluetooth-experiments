@@ -169,7 +169,9 @@ namespace LegoBoostController
             ToggleTiltSensorNotificationsButton.IsEnabled = state;
             GetHubName.IsEnabled = state;
             GetHubFirmware.IsEnabled = state;
+            GetHubBatteryStatus.IsEnabled = state;
             SyncLEDMotorButton.IsEnabled = state;
+            SyncLEDButtonButton.IsEnabled = state;
         }
         #endregion
 
@@ -645,13 +647,13 @@ namespace LegoBoostController
         {
             if (!_notificationManager.IsHandlerRegistered(typeof(ButtonStateMessage), typeof(ButtonToLEDEventHandler)))
             {
-                SyncLEDMotorButton.Content = "Un-sync LED with Motor";
+                SyncLEDButtonButton.Content = "Un-sync LED with Motor";
                 _notificationManager.AddEventHandler(new ButtonToLEDEventHandler(_controller));
 
             }
             else
             {
-                SyncLEDMotorButton.Content = "Sync LED with Motor";
+                SyncLEDButtonButton.Content = "Sync LED with Motor";
                 _notificationManager.RemoveEventHandler(new ButtonToLEDEventHandler(_controller));
             }
         }
