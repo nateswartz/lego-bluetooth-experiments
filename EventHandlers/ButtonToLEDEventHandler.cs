@@ -9,11 +9,11 @@ namespace LegoBoostController.EventHandlers
 {
     public class ButtonToLEDEventHandler : IEventHandler
     {
-        private readonly BoostController _controller;
+        private readonly HubController _controller;
 
         public Type HandledEvent { get; } = typeof(ButtonStateMessage);
 
-        public ButtonToLEDEventHandler(BoostController controller)
+        public ButtonToLEDEventHandler(HubController controller)
         {
             _controller = controller;
         }

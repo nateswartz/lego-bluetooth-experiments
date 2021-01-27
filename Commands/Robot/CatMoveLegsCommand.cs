@@ -11,7 +11,7 @@ namespace LegoBoostController.Commands.Robot
 
         public string Description { get => "Up/Down(Speed, Time)"; }
 
-        public async Task RunAsync(BoostController controller, string commandText)
+        public async Task RunAsync(HubController controller, string commandText)
         {
             await RunAsync(controller, commandText, "down", Motors.B);
         }

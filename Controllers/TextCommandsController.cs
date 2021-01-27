@@ -16,7 +16,7 @@ namespace LegoBoostController.Controllers
 
     public class TextCommandsController
     {
-        private readonly BoostController _controller;
+        private readonly HubController _controller;
         private readonly StorageFolder _storageFolder;
         private ICommandFactory _commandFactory;
         private const string _saveFile = "savedCommands.txt";
@@ -35,7 +35,7 @@ namespace LegoBoostController.Controllers
         }
         public string SampleCommandsText { get; set; }
 
-        public TextCommandsController(BoostController controller, StorageFolder storageFolder)
+        public TextCommandsController(HubController controller, StorageFolder storageFolder)
         {
             _controller = controller;
             _storageFolder = storageFolder;

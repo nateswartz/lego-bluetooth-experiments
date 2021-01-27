@@ -13,7 +13,7 @@ namespace LegoBoostController.Commands.Robot
 
         public string Description { get => "LED(Color[Green, Blue, Red, Purple])"; }
 
-        public async Task RunAsync(BoostController controller, string commandText)
+        public async Task RunAsync(HubController controller, string commandText)
         {
             Match m = Regex.Match(commandText, @"\((\w+)\)");
             if (m.Groups.Count == 2)

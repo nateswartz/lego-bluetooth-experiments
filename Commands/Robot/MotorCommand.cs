@@ -9,7 +9,7 @@ namespace LegoBoostController.Commands.Robot
 {
     public abstract class MotorCommand
     {
-        public async Task RunAsync(BoostController controller, string commandText, string clockwiseKeyword, Motor motor)
+        public async Task RunAsync(HubController controller, string commandText, string clockwiseKeyword, Motor motor)
         {
             Match m = Regex.Match(commandText, @"\((\d+),(\d+)\)");
             if (m.Groups.Count == 3)

@@ -44,17 +44,24 @@ namespace LegoBoostController
 
         private DeviceWatcher _deviceWatcher;
 
-        private BluetoothLEDevice _bluetoothLeDevice = null;
-
-        private string _selectedBleDeviceId;
-
-        private GattDeviceService _moveHubService;
-
         private List<string> _notifications = new List<string>();
+
+        private const string LegoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
+        private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
         private PortState _portState;
         private ResponseProcessor _responseProcessor;
-        private BoostController _controller;
+
+        private HubController _controller;
+        private string _selectedBleDeviceId;
+        private GattDeviceService _moveHubService;
+        private BluetoothLEDevice _bluetoothLeDevice = null;
+
+        private HubController _controller2;
+        private string _selectedBleDeviceId2;
+        private GattDeviceService _twoPortHubService;
+        private BluetoothLEDevice _bluetoothLeDevice2 = null;
+
         private NotificationManager _notificationManager;
         private TextCommandsController _textCommandsController;
 
@@ -75,7 +82,7 @@ namespace LegoBoostController
             var storageFolder = ApplicationData.Current.LocalFolder;
             _portState = new PortState();
             _responseProcessor = new ResponseProcessor(_portState);
-            _controller = new BoostController(_portState);
+            _controller = new HubController(_portState);
             _notificationManager = new NotificationManager(_responseProcessor, storageFolder);
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
@@ -230,9 +237,18 @@ namespace LegoBoostController
                         _selectedBleDeviceId = deviceInfo.Id;
                         ConnectButton.IsEnabled = true;
                         Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
-                        StopBleDeviceWatcher();
-                        ScanButton.Content = "Start scanning";
-                        _rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
+                        _rootPage.NotifyUser($"Found Boost Move Hub.", NotifyType.StatusMessage);
+                        await Connect();
+                    }
+
+                    if (string.IsNullOrEmpty(_selectedBleDeviceId2) && deviceInfo.Name == "HUB NO.4")
+                    {
+                        string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
+                        Debug.WriteLine(s);
+                        _selectedBleDeviceId2 = deviceInfo.Id;
+                        ConnectButton.IsEnabled = true;
+                        Debug.WriteLine(String.Format($"Found Two Port Hub: {deviceInfo.Id}"));
+                        _rootPage.NotifyUser($"Found Two Port Hub.", NotifyType.StatusMessage);
                         await Connect();
                     }
                 }
@@ -342,26 +358,36 @@ namespace LegoBoostController
             await Connect();
         }
 
-        private async Task<bool> Connect()
+        private async Task<bool> Connect(bool secondHub = false)
         {
             ConnectButton.IsEnabled = false;
 
-            if (!await DisconnectBluetoothLEDeviceAsync())
-            {
-                _rootPage.NotifyUser("Error: Unable to reset state, try again.", NotifyType.ErrorMessage);
-                ConnectButton.IsEnabled = false;
-                return false;
-            }
+            //if (!await DisconnectBluetoothLEDeviceAsync())
+            //{
+            //    _rootPage.NotifyUser("Error: Unable to reset state, try again.", NotifyType.ErrorMessage);
+            //    ConnectButton.IsEnabled = false;
+            //    return false;
+            //}
 
             try
             {
-                // BT_Code: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
-                _bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId);
-
-                if (_bluetoothLeDevice == null)
+                if (secondHub)
                 {
-                    _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
-                    return false;
+                    _bluetoothLeDevice2 = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId2);
+                    if (_bluetoothLeDevice2 == null)
+                    {
+                        _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
+                        return false;
+                    }
+                }
+                else
+                {
+                    _bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId);
+                    if (_bluetoothLeDevice == null)
+                    {
+                        _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
+                        return false;
+                    }
                 }
             }
             catch (Exception ex) when (ex.HResult == E_DEVICE_NOT_AVAILABLE)
@@ -370,11 +396,8 @@ namespace LegoBoostController
                 return false;
             }
 
-            if (_bluetoothLeDevice != null)
+            if (!secondHub && _bluetoothLeDevice != null)
             {
-                // Note: BluetoothLEDevice.GattServices property will return an empty list for unpaired devices. For all uses we recommend using the GetGattServicesAsync method.
-                // BT_Code: GetGattServicesAsync returns a list of all the supported services of the device (even if it's not paired to the system).
-                // If the services supported by the device are expected to change during BT usage, subscribe to the GattServicesChanged event.
                 GattDeviceServicesResult result = await _bluetoothLeDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
 
                 if (result.Status == GattCommunicationStatus.Success)
@@ -385,10 +408,10 @@ namespace LegoBoostController
 
                     foreach (var service in services)
                     {
-                        if (service.Uuid == new Guid("00001623-1212-efde-1623-785feabcd123"))
+                        if (service.Uuid == new Guid(LegoHubService))
                         {
                             _moveHubService = service;
-                            var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid("00001624-1212-efde-1623-785feabcd123"));
+                            var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(LegoHubCharacteristic));
                             foreach (var characteristic in characteristics.Characteristics)
                             {
                                 _controller.MoveHubCharacteristic = characteristic;
@@ -398,6 +421,42 @@ namespace LegoBoostController
                                 await ToggleSubscribedForNotifications();
                                 EnableCharacteristicPanels(characteristic.CharacteristicProperties);
                                 await _controller.ExecuteCommandAsync(new HubFirmwareCommand());
+                            }
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    _rootPage.NotifyUser("Device unreachable", NotifyType.ErrorMessage);
+                    return false;
+                }
+            }
+            else if (secondHub && _bluetoothLeDevice2 != null)
+            {
+                GattDeviceServicesResult result = await _bluetoothLeDevice2.GetGattServicesAsync(BluetoothCacheMode.Uncached);
+
+                if (result.Status == GattCommunicationStatus.Success)
+                {
+                    var services = result.Services;
+                    _rootPage.NotifyUser(String.Format("Found {0} services", services.Count), NotifyType.StatusMessage);
+                    Debug.WriteLine(String.Format("Found {0} services", services.Count));
+
+                    foreach (var service in services)
+                    {
+                        if (service.Uuid == new Guid(LegoHubService))
+                        {
+                            _twoPortHubService = service;
+                            var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(LegoHubCharacteristic));
+                            foreach (var characteristic in characteristics.Characteristics)
+                            {
+                                _controller2.MoveHubCharacteristic = characteristic;
+                                //ToggleButtons(true);
+                                //DisconnectButton.IsEnabled = true;
+                                //ConnectButton.IsEnabled = false;
+                                //await ToggleSubscribedForNotifications();
+                                //EnableCharacteristicPanels(characteristic.CharacteristicProperties);
+                                await _controller2.ExecuteCommandAsync(new HubFirmwareCommand());
                             }
                         }
                     }
@@ -548,7 +607,7 @@ namespace LegoBoostController
             }
         }
 
-        private async void SyncLEDButtonButton_Click()
+        private void SyncLEDButtonButton_Click()
         {
             if (!_notificationManager.IsHandlerRegistered(typeof(ButtonStateMessage), typeof(ButtonToLEDEventHandler)))
             {

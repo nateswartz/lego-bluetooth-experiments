@@ -11,7 +11,7 @@ namespace LegoBoostController.Commands.Robot
 
         public string Description { get => "Sit/Stand()"; }
 
-        public async Task RunAsync(BoostController controller, string commandText)
+        public async Task RunAsync(HubController controller, string commandText)
         {
             await RunAsync(controller, $"{commandText.TrimEnd(new char[2] { '(', ')' })}(20,500)", "sit", Motors.B);
         }

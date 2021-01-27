@@ -8,12 +8,12 @@ using Windows.Storage.Streams;
 
 namespace LegoBoostController.Controllers
 {
-    public class BoostController
+    public class HubController
     {
         public GattCharacteristic MoveHubCharacteristic { get; set; }
         private PortState _state;
 
-        public BoostController(PortState portState)
+        public HubController(PortState portState)
         {
             _state = portState;
         }
