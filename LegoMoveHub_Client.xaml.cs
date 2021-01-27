@@ -163,13 +163,13 @@ namespace LegoBoostController
             DirectionToggle.IsEnabled = state;
             ExternalMotorNotificationTypeToggle.IsEnabled = state;
 
-            EnableButtonNotificationsButton.IsEnabled = state;
+            ToggleButtonNotificationsButton.IsEnabled = state;
             ToggleColorDistanceNotificationsButton.IsEnabled = state;
             ToggleExternalMotorNotificationsButton.IsEnabled = state;
             ToggleTiltSensorNotificationsButton.IsEnabled = state;
             GetHubName.IsEnabled = state;
             GetHubFirmware.IsEnabled = state;
-            GetHubBatteryStatus.IsEnabled = state;
+            ToggleHubBatteryStatus.IsEnabled = state;
             SyncLEDMotorButton.IsEnabled = state;
             SyncLEDButtonButton.IsEnabled = state;
         }
@@ -567,9 +567,21 @@ namespace LegoBoostController
             }
         }
 
-        private async void EnableButtonNotificationsButton_Click()
+        private async void ToggleButtonNotificationsButton_Click()
         {
-            var command = new EnableButtonNotificationsCommand();
+            bool notificationsEnabled;
+            var button = ToggleButtonNotificationsButton;
+            if (button.Content.ToString() == $"Enable Button Notifications")
+            {
+                notificationsEnabled = false;
+                button.Content = $"Disable Button Notifications";
+            }
+            else
+            {
+                notificationsEnabled = true;
+                button.Content = $"Enable Button Notifications";
+            }
+            var command = new ButtonNotificationsCommand(notificationsEnabled);
             await _controller.ExecuteCommandAsync(command);
         }
 
@@ -622,9 +634,21 @@ namespace LegoBoostController
             await _controller2.ExecuteCommandAsync(new HubFirmwareCommand());
         }
 
-        private async void GetHubBatteryStatusButton_Click()
+        private async void ToggleHubBatteryStatusButton_Click()
         {
-            await _controller.ExecuteCommandAsync(new HubVoltageCommand());
+            bool notificationsEnabled;
+            var button = ToggleHubBatteryStatus;
+            if (button.Content.ToString() == $"Enable Battery Notifications")
+            {
+                notificationsEnabled = false;
+                button.Content = $"Disable Battery Notifications";
+            }
+            else
+            {
+                notificationsEnabled = true;
+                button.Content = $"Enable Battery Notifications";
+            }
+            await _controller.ExecuteCommandAsync(new HubVoltageNotificationsCommand(notificationsEnabled));
         }
 
         private async void SyncLEDMotorButton_Click()

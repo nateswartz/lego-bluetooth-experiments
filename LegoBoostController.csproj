@@ -93,7 +93,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Commands\Boost\EnableButtonNotificationsCommand.cs" />
-    <Compile Include="Commands\Boost\HubVoltageCommand.cs" />
+    <Compile Include="Commands\Boost\HubVoltageNotificationsCommand.cs" />
     <Compile Include="Commands\Boost\ToggleNotificationsCommand.cs" />
     <Compile Include="Commands\Boost\HubNameCommand.cs" />
     <Compile Include="Commands\Boost\HubFirmwareCommand.cs" />
