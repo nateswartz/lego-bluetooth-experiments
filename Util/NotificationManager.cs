@@ -89,6 +89,8 @@ namespace LegoBoostController.Util
 
         private async Task TriggerActionsFromNotification(Response response)
         {
+            if (!_eventHandlers.ContainsKey(response.GetType()))
+                return;
             var handlers = _eventHandlers[response.GetType()];
             foreach (var handler in handlers)
             {

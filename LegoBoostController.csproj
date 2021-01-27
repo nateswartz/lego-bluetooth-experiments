@@ -111,9 +111,9 @@
     <Compile Include="Commands\Robot\RoverMoveCommand.cs" />
     <Compile Include="Commands\Robot\LEDCommand.cs" />
     <Compile Include="Commands\Robot\RoverSpinCommand.cs" />
-    <Compile Include="Controllers\BoostController.cs" />
     <Compile Include="Commands\Robot\RoverCommandFactory.cs" />
     <Compile Include="Commands\Robot\RoverArmCommand.cs" />
+    <Compile Include="Controllers\HubController.cs" />
     <Compile Include="EventHandlers\IEventHandler.cs" />
     <Compile Include="EventHandlers\ButtonToLEDEventHandler.cs" />
     <Compile Include="EventHandlers\MotorToLEDEventHandler.cs" />
