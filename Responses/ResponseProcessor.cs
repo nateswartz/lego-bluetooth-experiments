@@ -4,15 +4,9 @@ namespace LegoBoostController.Responses
 {
     public class ResponseProcessor
     {
-        PortState _state;
-
-        public ResponseProcessor(PortState portState)
-        {
-            _state = portState;
-        }
         const string TILT_SENSOR_PORT = "3a";
 
-        public Response CreateResponse(string notification)
+        public Response CreateResponse(string notification, PortState portState)
         {
             var response = new Response(notification);
             switch (response.MessageType)
@@ -36,10 +30,10 @@ namespace LegoBoostController.Responses
                         case DeviceType.LEDState:
                             return new LEDState(notification);
                         case DeviceType.ColorDistanceState:
-                            _state.CurrentColorDistanceSensorPort = portInfo.Port;
+                            portState.CurrentColorDistanceSensorPort = portInfo.Port;
                             return new ColorDistanceState(notification);
                         case DeviceType.ExternalMotorState:
-                            _state.CurrentExternalMotorPort = portInfo.Port;
+                            portState.CurrentExternalMotorPort = portInfo.Port;
                             return new ExternalMotorState(notification);
                         case DeviceType.InternalMotorState:
                             return new InternalMotorState(notification);
@@ -49,11 +43,11 @@ namespace LegoBoostController.Responses
                     return new Error(notification);
                 case MessageType.SensorData:
                     var sensorData = new SensorData(notification);
-                    if (sensorData.Port == _state.CurrentColorDistanceSensorPort)
+                    if (sensorData.Port == portState.CurrentColorDistanceSensorPort)
                     {
                         return new ColorDistanceData(notification);
                     }
-                    if (sensorData.Port == _state.CurrentExternalMotorPort)
+                    if (sensorData.Port == portState.CurrentExternalMotorPort)
                     {
                         var externalMotorData = new ExternalMotorData(notification);
                         switch (externalMotorData.DataType)

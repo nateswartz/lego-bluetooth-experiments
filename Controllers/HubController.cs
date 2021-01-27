@@ -11,16 +11,12 @@ namespace LegoBoostController.Controllers
     public class HubController
     {
         public GattCharacteristic MoveHubCharacteristic { get; set; }
-        private PortState _state;
 
-        public HubController(PortState portState)
-        {
-            _state = portState;
-        }
+        public PortState PortState { get; set; }
 
         public string GetCurrentExternalMotorPort()
         {
-            return _state.CurrentExternalMotorPort;
+            return PortState.CurrentExternalMotorPort;
         }
 
         public async Task<bool> ExecuteCommandAsync(IBoostCommand command)

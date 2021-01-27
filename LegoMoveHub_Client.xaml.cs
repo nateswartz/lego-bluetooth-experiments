@@ -53,12 +53,10 @@ namespace LegoBoostController
 
         private HubController _controller;
         private string _selectedBleDeviceId;
-        private PortState _portState;
         private bool _subscribedForNotifications = false;
 
         private HubController _controller2;
         private string _selectedBleDeviceId2;
-        private PortState _portState2;
         private bool _subscribedForNotifications2 = false;
 
         private NotificationManager _notificationManager;
@@ -79,11 +77,9 @@ namespace LegoBoostController
         public LegoMoveHub_Client()
         {
             var storageFolder = ApplicationData.Current.LocalFolder;
-            _portState = new PortState();
-            _portState2 = new PortState();
-            _responseProcessor = new ResponseProcessor(_portState);
-            _controller = new HubController(_portState);
-            _controller2 = new HubController(_portState2);
+            _responseProcessor = new ResponseProcessor();
+            _controller = new HubController();
+            _controller2 = new HubController();
             _notificationManager = new NotificationManager(_responseProcessor, storageFolder);
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
@@ -592,14 +588,14 @@ namespace LegoBoostController
 
         private async void ToggleColorDistanceNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", _portState.CurrentColorDistanceSensorPort, "08");
+            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", _controller.PortState.CurrentColorDistanceSensorPort, "08");
         }
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
             // 01 - Speed; 02 - Angle
             var notificationType = ExternalMotorNotificationTypeToggle.IsOn ? "02" : "01";
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, notificationType);
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _controller.PortState.CurrentExternalMotorPort, notificationType);
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
@@ -658,7 +654,7 @@ namespace LegoBoostController
 
         private async void SyncLEDMotorButton_Click()
         {
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _portState.CurrentExternalMotorPort, "01");
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _controller.PortState.CurrentExternalMotorPort, "01");
 
             if (!_notificationManager.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {
@@ -810,12 +806,22 @@ namespace LegoBoostController
 
         private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
+            HubController controller = null;
+            if (sender == _controller.MoveHubCharacteristic)
+            {
+                controller = _controller;
+            }
+            else if (sender == _controller2.MoveHubCharacteristic)
+            {
+                controller = _controller2;
+            }
+
             var output = new byte[args.CharacteristicValue.Length];
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            await _notificationManager.ProcessNotification(notification);
-            var message = _notificationManager.DecodeNotification(notification);
+            await _notificationManager.ProcessNotification(notification, controller.PortState);
+            var message = _notificationManager.DecodeNotification(notification, controller.PortState);
             _notifications.Add(message);
             if (_notifications.Count > 10)
             {

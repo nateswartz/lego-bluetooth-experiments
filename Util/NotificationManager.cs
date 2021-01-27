@@ -1,4 +1,5 @@
 ﻿using LegoBoostController.EventHandlers;
+using LegoBoostController.Models;
 using LegoBoostController.Responses;
 using System;
 using System.Collections.Generic;
@@ -23,20 +24,20 @@ namespace LegoBoostController.Util
             _eventHandlers = new Dictionary<string, List<IEventHandler>>();
         }
 
-        public async Task ProcessNotification(string notification)
+        public async Task ProcessNotification(string notification, PortState portState)
         {
-            var response = _responseProcessor.CreateResponse(notification);
+            var response = _responseProcessor.CreateResponse(notification, portState);
 
             await TriggerActionsFromNotification(response);
 
-            var message = DecodeNotification(notification);
+            var message = DecodeNotification(notification, portState);
 
             await StoreNotification(_storageFolder, message);
         }
 
-        public string DecodeNotification(string notification)
+        public string DecodeNotification(string notification, PortState portState)
         {
-            var response = _responseProcessor.CreateResponse(notification);
+            var response = _responseProcessor.CreateResponse(notification, portState);
             var message = response.ToString();
             return message;
         }
