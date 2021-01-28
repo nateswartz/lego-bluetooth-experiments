@@ -8,7 +8,7 @@ namespace LegoBoostController.Responses
 
         public VoltageData(string body) : base(body)
         {
-            Voltage = Convert.ToInt32(body.Substring(8, 4), 16);
+            Voltage = Convert.ToInt32($"{body.Substring(10, 2)}{body.Substring(8, 2)}", 16);
         }
 
         public override string ToString()

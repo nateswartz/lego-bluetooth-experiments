@@ -10,9 +10,11 @@ namespace LegoBoostController.Controllers
 {
     public class HubController
     {
-        public GattCharacteristic MoveHubCharacteristic { get; set; }
+        public GattCharacteristic HubCharacteristic { get; set; }
 
-        public PortState PortState { get; set; }
+        public PortState PortState { get; set; } = new PortState();
+
+        public bool IsConnected { get; set; }
 
         public string GetCurrentExternalMotorPort()
         {
@@ -48,7 +50,7 @@ namespace LegoBoostController.Controllers
             try
             {
                 // BT_Code: Writes the value from the buffer to the characteristic.
-                var result = await MoveHubCharacteristic.WriteValueWithResultAsync(buffer);
+                var result = await HubCharacteristic.WriteValueWithResultAsync(buffer);
 
                 if (result.Status == GattCommunicationStatus.Success)
                 {

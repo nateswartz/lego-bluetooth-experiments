@@ -5,6 +5,7 @@ namespace LegoBoostController.Responses
     public class ResponseProcessor
     {
         const string TILT_SENSOR_PORT = "3a";
+        const string VOLTAGE_SENSOR_PORT = "3c";
 
         public Response CreateResponse(string notification, PortState portState)
         {
@@ -62,6 +63,10 @@ namespace LegoBoostController.Responses
                     if (sensorData.Port == TILT_SENSOR_PORT)
                     {
                         return new TiltData(notification);
+                    }
+                    if (sensorData.Port == VOLTAGE_SENSOR_PORT)
+                    {
+                        return new VoltageData(notification);
                     }
                     return sensorData;
             }
