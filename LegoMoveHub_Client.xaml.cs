@@ -35,12 +35,7 @@ namespace LegoBoostController
         private ResponseProcessor _responseProcessor;
 
         private HubController _controller;
-        private string _selectedBleDeviceId;
-        private bool _subscribedForNotifications = false;
-
         private HubController _controller2;
-        private string _selectedBleDeviceId2;
-        private bool _subscribedForNotifications2 = false;
 
         private NotificationManager _notificationManager;
         private TextCommandsController _textCommandsController;
@@ -88,7 +83,7 @@ namespace LegoBoostController
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (string.IsNullOrEmpty(_selectedBleDeviceId))
+            if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId))
             {
                 ConnectButton.IsEnabled = false;
                 DisconnectButton.IsEnabled = false;
@@ -202,22 +197,22 @@ namespace LegoBoostController
                 // Protect against race condition if the task runs after the app stopped the deviceWatcher.
                 if (sender == _deviceWatcher)
                 {
-                    if (string.IsNullOrEmpty(_selectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
+                    if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
                         Debug.WriteLine(s);
-                        _selectedBleDeviceId = deviceInfo.Id;
+                        _controller.SelectedBleDeviceId = deviceInfo.Id;
                         ConnectButton.IsEnabled = true;
                         Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
                         _rootPage.NotifyUser($"Found Boost Move Hub.", NotifyType.StatusMessage);
                         await Connect();
                     }
 
-                    if (string.IsNullOrEmpty(_selectedBleDeviceId2) && deviceInfo.Name == "HUB NO.4")
+                    if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && deviceInfo.Name == "HUB NO.4")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
                         Debug.WriteLine(s);
-                        _selectedBleDeviceId2 = deviceInfo.Id;
+                        _controller2.SelectedBleDeviceId = deviceInfo.Id;
                         ConnectButton.IsEnabled = true;
                         Debug.WriteLine(String.Format($"Found Two Port Hub: {deviceInfo.Id}"));
                         _rootPage.NotifyUser($"Found Two Port Hub.", NotifyType.StatusMessage);
@@ -294,7 +289,7 @@ namespace LegoBoostController
         #region Enumerating Services
         private async Task<bool> DisableNotifications()
         {
-            if (_subscribedForNotifications)
+            if (_controller.SubscribedForNotifications)
             {
                 // Need to clear the CCCD from the remote device so we stop receiving notifications
                 var result = await _controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
@@ -305,10 +300,10 @@ namespace LegoBoostController
                 else
                 {
                     _controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    _subscribedForNotifications = false;
+                    _controller.SubscribedForNotifications = false;
                 }
             }
-            if (_subscribedForNotifications2)
+            if (_controller2.SubscribedForNotifications)
             {
                 // Need to clear the CCCD from the remote device so we stop receiving notifications
                 var result = await _controller2.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
@@ -319,7 +314,7 @@ namespace LegoBoostController
                 else
                 {
                     _controller2.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    _subscribedForNotifications2 = false;
+                    _controller2.SubscribedForNotifications = false;
                 }
             }
             return true;
@@ -366,7 +361,7 @@ namespace LegoBoostController
             {
                 if (secondHub)
                 {
-                    bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId2);
+                    bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(_controller2.SelectedBleDeviceId);
                     if (bluetoothLEDevice == null)
                     {
                         _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
@@ -375,7 +370,7 @@ namespace LegoBoostController
                 }
                 else
                 {
-                    bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(_selectedBleDeviceId);
+                    bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(_controller.SelectedBleDeviceId);
                     if (bluetoothLEDevice == null)
                     {
                         _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
@@ -488,18 +483,18 @@ namespace LegoBoostController
         {
             if (!isSecondHub)
             {
-                if (!_subscribedForNotifications)
+                if (!_controller.SubscribedForNotifications)
                 {
                     _controller.HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                    _subscribedForNotifications = true;
+                    _controller.SubscribedForNotifications = true;
                 }
             }
             else
             {
-                if (!_subscribedForNotifications2)
+                if (!_controller2.SubscribedForNotifications)
                 {
                     _controller2.HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                    _subscribedForNotifications2 = true;
+                    _controller2.SubscribedForNotifications = true;
                 }
             }
 
@@ -509,18 +504,18 @@ namespace LegoBoostController
         {
             if (!isSecondHub)
             {
-                if (_subscribedForNotifications)
+                if (_controller.SubscribedForNotifications)
                 {
                     _controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    _subscribedForNotifications = false;
+                    _controller.SubscribedForNotifications = false;
                 }
             }
             else
             {
-                if (_subscribedForNotifications2)
+                if (_controller2.SubscribedForNotifications)
                 {
                     _controller2.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    _subscribedForNotifications2 = false;
+                    _controller2.SubscribedForNotifications = false;
                 }
             }
 
@@ -699,7 +694,7 @@ namespace LegoBoostController
 
         private async Task<bool> ToggleSubscribedForNotifications(bool isSecondHub = false)
         {
-            if ((!isSecondHub && !_subscribedForNotifications) || (isSecondHub && !_subscribedForNotifications2))
+            if ((!isSecondHub && !_controller.SubscribedForNotifications) || (isSecondHub && !_controller2.SubscribedForNotifications))
             {
                 // initialize status
                 GattCommunicationStatus status = GattCommunicationStatus.Unreachable;
@@ -758,9 +753,9 @@ namespace LegoBoostController
                     if (result == GattCommunicationStatus.Success)
                     {
                         if (!isSecondHub)
-                            _subscribedForNotifications = false;
+                            _controller.SubscribedForNotifications = false;
                         else
-                            _subscribedForNotifications2 = false;
+                            _controller2.SubscribedForNotifications = false;
                         RemoveValueChangedHandler();
                         _rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
                         return true;

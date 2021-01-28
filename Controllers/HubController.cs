@@ -14,7 +14,11 @@ namespace LegoBoostController.Controllers
 
         public PortState PortState { get; set; } = new PortState();
 
+        public string SelectedBleDeviceId { get; set; }
+
         public bool IsConnected { get; set; }
+
+        public bool SubscribedForNotifications { get; set; }
 
         public string GetCurrentExternalMotorPort()
         {
