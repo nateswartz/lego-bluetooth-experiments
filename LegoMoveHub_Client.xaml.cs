@@ -1,14 +1,3 @@
-//*********************************************************
-//
-// Copyright (c) Microsoft. All rights reserved.
-// This code is licensed under the MIT License (MIT).
-// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
-// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
-// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
-//
-//*********************************************************
-
 using LegoBoostController.Commands.Boost;
 using LegoBoostController.Controllers;
 using LegoBoostController.EventHandlers;
@@ -32,12 +21,6 @@ using Windows.UI.Xaml.Navigation;
 
 namespace LegoBoostController
 {
-    // This scenario connects to the device selected in the "Discover
-    // GATT Servers" scenario and communicates with it.
-    // Note that this scenario is rather artificial because it communicates
-    // with an unknown service with unknown characteristics.
-    // In practice, your app will be interested in a specific service with
-    // a specific characteristic.
     public sealed partial class LegoMoveHub_Client : Page
     {
         private MainPage _rootPage = MainPage.Current;
@@ -63,9 +46,6 @@ namespace LegoBoostController
         private TextCommandsController _textCommandsController;
 
         #region Error Codes
-        readonly int E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED = unchecked((int)0x80650003);
-        readonly int E_BLUETOOTH_ATT_INVALID_PDU = unchecked((int)0x80650004);
-        readonly int E_ACCESSDENIED = unchecked((int)0x80070005);
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
         #endregion
 
@@ -169,17 +149,10 @@ namespace LegoBoostController
 
         #region Device discovery
 
-        /// <summary>
-        /// Starts a device watcher that looks for all nearby Bluetooth devices (paired or unpaired). 
-        /// Attaches event handlers to populate the device collection.
-        /// </summary>
         private void StartBleDeviceWatcher()
         {
-            // Additional properties we would like about the device.
-            // Property strings are documented here https://msdn.microsoft.com/en-us/library/windows/desktop/ff521659(v=vs.85).aspx
             string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected", "System.Devices.Aep.Bluetooth.Le.IsConnectable" };
 
-            // BT_Code: Example showing paired and non-paired in a single query.
             string aqsAllBluetoothLEDevices = "(System.Devices.Aep.ProtocolId:=\"{bb7bb05e-5972-42b5-94fc-76eaa7084d49}\")";
 
             _deviceWatcher =
