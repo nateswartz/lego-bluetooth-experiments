@@ -32,12 +32,12 @@ namespace LegoBoostController
         private const string LegoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
         private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
-        private ResponseProcessor _responseProcessor;
-
         private HubController _controller;
-        private HubController _controller2;
-
         private NotificationManager _notificationManager;
+
+        private HubController _controller2;
+        private NotificationManager _notificationManager2;
+
         private TextCommandsController _textCommandsController;
 
         #region Error Codes
@@ -52,10 +52,10 @@ namespace LegoBoostController
         public LegoMoveHub_Client()
         {
             var storageFolder = ApplicationData.Current.LocalFolder;
-            _responseProcessor = new ResponseProcessor();
             _controller = new HubController();
             _controller2 = new HubController();
-            _notificationManager = new NotificationManager(_responseProcessor, storageFolder);
+            _notificationManager = new NotificationManager(_controller);
+            _notificationManager2 = new NotificationManager(_controller2);
             // TODO: This currently only supports the Move Hub (controller1)
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
@@ -560,12 +560,12 @@ namespace LegoBoostController
             if (!_notificationManager.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {
                 SyncLEDMotorButton.Content = "Un-sync LED with Motor";
-                _notificationManager.AddEventHandler(new MotorToLEDEventHandler(_controller));
+                _notificationManager.AddEventHandler(new MotorToLEDEventHandler(_controller2));
             }
             else
             {
                 SyncLEDMotorButton.Content = "Sync LED with Motor";
-                _notificationManager.RemoveEventHandler(new MotorToLEDEventHandler(_controller));
+                _notificationManager.RemoveEventHandler(new MotorToLEDEventHandler(_controller2));
             }
         }
 
@@ -693,21 +693,24 @@ namespace LegoBoostController
         private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
             HubController controller = null;
+            NotificationManager notificationManager = null;
             if (sender == _controller.HubCharacteristic)
             {
                 controller = _controller;
+                notificationManager = _notificationManager;
             }
             else if (sender == _controller2.HubCharacteristic)
             {
                 controller = _controller2;
+                notificationManager = _notificationManager2;
             }
 
             var output = new byte[args.CharacteristicValue.Length];
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            await _notificationManager.ProcessNotification(notification, controller);
-            var message = _notificationManager.DecodeNotification(notification, controller.PortState);
+            await notificationManager.ProcessNotification(notification);
+            var message = notificationManager.DecodeNotification(notification);
             _notifications.Add(message);
             if (_notifications.Count > 10)
             {

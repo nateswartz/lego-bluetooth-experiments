@@ -2,12 +2,12 @@
 
 namespace LegoBoostController.Responses
 {
-    public class ResponseProcessor
+    public static class ResponseProcessor
     {
         const string TILT_SENSOR_PORT = "3a";
         const string VOLTAGE_SENSOR_PORT = "3c";
 
-        public Response CreateResponse(string notification, PortState portState)
+        public static Response CreateResponse(string notification, PortState portState)
         {
             var response = new Response(notification);
             switch (response.MessageType)
