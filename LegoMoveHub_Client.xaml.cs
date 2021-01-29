@@ -209,7 +209,7 @@ namespace LegoBoostController
                         await Connect(_controller);
                     }
 
-                    if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && deviceInfo.Name == "HUB NO.4")
+                    if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && deviceInfo.Name == "Two Port Hub")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
                         Debug.WriteLine(s);
