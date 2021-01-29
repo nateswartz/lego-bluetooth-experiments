@@ -7,6 +7,7 @@ namespace LegoBoostController.Responses
         HubName = 1,
         ButtonState = 2,
         FirmwareVersion = 3,
+        SystemType = 11,
         LEDState = 23,
         ColorDistanceState = 37,
         ExternalMotorState = 38,

@@ -8,6 +8,12 @@ using Windows.Storage.Streams;
 
 namespace LegoBoostController.Controllers
 {
+    public enum HubType
+    {
+        BoostMoveHub = 1,
+        TwoPortHub = 2
+    }
+
     public class HubController
     {
         public GattCharacteristic HubCharacteristic { get; set; }
@@ -16,7 +22,9 @@ namespace LegoBoostController.Controllers
 
         public string SelectedBleDeviceId { get; set; }
 
-        public bool IsConnected { get; set; }
+        public HubType HubType { get; set; }
+
+        public bool IsConnected { get; private set; }
 
         public bool SubscribedForNotifications { get; set; }
 
@@ -47,6 +55,17 @@ namespace LegoBoostController.Controllers
 
             var writeSuccessful = await WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
             return writeSuccessful;
+        }
+
+        public async Task ConnectAsync()
+        {
+            IsConnected = true;
+            await ExecuteCommandAsync(new HubTypeCommand());
+        }
+
+        public async Task DisconnectAsync()
+        {
+            IsConnected = false;
         }
 
         private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)

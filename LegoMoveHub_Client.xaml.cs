@@ -198,6 +198,7 @@ namespace LegoBoostController
                 // Protect against race condition if the task runs after the app stopped the deviceWatcher.
                 if (sender == _deviceWatcher)
                 {
+                    // TODO: Make controller and controller2 more generic, allow either device to connect
                     if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
@@ -331,12 +332,12 @@ namespace LegoBoostController
                 if (_controller.IsConnected)
                 {
                     await _controller.ExecuteCommandAsync(new DisconnectCommand());
-                    _controller.IsConnected = false;
+                    await _controller.DisconnectAsync();
                 }
                 if (_controller2.IsConnected)
                 {
                     await _controller2.ExecuteCommandAsync(new DisconnectCommand());
-                    _controller2.IsConnected = false;
+                    await _controller2.DisconnectAsync();
                 }
             }
         }
@@ -391,11 +392,11 @@ namespace LegoBoostController
                             foreach (var characteristic in characteristics.Characteristics)
                             {
                                 controller.HubCharacteristic = characteristic;
-                                controller.IsConnected = true;
                                 ToggleButtons(true);
                                 DisconnectButton.IsEnabled = true;
                                 ConnectButton.IsEnabled = false;
                                 await ToggleSubscribedForNotifications(controller);
+                                await controller.ConnectAsync();
                                 EnableCharacteristicPanels();
                                 await controller.ExecuteCommandAsync(new HubFirmwareCommand());
                             }
@@ -705,7 +706,7 @@ namespace LegoBoostController
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            await _notificationManager.ProcessNotification(notification, controller.PortState);
+            await _notificationManager.ProcessNotification(notification, controller);
             var message = _notificationManager.DecodeNotification(notification, controller.PortState);
             _notifications.Add(message);
             if (_notifications.Count > 10)

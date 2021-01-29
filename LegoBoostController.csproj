@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="Commands\Boost\ButtonNotificationsCommand.cs" />
     <Compile Include="Commands\Boost\DisconnectCommand.cs" />
+    <Compile Include="Commands\Boost\HubTypeCommand.cs" />
     <Compile Include="Commands\Boost\HubVoltageNotificationsCommand.cs" />
     <Compile Include="Commands\Boost\ToggleNotificationsCommand.cs" />
     <Compile Include="Commands\Boost\HubNameCommand.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Models\Constants.cs" />
     <Compile Include="DispatcherTaskExtensions.cs" />
     <Compile Include="Responses\ButtonState.cs" />
+    <Compile Include="Responses\SystemType.cs" />
     <Compile Include="Responses\VoltageData.cs" />
     <Compile Include="Responses\FirmwareVersion.cs" />
     <Compile Include="Responses\HubName.cs" />

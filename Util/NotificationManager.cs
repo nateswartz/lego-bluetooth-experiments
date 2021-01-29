@@ -1,4 +1,5 @@
-﻿using LegoBoostController.EventHandlers;
+﻿using LegoBoostController.Controllers;
+using LegoBoostController.EventHandlers;
 using LegoBoostController.Models;
 using LegoBoostController.Responses;
 using System;
@@ -24,13 +25,24 @@ namespace LegoBoostController.Util
             _eventHandlers = new Dictionary<string, List<IEventHandler>>();
         }
 
-        public async Task ProcessNotification(string notification, PortState portState)
+        public async Task ProcessNotification(string notification, HubController controller)
         {
-            var response = _responseProcessor.CreateResponse(notification, portState);
+            var response = _responseProcessor.CreateResponse(notification, controller.PortState);
+
+            try
+            {
+                var hubTypeCommand = (SystemType)response;
+                controller.HubType = hubTypeCommand.HubType;
+            }
+            catch (Exception)
+            {
+                // Command was not a Hub Type command
+                // TODO: Find a better way to check this
+            }
 
             await TriggerActionsFromNotification(response);
 
-            var message = DecodeNotification(notification, portState);
+            var message = DecodeNotification(notification, controller.PortState);
 
             await StoreNotification(_storageFolder, message);
         }

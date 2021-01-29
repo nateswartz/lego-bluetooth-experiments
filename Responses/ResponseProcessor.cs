@@ -22,6 +22,8 @@ namespace LegoBoostController.Responses
                             return new ButtonStateMessage(notification);
                         case DeviceType.FirmwareVersion:
                             return new FirmwareVersion(notification);
+                        case DeviceType.SystemType:
+                            return new SystemType(notification);
                     }
                     return deviceInfo;
                 case MessageType.PortInfo:
