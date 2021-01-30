@@ -560,12 +560,12 @@ namespace LegoBoostController
             if (!_notificationManager.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {
                 SyncLEDMotorButton.Content = "Un-sync LED with Motor";
-                _notificationManager.AddEventHandler(new MotorToLEDEventHandler(_controller2));
+                _notificationManager.AddEventHandler(new MotorToLEDEventHandler(_controller));
             }
             else
             {
                 SyncLEDMotorButton.Content = "Sync LED with Motor";
-                _notificationManager.RemoveEventHandler(new MotorToLEDEventHandler(_controller2));
+                _notificationManager.RemoveEventHandler(new MotorToLEDEventHandler(_controller));
             }
         }
 
@@ -573,14 +573,14 @@ namespace LegoBoostController
         {
             if (!_notificationManager.IsHandlerRegistered(typeof(ButtonStateMessage), typeof(ButtonToLEDEventHandler)))
             {
-                SyncLEDButtonButton.Content = "Un-sync LED with Motor";
-                _notificationManager.AddEventHandler(new ButtonToLEDEventHandler(_controller));
+                SyncLEDButtonButton.Content = "Un-sync LED with Button";
+                _notificationManager.AddEventHandler(new ButtonToLEDEventHandler(_controller2));
 
             }
             else
             {
-                SyncLEDButtonButton.Content = "Sync LED with Motor";
-                _notificationManager.RemoveEventHandler(new ButtonToLEDEventHandler(_controller));
+                SyncLEDButtonButton.Content = "Sync LED with Button";
+                _notificationManager.RemoveEventHandler(new ButtonToLEDEventHandler(_controller2));
             }
         }
 
