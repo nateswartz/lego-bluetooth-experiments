@@ -389,6 +389,10 @@ namespace LegoBoostController
                                 ConnectButton.IsEnabled = false;
                                 await ToggleSubscribedForNotifications(controller);
                                 await controller.ConnectAsync();
+                                if (controller.HubType == HubType.BoostMoveHub)
+                                {
+                                    ToggleControls.IsEnabled = true;
+                                }
                                 EnableCharacteristicPanels();
                                 await controller.ExecuteCommandAsync(new HubFirmwareCommand());
                             }
@@ -674,7 +678,7 @@ namespace LegoBoostController
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    // This usually happens when a device reports that it support notify, but it actually doesn't.
+                    // This usually happens when a device reports that it supports notify, but it actually doesn't.
                     _rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
                     return false;
                 }

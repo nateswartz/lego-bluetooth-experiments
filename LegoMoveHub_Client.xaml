@@ -68,7 +68,7 @@
                     </RelativePanel>
                 </StackPanel>
             </StackPanel>
-            <ToggleSwitch x:Name="ToggleControls" OnContent="Advanced" OffContent="Simple" Toggled="{x:Bind ToggleControls_Click}" RelativePanel.RightOf="ControlsPanel" Margin="100, 20, 0, 0"/>
+            <ToggleSwitch x:Name="ToggleControls" IsEnabled="False" OnContent="Advanced" OffContent="Simple" Toggled="{x:Bind ToggleControls_Click}" RelativePanel.RightOf="ControlsPanel" Margin="100, 20, 0, 0"/>
             <StackPanel x:Name="NotificationControlsPanel" Visibility="Visible" RelativePanel.RightOf="ControlsPanel" Margin="100, 60, 0, 0">
                 <Button x:Name="ToggleButtonNotificationsButton" Content="Toggle Button Notifications" Click="{x:Bind ToggleButtonNotificationsButton_Click}" Margin="0,30,0,0"/>
                 <Button x:Name="ToggleColorDistanceNotificationsButton" Content="Enable Color/Distance Notifications" 

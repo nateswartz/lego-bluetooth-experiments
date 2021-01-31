@@ -96,7 +96,7 @@ namespace LegoBoostController.Controllers
             //    //rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
             //    return false;
             //}
-            catch (Exception ex)// when (ex.HResult == E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED || ex.HResult == E_ACCESSDENIED)
+            catch (Exception)// when (ex.HResult == E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED || ex.HResult == E_ACCESSDENIED)
             {
                 // This usually happens when a device reports that it support writing, but it actually doesn't.
                 //rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
