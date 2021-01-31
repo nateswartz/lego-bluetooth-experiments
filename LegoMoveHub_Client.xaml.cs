@@ -61,7 +61,7 @@ namespace LegoBoostController
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
             SampleCommands.Text = "Sample Commands:";
-            var _hubs = new List<HubController> { _controller, _controller2 };
+            _hubs = new List<HubController> { _controller, _controller2 };
         }
 
         private async Task LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -294,32 +294,21 @@ namespace LegoBoostController
         #region Enumerating Services
         private async Task<bool> DisableNotifications()
         {
-            if (_controller.SubscribedForNotifications)
+            foreach (var controller in _hubs)
             {
-                // Need to clear the CCCD from the remote device so we stop receiving notifications
-                var result = await _controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
-                if (result != GattCommunicationStatus.Success)
+                if (controller.SubscribedForNotifications)
                 {
-                    return false;
-                }
-                else
-                {
-                    _controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    _controller.SubscribedForNotifications = false;
-                }
-            }
-            if (_controller2.SubscribedForNotifications)
-            {
-                // Need to clear the CCCD from the remote device so we stop receiving notifications
-                var result = await _controller2.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
-                if (result != GattCommunicationStatus.Success)
-                {
-                    return false;
-                }
-                else
-                {
-                    _controller2.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    _controller2.SubscribedForNotifications = false;
+                    // Need to clear the CCCD from the remote device so we stop receiving notifications
+                    var result = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
+                    if (result != GattCommunicationStatus.Success)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                        controller.SubscribedForNotifications = false;
+                    }
                 }
             }
             return true;
@@ -487,8 +476,7 @@ namespace LegoBoostController
                 notificationsEnabled = true;
                 button.Content = $"Enable Button Notifications";
             }
-            var command = new ButtonNotificationsCommand(notificationsEnabled);
-            await _controller.ExecuteCommandAsync(command);
+            await _controller.ExecuteCommandAsync(new ButtonNotificationsCommand(notificationsEnabled));
         }
 
         private async void ToggleColorDistanceNotificationsButton_Click()
@@ -521,8 +509,7 @@ namespace LegoBoostController
                 notificationsEnabled = true;
                 button.Content = $"Enable {sensorType} Notifications";
             }
-            var command = new ToggleNotificationsCommand(notificationsEnabled, port, sensorMode);
-            return await _controller.ExecuteCommandAsync(command);
+            return await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(notificationsEnabled, port, sensorMode));
         }
 
         private async void GetHubNameButton_Click()
