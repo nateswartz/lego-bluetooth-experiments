@@ -47,6 +47,7 @@ namespace LegoBoostController
         List<LEDColor> _colors = LEDColors.All;
         List<Motor> _motors = Motors.All;
         List<Robot> _robots = Enum.GetValues(typeof(Robot)).Cast<Robot>().ToList();
+        List<HubController> _hubs;
 
         #region UI Code
         public LegoMoveHub_Client()
@@ -60,6 +61,7 @@ namespace LegoBoostController
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
             SampleCommands.Text = "Sample Commands:";
+            var _hubs = new List<HubController> { _controller, _controller2 };
         }
 
         private async Task LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -68,8 +70,9 @@ namespace LegoBoostController
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
             _rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
-            var command = new LEDBoostCommand(color);
-            await _controller.SetHexValueAsync(command.HexCommand);
+            var selectedHub = HubSelectCombo.SelectedItem as HubController;
+
+            await selectedHub.ExecuteCommandAsync(new LEDBoostCommand(color));
         }
 
         private void RobotSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -332,12 +335,12 @@ namespace LegoBoostController
                 if (_controller.IsConnected)
                 {
                     await _controller.ExecuteCommandAsync(new DisconnectCommand());
-                    await _controller.DisconnectAsync();
+                    _controller.Disconnect();
                 }
                 if (_controller2.IsConnected)
                 {
                     await _controller2.ExecuteCommandAsync(new DisconnectCommand());
-                    await _controller2.DisconnectAsync();
+                    _controller2.Disconnect();
                 }
             }
         }
@@ -458,10 +461,11 @@ namespace LegoBoostController
 
         private async void WriteHexButton_Click()
         {
+            var selectedHub = HubSelectCombo.SelectedItem as HubController;
             var text = CharacteristicWriteValue.Text;
             if (!string.IsNullOrEmpty(text))
             {
-                await _controller.SetHexValueAsync(text);
+                await selectedHub.SetHexValueAsync(text);
             }
             else
             {
@@ -591,7 +595,7 @@ namespace LegoBoostController
             if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
                 var command = new MotorBoostCommand((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise, _controller.GetCurrentExternalMotorPort());
-                await _controller.SetHexValueAsync(command.HexCommand);
+                await _controller.ExecuteCommandAsync(command);
             }
             else
             {

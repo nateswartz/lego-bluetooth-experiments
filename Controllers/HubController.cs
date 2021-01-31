@@ -63,9 +63,14 @@ namespace LegoBoostController.Controllers
             await ExecuteCommandAsync(new HubTypeCommand());
         }
 
-        public async Task DisconnectAsync()
+        public void Disconnect()
         {
             IsConnected = false;
+        }
+
+        public override string ToString()
+        {
+            return $"{Enum.GetName(typeof(HubType), HubType)} ({SelectedBleDeviceId})";
         }
 
         private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)

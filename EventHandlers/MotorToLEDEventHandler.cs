@@ -31,7 +31,7 @@ namespace LegoBoostController.EventHandlers
                 color = LEDColors.Purple;
             }
             var command = new LEDBoostCommand(color);
-            await _controller.SetHexValueAsync(command.HexCommand);
+            await _controller.ExecuteCommandAsync(command);
         }
     }
 }

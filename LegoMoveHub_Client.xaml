@@ -48,9 +48,11 @@
                     <Button x:Name="DisconnectButton" Content="Disconnect" Click="{x:Bind DisconnectButton_Click}" Margin="10,10,0,0" RelativePanel.RightOf="ConnectButton"/>
                 </RelativePanel>
                 <StackPanel x:Name="CharacteristicWritePanel" Margin="0,10,0,0" Visibility="Visible">
-                    <TextBox x:Name="CharacteristicWriteValue" PlaceholderText="Enter text/number to send" Width="400" HorizontalAlignment="Left"/>
-                    <Button x:Name="WriteHexButton" Content="Write Value as Hex" Click="{x:Bind WriteHexButton_Click}" Margin="0,10,0,0"/>
-                    <ComboBox x:Name="LEDColorsCombo" Header="Change LED Color:" Height="75" Width="296" 
+                    <ComboBox x:Name="HubSelectCombo" Header="Select a Hub:" Height="75" Width="296" 
+                          ItemsSource="{x:Bind _hubs}" Margin="0, 10, 10, 10"/>
+                    <TextBox x:Name="CharacteristicWriteValue" PlaceholderText="Enter hex command to send to selected hub:" Width="400" HorizontalAlignment="Left"/>
+                    <Button x:Name="WriteHexButton" Content="Write to Selected Hub" Click="{x:Bind WriteHexButton_Click}" Margin="0,10,0,0"/>
+                    <ComboBox x:Name="LEDColorsCombo" Header="Change LED Color for Selected Hub:" Height="75" Width="296" 
                           ItemsSource="{x:Bind _colors}" SelectionChanged="{x:Bind LEDColorsCombo_SelectionChanged}" Margin="0, 10, 10, 10"/>
                     <RelativePanel Margin="0, 30, 10, 10">
                         <ComboBox x:Name="MotorsCombo" Header="Pick Motor:" Height="75" Width="296" 

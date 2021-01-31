@@ -24,7 +24,7 @@ namespace LegoBoostController.Commands.Robot
                 var direction = m.Groups[3].Value;
                 var motor = direction == "clockwise" ? Motors.A : Motors.B;
                 var command = new MotorBoostCommand(motor, speed, time, true, controller.GetCurrentExternalMotorPort());
-                await controller.SetHexValueAsync(command.HexCommand);
+                await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);
             }
         }
