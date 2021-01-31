@@ -6,6 +6,7 @@ using LegoBoostController.Responses;
 using LegoBoostController.Util;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,7 +48,7 @@ namespace LegoBoostController
         List<LEDColor> _colors = LEDColors.All;
         List<Motor> _motors = Motors.All;
         List<Robot> _robots = Enum.GetValues(typeof(Robot)).Cast<Robot>().ToList();
-        List<HubController> _hubs;
+        ObservableCollection<HubController> _hubs = new ObservableCollection<HubController>();
 
         #region UI Code
         public LegoMoveHub_Client()
@@ -61,7 +62,6 @@ namespace LegoBoostController
             _textCommandsController = new TextCommandsController(_controller, storageFolder);
             InitializeComponent();
             SampleCommands.Text = "Sample Commands:";
-            _hubs = new List<HubController> { _controller, _controller2 };
         }
 
         private async Task LEDColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -202,7 +202,7 @@ namespace LegoBoostController
                 if (sender == _deviceWatcher)
                 {
                     // TODO: Make controller and controller2 more generic, allow either device to connect
-                    if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId) && deviceInfo.Name == "LEGO Move Hub")
+                    if (!_controller.IsConnected && deviceInfo.Name == "LEGO Move Hub")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
                         Debug.WriteLine(s);
@@ -213,7 +213,7 @@ namespace LegoBoostController
                         await Connect(_controller);
                     }
 
-                    if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && deviceInfo.Name == "Two Port Hub")
+                    if (!_controller2.IsConnected && deviceInfo.Name == "Two Port Hub")
                     {
                         string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
                         Debug.WriteLine(s);
@@ -389,6 +389,7 @@ namespace LegoBoostController
                                 ConnectButton.IsEnabled = false;
                                 await ToggleSubscribedForNotifications(controller);
                                 await controller.ConnectAsync();
+                                _hubs.Add(controller);
                                 if (controller.HubType == HubType.BoostMoveHub)
                                 {
                                     ToggleControls.IsEnabled = true;
@@ -698,6 +699,10 @@ namespace LegoBoostController
             {
                 controller = _controller2;
                 notificationManager = _notificationManager2;
+            }
+            else
+            {
+                return;
             }
 
             var output = new byte[args.CharacteristicValue.Length];
