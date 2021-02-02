@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace LegoBoostController.Util
+namespace BluetoothController.Util
 {
     public static class DataConverter
     {

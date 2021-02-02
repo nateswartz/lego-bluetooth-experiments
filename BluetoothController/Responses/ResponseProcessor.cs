@@ -1,6 +1,6 @@
-﻿using LegoBoostController.Models;
+﻿using BluetoothController.Models;
 
-namespace LegoBoostController.Responses
+namespace BluetoothController.Responses
 {
     public static class ResponseProcessor
     {

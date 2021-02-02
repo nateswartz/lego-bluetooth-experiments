@@ -1,4 +1,4 @@
-﻿namespace LegoBoostController.Responses
+﻿namespace BluetoothController.Responses
 {
     public class SensorData : Response
     {

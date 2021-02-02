@@ -1,4 +1,4 @@
-﻿namespace LegoBoostController.Commands.Boost
+﻿namespace BluetoothController.Commands.Boost
 {
     public class HubVoltageNotificationsCommand : IBoostCommand
     {

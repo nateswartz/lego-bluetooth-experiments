@@ -1,4 +1,4 @@
-﻿namespace LegoBoostController.Models
+﻿namespace BluetoothController.Models
 {
     public class PortState
     {

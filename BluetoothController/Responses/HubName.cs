@@ -1,7 +1,7 @@
-﻿using LegoBoostController.Util;
+﻿using BluetoothController.Util;
 using System.Text;
 
-namespace LegoBoostController.Responses
+namespace BluetoothController.Responses
 {
     public class HubName : DeviceInfo
     {

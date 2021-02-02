@@ -1,9 +1,8 @@
-﻿using LegoBoostController.Controllers;
-using LegoBoostController.Models;
+﻿using BluetoothController.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Commands.Robot
+namespace BluetoothController.Commands.Robot
 {
     public class RoverArmCommand : MotorCommand, IRobotCommand
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LegoBoostController.Responses
+namespace BluetoothController.Responses
 {
     public enum ButtonState
     {
@@ -14,7 +14,7 @@ namespace LegoBoostController.Responses
 
         public ButtonStateMessage(string body) : base(body)
         {
-            State = (Body.Substring(10, 2) == "00" ? ButtonState.Released : ButtonState.Pressed);
+            State = Body.Substring(10, 2) == "00" ? ButtonState.Released : ButtonState.Pressed;
             NotificationType = GetType().Name;
         }
 

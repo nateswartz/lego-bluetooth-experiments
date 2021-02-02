@@ -7,7 +7,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace LegoBoostController.Util
+namespace BluetoothController.Util
 {
     /// <summary>
     ///     Represents the display of an attribute - both characteristics and services.
@@ -328,7 +328,7 @@ namespace LegoBoostController.Util
         {
             // Get the short Uuid
             var bytes = uuid.ToByteArray();
-            var shortUuid = (ushort)(bytes[0] | (bytes[1] << 8));
+            var shortUuid = (ushort)(bytes[0] | bytes[1] << 8);
             return shortUuid;
         }
 

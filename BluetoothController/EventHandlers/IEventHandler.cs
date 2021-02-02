@@ -1,8 +1,8 @@
-﻿using LegoBoostController.Responses;
+﻿using BluetoothController.Responses;
 using System;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.EventHandlers
+namespace BluetoothController.EventHandlers
 {
     public interface IEventHandler
     {

@@ -1,11 +1,10 @@
-﻿using LegoBoostController.Controllers;
-using LegoBoostController.EventHandlers;
-using LegoBoostController.Responses;
+﻿using BluetoothController.EventHandlers;
+using BluetoothController.Responses;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Util
+namespace BluetoothController.Util
 {
     public class NotificationManager
     {
@@ -20,6 +19,7 @@ namespace LegoBoostController.Util
 
         public async Task ProcessNotification(string notification)
         {
+            Console.WriteLine(notification);
             var response = ResponseProcessor.CreateResponse(notification, _controller.PortState);
 
             try

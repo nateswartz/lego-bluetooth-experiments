@@ -1,12 +1,12 @@
-﻿using LegoBoostController.Commands.Boost;
-using LegoBoostController.Models;
+﻿using BluetoothController.Commands.Boost;
+using BluetoothController.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
 
-namespace LegoBoostController.Controllers
+namespace BluetoothController
 {
     public enum HubType
     {

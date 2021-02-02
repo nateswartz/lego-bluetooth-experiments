@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LegoBoostController.Models
+namespace BluetoothController.Models
 {
     public class Motors
     {

@@ -1,12 +1,11 @@
-﻿using LegoBoostController.Commands.Boost;
-using LegoBoostController.Controllers;
-using LegoBoostController.Models;
+﻿using BluetoothController.Commands.Boost;
+using BluetoothController.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.Commands.Robot
+namespace BluetoothController.Commands.Robot
 {
     public class CatMoveEyesCommand : IRobotCommand
     {

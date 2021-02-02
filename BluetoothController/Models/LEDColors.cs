@@ -1,8 +1,7 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace LegoBoostController.Models
+namespace BluetoothController.Models
 {
     public class LEDColor
     {

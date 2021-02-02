@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LegoBoostController.Responses
+namespace BluetoothController.Responses
 {
     public enum MessageType
     {

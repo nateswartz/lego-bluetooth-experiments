@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
-namespace LegoBoostController.Models
+namespace BluetoothController.Models
 {
     // Define the characteristics and other properties of our custom service.
     public class Constants

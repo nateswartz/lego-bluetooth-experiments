@@ -1,6 +1,4 @@
-﻿using LegoBoostController.Controllers;
-
-namespace LegoBoostController.Responses
+﻿namespace BluetoothController.Responses
 {
     public class SystemType : DeviceInfo
     {

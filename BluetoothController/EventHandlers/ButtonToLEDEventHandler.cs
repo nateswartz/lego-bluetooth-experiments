@@ -1,11 +1,10 @@
-﻿using LegoBoostController.Commands.Boost;
-using LegoBoostController.Controllers;
-using LegoBoostController.Models;
-using LegoBoostController.Responses;
+﻿using BluetoothController.Commands.Boost;
+using BluetoothController.Models;
+using BluetoothController.Responses;
 using System;
 using System.Threading.Tasks;
 
-namespace LegoBoostController.EventHandlers
+namespace BluetoothController.EventHandlers
 {
     public class ButtonToLEDEventHandler : IEventHandler
     {

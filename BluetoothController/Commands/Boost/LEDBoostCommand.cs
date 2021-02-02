@@ -1,6 +1,6 @@
-﻿using LegoBoostController.Models;
+﻿using BluetoothController.Models;
 
-namespace LegoBoostController.Commands.Boost
+namespace BluetoothController.Commands.Boost
 {
     public class LEDBoostCommand : IBoostCommand
     {
