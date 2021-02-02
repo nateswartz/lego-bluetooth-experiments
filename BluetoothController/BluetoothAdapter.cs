@@ -36,7 +36,7 @@ namespace LegoBoostController
             _notificationManager2 = new NotificationManager(_controller2);
         }
 
-        public void StartBleDeviceWatcher(Func<string, Task> discoveryHandler, Func<string, Task> connectionHandler)
+        public void StartBleDeviceWatcher(Func<string, Task> discoveryHandler, Func<HubController, Task> connectionHandler)
         {
             _watcher = new BluetoothLEAdvertisementWatcher();
             _watcher.ScanningMode = BluetoothLEScanningMode.Active;
@@ -94,7 +94,7 @@ namespace LegoBoostController
         //    }
         //}
 
-        private async Task<bool> Connect(HubController controller, Func<string, Task> connectionHandler)
+        private async Task<bool> Connect(HubController controller, Func<HubController, Task> connectionHandler)
         {
             //ConnectButton.IsEnabled = false;
             BluetoothLEDevice bluetoothLEDevice;
@@ -143,7 +143,7 @@ namespace LegoBoostController
                                 //    ToggleControls.IsEnabled = true;
                                 //}
                                 //EnableCharacteristicPanels();
-                                await connectionHandler($"Succesfully connected to {Enum.GetName(typeof(HubType), controller.HubType)}");
+                                await connectionHandler(controller);
                                 await controller.ExecuteCommandAsync(new HubFirmwareCommand());
                             }
                         }
