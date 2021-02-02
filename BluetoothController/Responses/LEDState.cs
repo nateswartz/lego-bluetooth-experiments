@@ -1,0 +1,15 @@
+﻿namespace LegoBoostController.Responses
+{
+    public class LEDState : PortInfo
+    {
+        public LEDState(string body) : base(body)
+        {
+            NotificationType = GetType().Name;
+        }
+
+        public override string ToString()
+        {
+            return "LED Notification: " + Body;
+        }
+    }
+}

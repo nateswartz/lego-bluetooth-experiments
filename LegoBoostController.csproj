@@ -92,6 +92,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BluetoothAdapter.cs" />
     <Compile Include="Commands\Boost\ButtonNotificationsCommand.cs" />
     <Compile Include="Commands\Boost\DisconnectCommand.cs" />
     <Compile Include="Commands\Boost\HubTypeCommand.cs" />
