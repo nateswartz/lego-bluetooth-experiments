@@ -1,4 +1,6 @@
-﻿namespace BluetoothController.Responses
+﻿using BluetoothController.Controllers;
+
+namespace BluetoothController.Responses
 {
     public class SystemType : DeviceInfo
     {

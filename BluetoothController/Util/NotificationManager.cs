@@ -1,4 +1,5 @@
-﻿using BluetoothController.EventHandlers;
+﻿using BluetoothController.Controllers;
+using BluetoothController.EventHandlers;
 using BluetoothController.Responses;
 using System;
 using System.Collections.Generic;

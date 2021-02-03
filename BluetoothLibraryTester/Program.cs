@@ -1,5 +1,6 @@
 ﻿using BluetoothController;
 using BluetoothController.Commands.Boost;
+using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using BluetoothController.Util;

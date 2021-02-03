@@ -1,10 +1,9 @@
-using BluetoothController;
 using BluetoothController.Commands.Boost;
+using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
 using BluetoothController.Util;
-using LegoBoostController.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +13,6 @@ using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -54,13 +52,12 @@ namespace LegoBoostController
         #region UI Code
         public LegoMoveHub_Client()
         {
-            var storageFolder = ApplicationData.Current.LocalFolder;
             _controller = new HubController();
             _controller2 = new HubController();
             _notificationManager = new NotificationManager(_controller);
             _notificationManager2 = new NotificationManager(_controller2);
             // TODO: This currently only supports the Move Hub (controller1)
-            _textCommandsController = new TextCommandsController(_controller, storageFolder);
+            _textCommandsController = new TextCommandsController(_controller);
             InitializeComponent();
             SampleCommands.Text = "Sample Commands:";
         }
@@ -599,24 +596,6 @@ namespace LegoBoostController
         private async Task RunCommandsButton_Click()
         {
             await _textCommandsController.RunCommandsAsync(CommandsText.Text);
-        }
-
-        private async void SaveCommandsButton_Click()
-        {
-            await _textCommandsController.SaveCommandsAsync(CommandsText.Text);
-        }
-
-        private async void LoadCommandsButton_Click()
-        {
-            var savedCommands = await _textCommandsController.LoadCommandsAsync();
-            if (string.IsNullOrEmpty(savedCommands))
-            {
-                _rootPage.NotifyUser("Failed to load commands", NotifyType.ErrorMessage);
-            }
-            else
-            {
-                CommandsText.Text = savedCommands;
-            }
         }
 
         private async Task<bool> ToggleSubscribedForNotifications(HubController controller)

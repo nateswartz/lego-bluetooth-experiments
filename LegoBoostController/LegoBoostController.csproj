@@ -97,7 +97,6 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="DispatcherTaskExtensions.cs" />
-    <Compile Include="Controllers\TextCommandsController.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="LegoMoveHub_Client.xaml.cs">
       <DependentUpon>LegoMoveHub_Client.xaml</DependentUpon>

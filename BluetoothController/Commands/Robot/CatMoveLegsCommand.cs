@@ -1,4 +1,5 @@
-﻿using BluetoothController.Models;
+﻿using BluetoothController.Controllers;
+using BluetoothController.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

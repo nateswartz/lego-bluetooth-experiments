@@ -95,8 +95,6 @@
                 <TextBox x:Name="CommandsText" AcceptsReturn="True" TextWrapping="Wrap" Height="167" Width="300" Header="Commands" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,20,0,0"/>
                 <RelativePanel>
                     <Button x:Name="RunCommandsButton" Content="Run Commands" Click="{x:Bind RunCommandsButton_Click}" Margin="0,10,0,0"/>
-                    <Button x:Name="SaveCommandsButton" Content="Save Commands" Click="{x:Bind SaveCommandsButton_Click}" RelativePanel.RightOf="RunCommandsButton" Margin="10,10,0,0"/>
-                    <Button x:Name="LoadCommandsButton" Content="Load Commands" Click="{x:Bind LoadCommandsButton_Click}" RelativePanel.RightOf="SaveCommandsButton" Margin="10,10,0,0"/>
                 </RelativePanel>
             </StackPanel>
             <StackPanel x:Name="NotificationsPanel" RelativePanel.RightOf="ControlsPanel" Margin="530,30,0,0">

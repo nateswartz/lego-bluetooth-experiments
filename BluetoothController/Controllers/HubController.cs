@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
 
-namespace BluetoothController
+namespace BluetoothController.Controllers
 {
     public enum HubType
     {

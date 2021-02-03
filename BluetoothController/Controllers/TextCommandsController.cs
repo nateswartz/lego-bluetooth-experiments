@@ -1,13 +1,9 @@
-﻿using BluetoothController;
-using BluetoothController.Commands.Robot;
-using System;
-using System.IO;
+﻿using BluetoothController.Commands.Robot;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Storage;
 
-namespace LegoBoostController.Controllers
+namespace BluetoothController.Controllers
 {
     public enum Robot
     {
@@ -18,9 +14,7 @@ namespace LegoBoostController.Controllers
     public class TextCommandsController
     {
         private readonly HubController _controller;
-        private readonly StorageFolder _storageFolder;
         private ICommandFactory _commandFactory;
-        private const string _saveFile = "savedCommands.txt";
         private Robot selectedRobot;
         public Robot SelectedRobot
         {
@@ -36,10 +30,9 @@ namespace LegoBoostController.Controllers
         }
         public string SampleCommandsText { get; set; }
 
-        public TextCommandsController(HubController controller, StorageFolder storageFolder)
+        public TextCommandsController(HubController controller)
         {
             _controller = controller;
-            _storageFolder = storageFolder;
         }
 
         public async Task RunCommandsAsync(string commands)
@@ -65,26 +58,6 @@ namespace LegoBoostController.Controllers
                     await Task.Delay(500);
                 }
             }
-        }
-
-        public async Task SaveCommandsAsync(string commands)
-        {
-            var saveFile = await _storageFolder.CreateFileAsync(_saveFile, CreationCollisionOption.OpenIfExists);
-            await FileIO.WriteTextAsync(saveFile, commands);
-        }
-
-        public async Task<string> LoadCommandsAsync()
-        {
-            try
-            {
-                var saveFile = await _storageFolder.GetFileAsync(_saveFile);
-                return await FileIO.ReadTextAsync(saveFile);
-            }
-            catch (IOException)
-            {
-                return "";
-            }
-
         }
     }
 }
