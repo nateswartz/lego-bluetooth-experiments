@@ -189,6 +189,13 @@ namespace LegoBoostController
             }
         }
 
+        private void OnDeviceDiscovered(DiscoveredDevice device)
+        {
+            ConnectButton.IsEnabled = true;
+            Debug.WriteLine(String.Format($"Found {device.Name}: {device.BluetoothDeviceId}"));
+            _rootPage.NotifyUser($"Found {device.Name}.", NotifyType.StatusMessage);
+        }
+
         private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
         {
             // We must update the collection on the UI thread because the collection is databound to a UI element.
@@ -202,23 +209,25 @@ namespace LegoBoostController
                     // TODO: Make controller and controller2 more generic, allow either device to connect
                     if (!_controller.IsConnected && deviceInfo.Name == "LEGO Move Hub")
                     {
-                        string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
-                        Debug.WriteLine(s);
+                        OnDeviceDiscovered(new DiscoveredDevice
+                        {
+                            Name = deviceInfo.Name,
+                            BluetoothDeviceId = deviceInfo.Id
+                        });
+
                         _controller.SelectedBleDeviceId = deviceInfo.Id;
-                        ConnectButton.IsEnabled = true;
-                        Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
-                        _rootPage.NotifyUser($"Found Boost Move Hub.", NotifyType.StatusMessage);
                         await Connect(_controller);
                     }
 
                     if (!_controller2.IsConnected && deviceInfo.Name == "Two Port Hub")
                     {
-                        string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
-                        Debug.WriteLine(s);
+                        OnDeviceDiscovered(new DiscoveredDevice
+                        {
+                            Name = deviceInfo.Name,
+                            BluetoothDeviceId = deviceInfo.Id
+                        });
+
                         _controller2.SelectedBleDeviceId = deviceInfo.Id;
-                        ConnectButton.IsEnabled = true;
-                        Debug.WriteLine(String.Format($"Found Two Port Hub: {deviceInfo.Id}"));
-                        _rootPage.NotifyUser($"Found Two Port Hub.", NotifyType.StatusMessage);
                         await Connect(_controller2);
                     }
                 }

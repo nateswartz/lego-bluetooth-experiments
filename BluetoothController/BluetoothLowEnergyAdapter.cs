@@ -1,5 +1,6 @@
 ﻿using BluetoothController.Commands.Boost;
 using BluetoothController.Controllers;
+using BluetoothController.Models;
 using BluetoothController.Util;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace BluetoothController
             _notificationManager2 = new NotificationManager(_controller2);
         }
 
-        public void StartBleDeviceWatcher(Func<string, Task> discoveryHandler, Func<HubController, NotificationManager, string, Task> connectionHandler)
+        public void StartBleDeviceWatcher(Func<DiscoveredDevice, Task> discoveryHandler, Func<HubController, NotificationManager, string, Task> connectionHandler)
         {
             _watcher = new BluetoothLEAdvertisementWatcher();
             _watcher.ScanningMode = BluetoothLEScanningMode.Active;
@@ -53,35 +54,30 @@ namespace BluetoothController
                     if (device == null)
                         return;
 
-                    if (!_controller.IsConnected && device.Name == "LEGO Move Hub")
+                    if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId) && device.Name == "LEGO Move Hub")
                     {
                         _controller.SelectedBleDeviceId = device.DeviceId;
-                        // TODO: Move to Discovery Handler in UWP App ******
-                        //ConnectButton.IsEnabled = true;
-                        //Debug.WriteLine(String.Format($"Found Move Hub: {deviceInfo.Id}"));
-                        //_rootPage.NotifyUser($"Found Boost Move Hub.", NotifyType.StatusMessage);
-                        //string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
-                        //Debug.WriteLine(s);
-                        // ************************************************
-                        await discoveryHandler("Boost Move Hub");
+
+                        await discoveryHandler(new DiscoveredDevice
+                        {
+                            Name = device.Name,
+                            BluetoothDeviceId = device.DeviceId
+                        });
                         await Connect(_controller, _notificationManager, connectionHandler);
                     }
 
-                    if (!_controller2.IsConnected && device.Name == "Two Port Hub")
+                    if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && device.Name == "Two Port Hub")
                     {
                         _controller2.SelectedBleDeviceId = device.DeviceId;
-                        // TODO: Move to Discovery Handler in UWP App ******
-                        //string s = string.Join(";", deviceInfo.Properties.Select(x => x.Key + "=" + x.Value));
-                        //Debug.WriteLine(s);
-                        //ConnectButton.IsEnabled = true;
-                        //Debug.WriteLine(String.Format($"Found Two Port Hub: {deviceInfo.Id}"));
-                        //_rootPage.NotifyUser($"Found Two Port Hub.", NotifyType.StatusMessage);
-                        // ************************************************
-                        await discoveryHandler("Two Port Hub");
+
+                        await discoveryHandler(new DiscoveredDevice
+                        {
+                            Name = device.Name,
+                            BluetoothDeviceId = device.DeviceId
+                        });
                         await Connect(_controller2, _notificationManager2, connectionHandler);
                     }
                 }
-                //Debug.WriteLine(String.Format("Added Called for ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
             }
         }
 

@@ -23,9 +23,9 @@ namespace BluetoothLibraryTester
             }
         }
 
-        static async Task HandleDiscover(string input)
+        static async Task HandleDiscover(DiscoveredDevice device)
         {
-            Console.WriteLine($"Discovered device: {input}");
+            Console.WriteLine($"Discovered device: {device.Name}");
             await Task.CompletedTask;
         }
 
