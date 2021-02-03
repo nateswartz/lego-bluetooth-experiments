@@ -11,7 +11,7 @@ using Windows.Storage.Streams;
 
 namespace BluetoothController
 {
-    public class BluetoothAdapter
+    public class BluetoothLowEnergyAdapter
     {
         private BluetoothLEAdvertisementWatcher _watcher;
 
@@ -28,7 +28,7 @@ namespace BluetoothController
         private const string LegoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
         private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
-        public BluetoothAdapter()
+        public BluetoothLowEnergyAdapter()
         {
             _controller = new HubController();
             _controller2 = new HubController();

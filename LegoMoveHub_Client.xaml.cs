@@ -1,9 +1,10 @@
-using LegoBoostController.Commands.Boost;
+using BluetoothController;
+using BluetoothController.Commands.Boost;
+using BluetoothController.EventHandlers;
+using BluetoothController.Models;
+using BluetoothController.Responses;
+using BluetoothController.Util;
 using LegoBoostController.Controllers;
-using LegoBoostController.EventHandlers;
-using LegoBoostController.Models;
-using LegoBoostController.Responses;
-using LegoBoostController.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

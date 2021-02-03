@@ -12,7 +12,7 @@ namespace BluetoothLibraryTester
     {
         static async Task Main(string[] args)
         {
-            var adapter = new BluetoothAdapter();
+            var adapter = new BluetoothLowEnergyAdapter();
             Console.WriteLine("Searching for devices...");
             adapter.StartBleDeviceWatcher(HandleDiscover, HandleConnect);
 

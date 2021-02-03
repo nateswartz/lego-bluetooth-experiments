@@ -16,7 +16,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local1="using:LegoBoostController.Util"
+    xmlns:local1="using:BluetoothController.Util"
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="AttributeTemplate" x:DataType="local1:BluetoothLEAttributeDisplay">
@@ -29,9 +29,6 @@
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{x:Bind Name}" Style="{StaticResource ListItemTextStyle}" FontWeight="Bold" TextWrapping="WrapWholeWords"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind AttributeDisplayType}" Margin="10,0,0,0"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
