@@ -145,7 +145,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="BluetoothController\BluetoothController.csproj">
+    <ProjectReference Include="..\BluetoothController\BluetoothController.csproj">
       <Project>{86828470-b622-4ed7-8376-c4417dd6709f}</Project>
       <Name>BluetoothController</Name>
     </ProjectReference>
