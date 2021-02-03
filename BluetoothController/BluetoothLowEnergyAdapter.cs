@@ -128,17 +128,6 @@ namespace BluetoothController
                         foreach (var characteristic in characteristics.Characteristics)
                         {
                             controller.HubCharacteristic = characteristic;
-                            // TODO: Move to Connection Handler in UWP App ******
-                            //ToggleButtons(true);
-                            //DisconnectButton.IsEnabled = true;
-                            //ConnectButton.IsEnabled = false;
-                            //_hubs.Add(controller);
-                            //if (controller.HubType == HubType.BoostMoveHub)
-                            //{
-                            //    ToggleControls.IsEnabled = true;
-                            //}
-                            //EnableCharacteristicPanels();
-                            // ************************************************
                             await ToggleSubscribedForNotifications(controller);
                             await controller.ConnectAsync();
                             await connectionHandler(controller, notificationManager, "");

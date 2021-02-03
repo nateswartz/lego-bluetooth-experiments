@@ -216,7 +216,7 @@ namespace LegoBoostController
                         });
 
                         _controller.SelectedBleDeviceId = deviceInfo.Id;
-                        await Connect(_controller);
+                        await Connect(_controller, _notificationManager);
                     }
 
                     if (!_controller2.IsConnected && deviceInfo.Name == "Two Port Hub")
@@ -228,7 +228,7 @@ namespace LegoBoostController
                         });
 
                         _controller2.SelectedBleDeviceId = deviceInfo.Id;
-                        await Connect(_controller2);
+                        await Connect(_controller2, _notificationManager2);
                     }
                 }
             });
@@ -343,10 +343,30 @@ namespace LegoBoostController
 
         private async void ConnectButton_Click()
         {
-            await Connect(_controller);
+            await Connect(_controller, _notificationManager);
         }
 
-        private async Task<bool> Connect(HubController controller)
+        private void OnDeviceConnected(HubController controller, NotificationManager notificationManager, string errorMessage)
+        {
+            if (controller != null)
+            {
+                ToggleButtons(true);
+                DisconnectButton.IsEnabled = true;
+                ConnectButton.IsEnabled = false;
+                _hubs.Add(controller);
+                if (controller.HubType == HubType.BoostMoveHub)
+                {
+                    ToggleControls.IsEnabled = true;
+                }
+                EnableCharacteristicPanels();
+            }
+            else if (!string.IsNullOrEmpty(errorMessage))
+            {
+                _rootPage.NotifyUser(errorMessage, NotifyType.ErrorMessage);
+            }
+        }
+
+        private async Task<bool> Connect(HubController controller, NotificationManager notificationManager)
         {
             ConnectButton.IsEnabled = false;
             BluetoothLEDevice bluetoothLEDevice;
@@ -363,13 +383,13 @@ namespace LegoBoostController
                 bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(controller.SelectedBleDeviceId);
                 if (bluetoothLEDevice == null)
                 {
-                    _rootPage.NotifyUser("Failed to connect to device.", NotifyType.ErrorMessage);
+                    OnDeviceConnected(null, null, "Failed to connect to device.");
                     return false;
                 }
             }
             catch (Exception ex) when (ex.HResult == E_DEVICE_NOT_AVAILABLE)
             {
-                _rootPage.NotifyUser("Bluetooth radio is not on.", NotifyType.ErrorMessage);
+                OnDeviceConnected(null, null, "Bluetooth radio is not on.");
                 return false;
             }
 
@@ -390,18 +410,11 @@ namespace LegoBoostController
                             var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(LegoHubCharacteristic));
                             foreach (var characteristic in characteristics.Characteristics)
                             {
+                                OnDeviceConnected(controller, notificationManager, "");
+
                                 controller.HubCharacteristic = characteristic;
-                                ToggleButtons(true);
-                                DisconnectButton.IsEnabled = true;
-                                ConnectButton.IsEnabled = false;
                                 await ToggleSubscribedForNotifications(controller);
                                 await controller.ConnectAsync();
-                                _hubs.Add(controller);
-                                if (controller.HubType == HubType.BoostMoveHub)
-                                {
-                                    ToggleControls.IsEnabled = true;
-                                }
-                                EnableCharacteristicPanels();
                                 await controller.ExecuteCommandAsync(new HubFirmwareCommand());
                             }
                         }
@@ -410,12 +423,13 @@ namespace LegoBoostController
                 }
                 else
                 {
-                    _rootPage.NotifyUser("Device unreachable", NotifyType.ErrorMessage);
+                    OnDeviceConnected(null, null, "Device unreachable");
                     return false;
                 }
             }
             else
             {
+                OnDeviceConnected(null, null, "Failed to connect to device.");
                 ConnectButton.IsEnabled = true;
                 return false;
             }
