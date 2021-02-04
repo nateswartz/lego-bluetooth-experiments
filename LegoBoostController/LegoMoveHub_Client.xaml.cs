@@ -189,10 +189,14 @@ namespace LegoBoostController
                         _controller = controller;
                         _notificationManager = notificationManager;
                     }
-                    else
+                    else if (controller.HubType == HubType.TwoPortHub)
                     {
                         _controller2 = controller;
                         _notificationManager2 = notificationManager;
+                    }
+                    else
+                    {
+                        _rootPage.NotifyUser("Unknown Hub Type", NotifyType.ErrorMessage);
                     }
                     EnableCharacteristicPanels();
                 }

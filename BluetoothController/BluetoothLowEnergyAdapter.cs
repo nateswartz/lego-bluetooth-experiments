@@ -93,6 +93,7 @@ namespace BluetoothController
             }
         }
 
+        // TODO: Verify this is working
         public void StopBleDeviceWatcher()
         {
             if (_watcher != null)
