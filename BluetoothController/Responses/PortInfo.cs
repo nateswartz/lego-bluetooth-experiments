@@ -13,6 +13,7 @@ namespace BluetoothController.Responses
             Port = body.Substring(6, 2);
             DeviceType = (DeviceType)Convert.ToInt32(body.Substring(10, 2), 16);
             PortLetter = Port == "02" ? "C" : "D";
+            NotificationType = GetType().Name;
         }
     }
 }

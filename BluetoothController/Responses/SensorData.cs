@@ -7,6 +7,7 @@
         public SensorData(string body) : base(body)
         {
             Port = body.Substring(6, 2);
+            NotificationType = GetType().Name;
         }
     }
 }

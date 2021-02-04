@@ -9,6 +9,7 @@ namespace BluetoothController.Responses
         public SystemType(string body) : base(body)
         {
             HubType = Body.Substring(10, 2) == "41" ? HubType.TwoPortHub : HubType.BoostMoveHub;
+            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"System Type: {Body}";

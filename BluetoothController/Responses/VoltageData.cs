@@ -9,6 +9,7 @@ namespace BluetoothController.Responses
         public VoltageData(string body) : base(body)
         {
             Voltage = Convert.ToInt32($"{body.Substring(10, 2)}{body.Substring(8, 2)}", 16);
+            NotificationType = GetType().Name;
         }
 
         public override string ToString()

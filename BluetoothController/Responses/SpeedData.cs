@@ -9,6 +9,7 @@ namespace BluetoothController.Responses
         public SpeedData(string body) : base(body)
         {
             Speed = Convert.ToInt32(body.Substring(8, 2), 16);
+            NotificationType = GetType().Name;
         }
 
         public override string ToString()

@@ -4,6 +4,7 @@
     {
         public AngleData(string body) : base(body)
         {
+            NotificationType = GetType().Name;
         }
 
         public override string ToString()
