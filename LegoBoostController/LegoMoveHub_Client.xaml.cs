@@ -4,7 +4,6 @@ using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
-using BluetoothController.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,10 +26,7 @@ namespace LegoBoostController
         private List<string> _notifications = new List<string>();
 
         private HubController _controller;
-        private NotificationManager _notificationManager;
-
         private HubController _controller2;
-        private NotificationManager _notificationManager2;
 
         private TextCommandsController _textCommandsController;
 
@@ -172,7 +168,7 @@ namespace LegoBoostController
             await Task.CompletedTask;
         }
 
-        private async Task OnDeviceConnectedAsync(HubController controller, NotificationManager notificationManager, string errorMessage)
+        private async Task OnDeviceConnectedAsync(HubController controller, string errorMessage)
         {
             // We must update the collection on the UI thread because the collection is databound to a UI element.
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
@@ -187,12 +183,10 @@ namespace LegoBoostController
                     {
                         ToggleControls.IsEnabled = true;
                         _controller = controller;
-                        _notificationManager = notificationManager;
                     }
                     else if (controller.HubType == HubType.TwoPortHub)
                     {
                         _controller2 = controller;
-                        _notificationManager2 = notificationManager;
                     }
                     else
                     {
@@ -328,30 +322,30 @@ namespace LegoBoostController
         {
             await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _controller.PortState.CurrentExternalMotorPort, "01");
 
-            if (!_notificationManager.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
+            if (!_controller.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {
                 SyncLEDMotorButton.Content = "Un-sync LED with Motor";
-                _notificationManager.AddEventHandler(new MotorToLEDEventHandler(_controller));
+                _controller.AddEventHandler(new MotorToLEDEventHandler(_controller));
             }
             else
             {
                 SyncLEDMotorButton.Content = "Sync LED with Motor";
-                _notificationManager.RemoveEventHandler(new MotorToLEDEventHandler(_controller));
+                _controller.RemoveEventHandler(new MotorToLEDEventHandler(_controller));
             }
         }
 
         private void SyncLEDButtonButton_Click()
         {
-            if (!_notificationManager.IsHandlerRegistered(typeof(ButtonStateMessage), typeof(ButtonToLEDEventHandler)))
+            if (!_controller.IsHandlerRegistered(typeof(ButtonStateMessage), typeof(ButtonToLEDEventHandler)))
             {
                 SyncLEDButtonButton.Content = "Un-sync LED with Button";
-                _notificationManager.AddEventHandler(new ButtonToLEDEventHandler(_controller2));
+                _controller.AddEventHandler(new ButtonToLEDEventHandler(_controller2));
 
             }
             else
             {
                 SyncLEDButtonButton.Content = "Sync LED with Button";
-                _notificationManager.RemoveEventHandler(new ButtonToLEDEventHandler(_controller2));
+                _controller.RemoveEventHandler(new ButtonToLEDEventHandler(_controller2));
             }
         }
 

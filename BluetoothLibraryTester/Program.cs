@@ -3,7 +3,6 @@ using BluetoothController.Commands.Boost;
 using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
-using BluetoothController.Util;
 using System;
 using System.Threading.Tasks;
 
@@ -25,6 +24,7 @@ namespace BluetoothLibraryTester
 
         static async Task HandleNotification(string message)
         {
+            Console.WriteLine(message);
             await Task.CompletedTask;
         }
 
@@ -34,11 +34,12 @@ namespace BluetoothLibraryTester
             await Task.CompletedTask;
         }
 
-        static async Task HandleConnect(HubController controller, NotificationManager notificationManager, string errorMessage)
+        static async Task HandleConnect(HubController controller, string errorMessage)
         {
             if (controller != null)
             {
                 Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
+                await controller.ExecuteCommandAsync(new HubFirmwareCommand());
                 Console.WriteLine($"Setting LED Yellow...");
                 await controller.ExecuteCommandAsync(new LEDBoostCommand(LEDColors.Yellow));
                 await Task.Delay(500);
@@ -46,12 +47,12 @@ namespace BluetoothLibraryTester
                 await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
                 await Task.Delay(500);
                 Console.WriteLine("Registering Event handler to change LED on Button press...");
-                notificationManager.AddEventHandler(new ButtonToLEDEventHandler(controller));
-                while (true)
-                {
-                    await Task.Delay(1000);
-                }
+                controller.AddEventHandler(new ButtonToLEDEventHandler(controller));
+                await Task.Delay(6000);
+                Console.WriteLine("Disconnecting soon...");
+                await Task.Delay(2000);
                 await controller.ExecuteCommandAsync(new DisconnectCommand());
+                Console.WriteLine("Disconnected");
                 await Task.CompletedTask;
             }
             else

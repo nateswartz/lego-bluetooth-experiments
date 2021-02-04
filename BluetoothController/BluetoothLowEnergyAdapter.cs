@@ -20,8 +20,6 @@ namespace BluetoothController
         private HubController _controller;
         private HubController _controller2;
 
-        private NotificationManager _notificationManager;
-        private NotificationManager _notificationManager2;
         private List<string> _notifications = new List<string>();
 
         public bool Scanning { get; private set; } = false;
@@ -33,17 +31,15 @@ namespace BluetoothController
         private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
         private Func<DiscoveredDevice, Task> _discoveryHandler;
-        private Func<HubController, NotificationManager, string, Task> _connectionHandler;
+        private Func<HubController, string, Task> _connectionHandler;
         private Func<string, Task> _notificationHandler;
 
         public BluetoothLowEnergyAdapter(Func<DiscoveredDevice, Task> discoveryHandler,
-                                         Func<HubController, NotificationManager, string, Task> connectionHandler,
+                                         Func<HubController, string, Task> connectionHandler,
                                          Func<string, Task> notificationHandler)
         {
             _controller = new HubController();
             _controller2 = new HubController();
-            _notificationManager = new NotificationManager(_controller);
-            _notificationManager2 = new NotificationManager(_controller2);
             _discoveryHandler = discoveryHandler;
             _connectionHandler = connectionHandler;
             _notificationHandler = notificationHandler;
@@ -75,7 +71,7 @@ namespace BluetoothController
                             Name = device.Name,
                             BluetoothDeviceId = device.DeviceId
                         });
-                        await Connect(_controller, _notificationManager, _connectionHandler);
+                        await Connect(_controller, _connectionHandler);
                     }
 
                     if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && device.Name == "Two Port Hub")
@@ -87,7 +83,7 @@ namespace BluetoothController
                             Name = device.Name,
                             BluetoothDeviceId = device.DeviceId
                         });
-                        await Connect(_controller2, _notificationManager2, _connectionHandler);
+                        await Connect(_controller2, _connectionHandler);
                     }
                 }
             }
@@ -105,7 +101,7 @@ namespace BluetoothController
             }
         }
 
-        private async Task<bool> Connect(HubController controller, NotificationManager notificationManager, Func<HubController, NotificationManager, string, Task> connectionHandler)
+        private async Task<bool> Connect(HubController controller, Func<HubController, string, Task> connectionHandler)
         {
             BluetoothLEDevice bluetoothLEDevice;
 
@@ -114,13 +110,13 @@ namespace BluetoothController
                 bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(controller.SelectedBleDeviceId);
                 if (bluetoothLEDevice == null)
                 {
-                    await connectionHandler(null, null, "Failed to connect to device.");
+                    await connectionHandler(null, "Failed to connect to device.");
                     return false;
                 }
             }
             catch (Exception ex) when (ex.HResult == E_DEVICE_NOT_AVAILABLE)
             {
-                await connectionHandler(null, null, "Bluetooth radio is not on.");
+                await connectionHandler(null, "Bluetooth radio is not on.");
                 return false;
             }
 
@@ -140,7 +136,7 @@ namespace BluetoothController
                             controller.HubCharacteristic = characteristic;
                             await ToggleSubscribedForNotifications(controller);
                             await controller.ConnectAsync();
-                            await connectionHandler(controller, notificationManager, "");
+                            await connectionHandler(controller, "");
                             await controller.ExecuteCommandAsync(new HubFirmwareCommand());
                         }
                     }
@@ -148,13 +144,13 @@ namespace BluetoothController
                 }
                 else
                 {
-                    await connectionHandler(null, null, "Device unreachable");
+                    await connectionHandler(null, "Device unreachable");
                     return false;
                 }
             }
             else
             {
-                await connectionHandler(null, null, "Failed to connect.");
+                await connectionHandler(null, "Failed to connect.");
                 return false;
             }
         }
@@ -247,14 +243,14 @@ namespace BluetoothController
 
         private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            NotificationManager notificationManager;
+            HubController controller;
             if (sender == _controller.HubCharacteristic)
             {
-                notificationManager = _notificationManager;
+                controller = _controller;
             }
             else if (sender == _controller2.HubCharacteristic)
             {
-                notificationManager = _notificationManager2;
+                controller = _controller2;
             }
             else
             {
@@ -265,8 +261,7 @@ namespace BluetoothController
             var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
             dataReader.ReadBytes(output);
             var notification = DataConverter.ByteArrayToString(output);
-            await notificationManager.ProcessNotification(notification);
-            var message = notificationManager.DecodeNotification(notification);
+            var message = await controller.ProcessNotification(notification);
             _notifications.Add(message);
             if (_notifications.Count > 10)
             {
