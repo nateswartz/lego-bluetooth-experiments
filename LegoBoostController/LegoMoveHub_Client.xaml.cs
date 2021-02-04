@@ -11,10 +11,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Devices.Enumeration;
-using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -153,29 +149,6 @@ namespace LegoBoostController
             });
         }
 
-        // TODO: Move this to either the HubController or BluetoothLowEnergyAdapter (if still needed)
-        //private async Task<bool> DisableNotifications()
-        //{
-        //    foreach (var controller in _hubs)
-        //    {
-        //        if (controller.SubscribedForNotifications)
-        //        {
-        //            // Need to clear the CCCD from the remote device so we stop receiving notifications
-        //            var result = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
-        //            if (result != GattCommunicationStatus.Success)
-        //            {
-        //                return false;
-        //            }
-        //            else
-        //            {
-        //                controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-        //                controller.SubscribedForNotifications = false;
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
-
         private async Task DisconnectButton_Click()
         {
             ConnectButton.IsEnabled = true;
@@ -195,7 +168,7 @@ namespace LegoBoostController
 
         private async void ConnectButton_Click()
         {
-            //await Connect(_controller, _notificationManager);
+            _rootPage.NotifyUser("Button not currently connected", NotifyType.ErrorMessage);
             await Task.CompletedTask;
         }
 

@@ -273,5 +273,28 @@ namespace BluetoothController
             }
             await _notificationHandler(message);
         }
+
+        // TODO: Is this needed?
+        //private async Task<bool> DisableNotifications()
+        //{
+        //    foreach (var controller in _hubs)
+        //    {
+        //        if (controller.SubscribedForNotifications)
+        //        {
+        //            // Need to clear the CCCD from the remote device so we stop receiving notifications
+        //            var result = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
+        //            if (result != GattCommunicationStatus.Success)
+        //            {
+        //                return false;
+        //            }
+        //            else
+        //            {
+        //                controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+        //                controller.SubscribedForNotifications = false;
+        //            }
+        //        }
+        //    }
+        //    return true;
+        //}
     }
 }
