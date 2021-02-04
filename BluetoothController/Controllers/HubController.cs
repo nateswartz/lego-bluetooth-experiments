@@ -73,9 +73,10 @@ namespace BluetoothController.Controllers
             await ExecuteCommandAsync(new HubTypeCommand());
         }
 
-        public void Disconnect()
+        public async Task DisconnectAsync()
         {
             IsConnected = false;
+            await ExecuteCommandAsync(new DisconnectCommand());
         }
 
         public override string ToString()
@@ -87,29 +88,19 @@ namespace BluetoothController.Controllers
         {
             try
             {
-                // BT_Code: Writes the value from the buffer to the characteristic.
                 var result = await HubCharacteristic.WriteValueWithResultAsync(buffer);
 
                 if (result.Status == GattCommunicationStatus.Success)
                 {
-                    //rootPage.NotifyUser("Successfully wrote value to device", NotifyType.StatusMessage);
                     return true;
                 }
                 else
                 {
-                    //rootPage.NotifyUser($"Write failed: {result.Status}", NotifyType.ErrorMessage);
                     return false;
                 }
             }
-            //catch (Exception ex) when (ex.HResult == E_BLUETOOTH_ATT_INVALID_PDU)
-            //{
-            //    //rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-            //    return false;
-            //}
-            catch (Exception)// when (ex.HResult == E_BLUETOOTH_ATT_WRITE_NOT_PERMITTED || ex.HResult == E_ACCESSDENIED)
+            catch (Exception)
             {
-                // This usually happens when a device reports that it support writing, but it actually doesn't.
-                //rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
                 return false;
             }
         }
@@ -117,17 +108,6 @@ namespace BluetoothController.Controllers
         internal async Task<string> ProcessNotification(string notification)
         {
             var response = ResponseProcessor.CreateResponse(notification, PortState);
-
-            try
-            {
-                var hubTypeCommand = (SystemType)response;
-                HubType = hubTypeCommand.HubType;
-            }
-            catch (Exception)
-            {
-                // Command was not a Hub Type command
-                // TODO: Find a better way to check this
-            }
 
             await TriggerActionsFromNotification(response);
 

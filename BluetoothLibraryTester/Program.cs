@@ -10,11 +10,12 @@ namespace BluetoothLibraryTester
 {
     class Program
     {
+        static BluetoothLowEnergyAdapter _adapter;
         static async Task Main(string[] args)
         {
-            var adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
+            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
             Console.WriteLine("Searching for devices...");
-            adapter.StartBleDeviceWatcher();
+            _adapter.StartBleDeviceWatcher();
 
             while (true)
             {
@@ -51,7 +52,8 @@ namespace BluetoothLibraryTester
                 await Task.Delay(6000);
                 Console.WriteLine("Disconnecting soon...");
                 await Task.Delay(2000);
-                await controller.ExecuteCommandAsync(new DisconnectCommand());
+                await _adapter.DisconnectAsync(controller);
+                _adapter.StopBleDeviceWatcher();
                 Console.WriteLine("Disconnected");
                 await Task.CompletedTask;
             }

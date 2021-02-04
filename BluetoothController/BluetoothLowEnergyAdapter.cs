@@ -1,5 +1,6 @@
 ﻿using BluetoothController.Commands.Boost;
 using BluetoothController.Controllers;
+using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using BluetoothController.Util;
 using System;
@@ -47,46 +48,15 @@ namespace BluetoothController
 
         public void StartBleDeviceWatcher()
         {
-            _watcher = new BluetoothLEAdvertisementWatcher();
-            _watcher.ScanningMode = BluetoothLEScanningMode.Active;
+            _watcher = new BluetoothLEAdvertisementWatcher
+            {
+                ScanningMode = BluetoothLEScanningMode.Active
+            };
 
             _watcher.Received += ReceivedHandler;
 
             _watcher.Start();
             Scanning = true;
-
-            async void ReceivedHandler(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
-            {
-                using (var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result)
-                {
-                    if (device == null)
-                        return;
-
-                    if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId) && device.Name == "LEGO Move Hub")
-                    {
-                        _controller.SelectedBleDeviceId = device.DeviceId;
-
-                        await _discoveryHandler(new DiscoveredDevice
-                        {
-                            Name = device.Name,
-                            BluetoothDeviceId = device.DeviceId
-                        });
-                        await Connect(_controller, _connectionHandler);
-                    }
-
-                    if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && device.Name == "Two Port Hub")
-                    {
-                        _controller2.SelectedBleDeviceId = device.DeviceId;
-
-                        await _discoveryHandler(new DiscoveredDevice
-                        {
-                            Name = device.Name,
-                            BluetoothDeviceId = device.DeviceId
-                        });
-                        await Connect(_controller2, _connectionHandler);
-                    }
-                }
-            }
         }
 
         // TODO: Verify this is working
@@ -94,10 +64,49 @@ namespace BluetoothController
         {
             if (_watcher != null)
             {
-                // Stop the watcher.
+                _watcher.Received -= ReceivedHandler;
                 _watcher.Stop();
                 Scanning = false;
                 _watcher = null;
+            }
+        }
+
+        public async Task DisconnectAsync(HubController controller)
+        {
+            await ToggleSubscribedForNotifications(controller);
+            await controller.DisconnectAsync();
+        }
+
+        private async void ReceivedHandler(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
+        {
+            using (var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result)
+            {
+                if (device == null)
+                    return;
+
+                if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId) && device.Name == "LEGO Move Hub")
+                {
+                    _controller.SelectedBleDeviceId = device.DeviceId;
+
+                    await _discoveryHandler(new DiscoveredDevice
+                    {
+                        Name = device.Name,
+                        BluetoothDeviceId = device.DeviceId
+                    });
+                    await Connect(_controller, _connectionHandler);
+                }
+
+                if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && device.Name == "Two Port Hub")
+                {
+                    _controller2.SelectedBleDeviceId = device.DeviceId;
+
+                    await _discoveryHandler(new DiscoveredDevice
+                    {
+                        Name = device.Name,
+                        BluetoothDeviceId = device.DeviceId
+                    });
+                    await Connect(_controller2, _connectionHandler);
+                }
             }
         }
 
@@ -134,6 +143,7 @@ namespace BluetoothController
                         foreach (var characteristic in characteristics.Characteristics)
                         {
                             controller.HubCharacteristic = characteristic;
+                            controller.AddEventHandler(new SystemTypeUpdateHubTypeEventHandler(controller));
                             await ToggleSubscribedForNotifications(controller);
                             await controller.ConnectAsync();
                             await connectionHandler(controller, "");
@@ -165,7 +175,8 @@ namespace BluetoothController
 
                 try
                 {
-                    AddValueChangedHandler(controller);
+                    controller.HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
+                    controller.SubscribedForNotifications = true;
                     // BT_Code: Must write the CCCD in order for server to send indications.
                     // We receive them in the ValueChanged event handler.
                     status = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(cccdValue);
@@ -177,7 +188,8 @@ namespace BluetoothController
                     }
                     else
                     {
-                        RemoveValueChangedHandler(controller);
+                        controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                        controller.SubscribedForNotifications = false;
                         //_rootPage.NotifyUser($"Error registering for value changes: {status}", NotifyType.ErrorMessage);
                         return false;
                     }
@@ -204,7 +216,8 @@ namespace BluetoothController
                     {
                         controller.SubscribedForNotifications = false;
 
-                        RemoveValueChangedHandler(controller);
+                        controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                        controller.SubscribedForNotifications = false;
                         //_rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
                         return true;
                     }
@@ -220,24 +233,6 @@ namespace BluetoothController
                     //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
                     return false;
                 }
-            }
-        }
-
-        private void AddValueChangedHandler(HubController controller)
-        {
-            if (!controller.SubscribedForNotifications)
-            {
-                controller.HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                controller.SubscribedForNotifications = true;
-            }
-        }
-
-        private void RemoveValueChangedHandler(HubController controller)
-        {
-            if (controller.SubscribedForNotifications)
-            {
-                controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                controller.SubscribedForNotifications = false;
             }
         }
 
@@ -269,28 +264,5 @@ namespace BluetoothController
             }
             await _notificationHandler(message);
         }
-
-        // TODO: Is this needed?
-        //private async Task<bool> DisableNotifications()
-        //{
-        //    foreach (var controller in _hubs)
-        //    {
-        //        if (controller.SubscribedForNotifications)
-        //        {
-        //            // Need to clear the CCCD from the remote device so we stop receiving notifications
-        //            var result = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
-        //            if (result != GattCommunicationStatus.Success)
-        //            {
-        //                return false;
-        //            }
-        //            else
-        //            {
-        //                controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-        //                controller.SubscribedForNotifications = false;
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
     }
 }

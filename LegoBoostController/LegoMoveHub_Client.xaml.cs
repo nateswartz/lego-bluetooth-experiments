@@ -153,12 +153,12 @@ namespace LegoBoostController
             if (_controller?.IsConnected == true)
             {
                 await _controller.ExecuteCommandAsync(new DisconnectCommand());
-                _controller.Disconnect();
+                _controller.DisconnectAsync();
             }
             if (_controller2?.IsConnected == true)
             {
                 await _controller2.ExecuteCommandAsync(new DisconnectCommand());
-                _controller2.Disconnect();
+                _controller2.DisconnectAsync();
             }
         }
 
