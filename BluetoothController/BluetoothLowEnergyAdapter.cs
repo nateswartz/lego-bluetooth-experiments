@@ -32,15 +32,24 @@ namespace BluetoothController
         private const string LegoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
         private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
-        public BluetoothLowEnergyAdapter()
+        private Func<DiscoveredDevice, Task> _discoveryHandler;
+        private Func<HubController, NotificationManager, string, Task> _connectionHandler;
+        private Func<string, Task> _notificationHandler;
+
+        public BluetoothLowEnergyAdapter(Func<DiscoveredDevice, Task> discoveryHandler,
+                                         Func<HubController, NotificationManager, string, Task> connectionHandler,
+                                         Func<string, Task> notificationHandler)
         {
             _controller = new HubController();
             _controller2 = new HubController();
             _notificationManager = new NotificationManager(_controller);
             _notificationManager2 = new NotificationManager(_controller2);
+            _discoveryHandler = discoveryHandler;
+            _connectionHandler = connectionHandler;
+            _notificationHandler = notificationHandler;
         }
 
-        public void StartBleDeviceWatcher(Func<DiscoveredDevice, Task> discoveryHandler, Func<HubController, NotificationManager, string, Task> connectionHandler)
+        public void StartBleDeviceWatcher()
         {
             _watcher = new BluetoothLEAdvertisementWatcher();
             _watcher.ScanningMode = BluetoothLEScanningMode.Active;
@@ -61,24 +70,24 @@ namespace BluetoothController
                     {
                         _controller.SelectedBleDeviceId = device.DeviceId;
 
-                        await discoveryHandler(new DiscoveredDevice
+                        await _discoveryHandler(new DiscoveredDevice
                         {
                             Name = device.Name,
                             BluetoothDeviceId = device.DeviceId
                         });
-                        await Connect(_controller, _notificationManager, connectionHandler);
+                        await Connect(_controller, _notificationManager, _connectionHandler);
                     }
 
                     if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && device.Name == "Two Port Hub")
                     {
                         _controller2.SelectedBleDeviceId = device.DeviceId;
 
-                        await discoveryHandler(new DiscoveredDevice
+                        await _discoveryHandler(new DiscoveredDevice
                         {
                             Name = device.Name,
                             BluetoothDeviceId = device.DeviceId
                         });
-                        await Connect(_controller2, _notificationManager2, connectionHandler);
+                        await Connect(_controller2, _notificationManager2, _connectionHandler);
                     }
                 }
             }
@@ -262,9 +271,7 @@ namespace BluetoothController
             {
                 _notifications.RemoveAt(0);
             }
-            //Debug.WriteLine(message);
-            //await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-            //    () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, _notifications));
+            await _notificationHandler(message);
         }
     }
 }

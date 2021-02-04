@@ -46,7 +46,7 @@ namespace LegoBoostController
         #region UI Code
         public LegoMoveHub_Client()
         {
-            _bluetoothAdapter = new BluetoothLowEnergyAdapter();
+            _bluetoothAdapter = new BluetoothLowEnergyAdapter(OnDeviceDiscoveredAsync, OnDeviceConnectedAsync, OnNotificationAsync);
             // TODO: This currently only supports the Move Hub (controller1)
             _textCommandsController = new TextCommandsController(_controller);
             InitializeComponent();
@@ -88,7 +88,7 @@ namespace LegoBoostController
         {
             if (!_bluetoothAdapter.Scanning)
             {
-                _bluetoothAdapter.StartBleDeviceWatcher(OnDeviceDiscoveredAsync, OnDeviceConnectedAsync);
+                _bluetoothAdapter.StartBleDeviceWatcher();
                 ScanButton.Content = "Stop scanning";
                 _rootPage.NotifyUser($"Device watcher started.", NotifyType.StatusMessage);
             }
@@ -138,45 +138,58 @@ namespace LegoBoostController
             });
         }
 
-        private async Task<bool> DisableNotifications()
+        private async Task OnNotificationAsync(string message)
         {
-            foreach (var controller in _hubs)
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                if (controller.SubscribedForNotifications)
+                _notifications.Add(message);
+                if (_notifications.Count > 10)
                 {
-                    // Need to clear the CCCD from the remote device so we stop receiving notifications
-                    var result = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
-                    if (result != GattCommunicationStatus.Success)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                        controller.SubscribedForNotifications = false;
-                    }
+                    _notifications.RemoveAt(0);
                 }
-            }
-            return true;
+                Debug.WriteLine(message);
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, _notifications));
+            });
         }
+
+        // TODO: Move this to either the HubController or BluetoothLowEnergyAdapter (if still needed)
+        //private async Task<bool> DisableNotifications()
+        //{
+        //    foreach (var controller in _hubs)
+        //    {
+        //        if (controller.SubscribedForNotifications)
+        //        {
+        //            // Need to clear the CCCD from the remote device so we stop receiving notifications
+        //            var result = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
+        //            if (result != GattCommunicationStatus.Success)
+        //            {
+        //                return false;
+        //            }
+        //            else
+        //            {
+        //                controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+        //                controller.SubscribedForNotifications = false;
+        //            }
+        //        }
+        //    }
+        //    return true;
+        //}
 
         private async Task DisconnectButton_Click()
         {
-            if (await DisableNotifications())
+            ConnectButton.IsEnabled = true;
+            DisconnectButton.IsEnabled = false;
+            ToggleButtons(false);
+            if (_controller?.IsConnected == true)
             {
-                ConnectButton.IsEnabled = true;
-                DisconnectButton.IsEnabled = false;
-                ToggleButtons(false);
-                if (_controller?.IsConnected == true)
-                {
-                    await _controller.ExecuteCommandAsync(new DisconnectCommand());
-                    _controller.Disconnect();
-                }
-                if (_controller2?.IsConnected == true)
-                {
-                    await _controller2.ExecuteCommandAsync(new DisconnectCommand());
-                    _controller2.Disconnect();
-                }
+                await _controller.ExecuteCommandAsync(new DisconnectCommand());
+                _controller.Disconnect();
+            }
+            if (_controller2?.IsConnected == true)
+            {
+                await _controller2.ExecuteCommandAsync(new DisconnectCommand());
+                _controller2.Disconnect();
             }
         }
 
@@ -230,24 +243,6 @@ namespace LegoBoostController
             {
                 NotificationControlsPanel.Visibility = Visibility.Visible;
                 FreeformCommandsPanel.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void AddValueChangedHandler(HubController controller)
-        {
-            if (!controller.SubscribedForNotifications)
-            {
-                controller.HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                controller.SubscribedForNotifications = true;
-            }
-        }
-
-        private void RemoveValueChangedHandler(HubController controller)
-        {
-            if (controller.SubscribedForNotifications)
-            {
-                controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                controller.SubscribedForNotifications = false;
             }
         }
 
@@ -401,109 +396,6 @@ namespace LegoBoostController
         private async Task RunCommandsButton_Click()
         {
             await _textCommandsController.RunCommandsAsync(CommandsText.Text);
-        }
-
-        private async Task<bool> ToggleSubscribedForNotifications(HubController controller)
-        {
-            if (!controller.SubscribedForNotifications)
-            {
-                // initialize status
-                GattCommunicationStatus status = GattCommunicationStatus.Unreachable;
-                var cccdValue = GattClientCharacteristicConfigurationDescriptorValue.Notify;
-
-                try
-                {
-                    AddValueChangedHandler(controller);
-                    // BT_Code: Must write the CCCD in order for server to send indications.
-                    // We receive them in the ValueChanged event handler.
-                    status = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(cccdValue);
-
-                    if (status == GattCommunicationStatus.Success)
-                    {
-                        _rootPage.NotifyUser("Successfully subscribed for value changes", NotifyType.StatusMessage);
-                        return true;
-                    }
-                    else
-                    {
-                        RemoveValueChangedHandler(controller);
-                        _rootPage.NotifyUser($"Error registering for value changes: {status}", NotifyType.ErrorMessage);
-                        return false;
-                    }
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    // This usually happens when a device reports that it support indicate, but it actually doesn't.
-                    _rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-                    return false;
-                }
-            }
-            else
-            {
-                try
-                {
-                    // BT_Code: Must write the CCCD in order for server to send notifications.
-                    // We receive them in the ValueChanged event handler.
-                    // Note that this sample configures either Indicate or Notify, but not both.
-                    var result = await
-                        controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                            GattClientCharacteristicConfigurationDescriptorValue.None);
-
-                    if (result == GattCommunicationStatus.Success)
-                    {
-                        controller.SubscribedForNotifications = false;
-
-                        RemoveValueChangedHandler(controller);
-                        _rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
-                        return true;
-                    }
-                    else
-                    {
-                        _rootPage.NotifyUser($"Error un-registering for notifications: {result}", NotifyType.ErrorMessage);
-                        return false;
-                    }
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    // This usually happens when a device reports that it supports notify, but it actually doesn't.
-                    _rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-                    return false;
-                }
-            }
-        }
-
-        private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
-        {
-            HubController controller = null;
-            NotificationManager notificationManager = null;
-            if (sender == _controller.HubCharacteristic)
-            {
-                controller = _controller;
-                notificationManager = _notificationManager;
-            }
-            else if (sender == _controller2.HubCharacteristic)
-            {
-                controller = _controller2;
-                notificationManager = _notificationManager2;
-            }
-            else
-            {
-                return;
-            }
-
-            var output = new byte[args.CharacteristicValue.Length];
-            var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
-            dataReader.ReadBytes(output);
-            var notification = DataConverter.ByteArrayToString(output);
-            await notificationManager.ProcessNotification(notification);
-            var message = notificationManager.DecodeNotification(notification);
-            _notifications.Add(message);
-            if (_notifications.Count > 10)
-            {
-                _notifications.RemoveAt(0);
-            }
-            Debug.WriteLine(message);
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, _notifications));
         }
     }
 }

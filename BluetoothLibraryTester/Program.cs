@@ -13,14 +13,19 @@ namespace BluetoothLibraryTester
     {
         static async Task Main(string[] args)
         {
-            var adapter = new BluetoothLowEnergyAdapter();
+            var adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
             Console.WriteLine("Searching for devices...");
-            adapter.StartBleDeviceWatcher(HandleDiscover, HandleConnect);
+            adapter.StartBleDeviceWatcher();
 
             while (true)
             {
                 await Task.Delay(1000);
             }
+        }
+
+        static async Task HandleNotification(string message)
+        {
+            await Task.CompletedTask;
         }
 
         static async Task HandleDiscover(DiscoveredDevice device)
