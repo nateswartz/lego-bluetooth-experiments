@@ -1,3 +1,4 @@
+using BluetoothController;
 using BluetoothController.Commands.Boost;
 using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
@@ -25,12 +26,9 @@ namespace LegoBoostController
     {
         private MainPage _rootPage = MainPage.Current;
 
-        private DeviceWatcher _deviceWatcher;
+        private BluetoothLowEnergyAdapter _bluetoothAdapter;
 
         private List<string> _notifications = new List<string>();
-
-        private const string LegoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
-        private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
         private HubController _controller;
         private NotificationManager _notificationManager;
@@ -40,10 +38,6 @@ namespace LegoBoostController
 
         private TextCommandsController _textCommandsController;
 
-        #region Error Codes
-        readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
-        #endregion
-
         List<LEDColor> _colors = LEDColors.All;
         List<Motor> _motors = Motors.All;
         List<Robot> _robots = Enum.GetValues(typeof(Robot)).Cast<Robot>().ToList();
@@ -52,10 +46,7 @@ namespace LegoBoostController
         #region UI Code
         public LegoMoveHub_Client()
         {
-            _controller = new HubController();
-            _controller2 = new HubController();
-            _notificationManager = new NotificationManager(_controller);
-            _notificationManager2 = new NotificationManager(_controller2);
+            _bluetoothAdapter = new BluetoothLowEnergyAdapter();
             // TODO: This currently only supports the Move Hub (controller1)
             _textCommandsController = new TextCommandsController(_controller);
             InitializeComponent();
@@ -85,7 +76,7 @@ namespace LegoBoostController
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId))
+            if (string.IsNullOrEmpty(_controller?.SelectedBleDeviceId))
             {
                 ConnectButton.IsEnabled = false;
                 DisconnectButton.IsEnabled = false;
@@ -93,26 +84,17 @@ namespace LegoBoostController
             }
         }
 
-        protected override async void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            var success = await DisableNotifications();
-            if (!success)
-            {
-                _rootPage.NotifyUser("Error: Unable to reset app state", NotifyType.ErrorMessage);
-            }
-        }
-
         private void ScanButton_Click()
         {
-            if (_deviceWatcher == null)
+            if (!_bluetoothAdapter.Scanning)
             {
-                StartBleDeviceWatcher();
+                _bluetoothAdapter.StartBleDeviceWatcher(OnDeviceDiscoveredAsync, OnDeviceConnectedAsync);
                 ScanButton.Content = "Stop scanning";
                 _rootPage.NotifyUser($"Device watcher started.", NotifyType.StatusMessage);
             }
             else
             {
-                StopBleDeviceWatcher();
+                _bluetoothAdapter.StopBleDeviceWatcher();
                 ScanButton.Content = "Start scanning";
                 _rootPage.NotifyUser($"Device watcher stopped.", NotifyType.StatusMessage);
             }
@@ -144,45 +126,6 @@ namespace LegoBoostController
         }
         #endregion
 
-        #region Device discovery
-
-        private void StartBleDeviceWatcher()
-        {
-            string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected", "System.Devices.Aep.Bluetooth.Le.IsConnectable" };
-
-            string aqsAllBluetoothLEDevices = "(System.Devices.Aep.ProtocolId:=\"{bb7bb05e-5972-42b5-94fc-76eaa7084d49}\")";
-
-            _deviceWatcher =
-                    DeviceInformation.CreateWatcher(
-                        aqsAllBluetoothLEDevices,
-                        requestedProperties,
-                        DeviceInformationKind.AssociationEndpoint);
-
-            // Register event handlers before starting the watcher.
-            _deviceWatcher.Added += DeviceWatcher_Added;
-            _deviceWatcher.Updated += DeviceWatcher_Updated;
-
-            // Start the watcher.
-            _deviceWatcher.Start();
-        }
-
-        /// <summary>
-        /// Stops watching for all nearby Bluetooth devices.
-        /// </summary>
-        private void StopBleDeviceWatcher()
-        {
-            if (_deviceWatcher != null)
-            {
-                // Unregister the event handlers.
-                _deviceWatcher.Added -= DeviceWatcher_Added;
-                _deviceWatcher.Updated -= DeviceWatcher_Updated;
-
-                // Stop the watcher.
-                _deviceWatcher.Stop();
-                _deviceWatcher = null;
-            }
-        }
-
         private async Task OnDeviceDiscoveredAsync(DiscoveredDevice device)
         {
             // We must update the collection on the UI thread because the collection is databound to a UI element.
@@ -195,61 +138,6 @@ namespace LegoBoostController
             });
         }
 
-        private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
-        {
-            Debug.WriteLine(String.Format("Added Called for ID: {0} Name: {1}", deviceInfo.Id, deviceInfo.Name));
-
-            // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-            if (sender == _deviceWatcher)
-            {
-                // TODO: Make controller and controller2 more generic, allow either device to connect
-                if (!_controller.IsConnected && deviceInfo.Name == "LEGO Move Hub")
-                {
-                    await OnDeviceDiscoveredAsync(new DiscoveredDevice
-                    {
-                        Name = deviceInfo.Name,
-                        BluetoothDeviceId = deviceInfo.Id
-                    });
-
-                    _controller.SelectedBleDeviceId = deviceInfo.Id;
-                    await Connect(_controller, _notificationManager);
-                }
-
-                if (!_controller2.IsConnected && deviceInfo.Name == "Two Port Hub")
-                {
-                    await OnDeviceDiscoveredAsync(new DiscoveredDevice
-                    {
-                        Name = deviceInfo.Name,
-                        BluetoothDeviceId = deviceInfo.Id
-                    });
-
-                    _controller2.SelectedBleDeviceId = deviceInfo.Id;
-                    await Connect(_controller2, _notificationManager2);
-                }
-            }
-        }
-
-        private async void DeviceWatcher_Updated(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate)
-        {
-            // We must update the collection on the UI thread because the collection is databound to a UI element.
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                lock (this)
-                {
-                    Debug.WriteLine(String.Format("Updated {0}{1}", deviceInfoUpdate.Id, ""));
-
-                    // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                    if (sender == _deviceWatcher)
-                    {
-                        // Do we need to do anything?
-                    }
-                }
-            });
-        }
-
-        #endregion
-
-        #region Enumerating Services
         private async Task<bool> DisableNotifications()
         {
             foreach (var controller in _hubs)
@@ -279,12 +167,12 @@ namespace LegoBoostController
                 ConnectButton.IsEnabled = true;
                 DisconnectButton.IsEnabled = false;
                 ToggleButtons(false);
-                if (_controller.IsConnected)
+                if (_controller?.IsConnected == true)
                 {
                     await _controller.ExecuteCommandAsync(new DisconnectCommand());
                     _controller.Disconnect();
                 }
-                if (_controller2.IsConnected)
+                if (_controller2?.IsConnected == true)
                 {
                     await _controller2.ExecuteCommandAsync(new DisconnectCommand());
                     _controller2.Disconnect();
@@ -294,7 +182,8 @@ namespace LegoBoostController
 
         private async void ConnectButton_Click()
         {
-            await Connect(_controller, _notificationManager);
+            //await Connect(_controller, _notificationManager);
+            await Task.CompletedTask;
         }
 
         private async Task OnDeviceConnectedAsync(HubController controller, NotificationManager notificationManager, string errorMessage)
@@ -311,6 +200,13 @@ namespace LegoBoostController
                     if (controller.HubType == HubType.BoostMoveHub)
                     {
                         ToggleControls.IsEnabled = true;
+                        _controller = controller;
+                        _notificationManager = notificationManager;
+                    }
+                    else
+                    {
+                        _controller2 = controller;
+                        _notificationManager2 = notificationManager;
                     }
                     EnableCharacteristicPanels();
                 }
@@ -321,73 +217,6 @@ namespace LegoBoostController
                 await Task.CompletedTask;
             });
         }
-
-        private async Task<bool> Connect(HubController controller, NotificationManager notificationManager)
-        {
-            BluetoothLEDevice bluetoothLEDevice;
-
-            //if (!await DisconnectBluetoothLEDeviceAsync())
-            //{
-            //    _rootPage.NotifyUser("Error: Unable to reset state, try again.", NotifyType.ErrorMessage);
-            //    ConnectButton.IsEnabled = false;
-            //    return false;
-            //}
-
-            try
-            {
-                bluetoothLEDevice = await BluetoothLEDevice.FromIdAsync(controller.SelectedBleDeviceId);
-                if (bluetoothLEDevice == null)
-                {
-                    await OnDeviceConnectedAsync(null, null, "Failed to connect to device.");
-                    return false;
-                }
-            }
-            catch (Exception ex) when (ex.HResult == E_DEVICE_NOT_AVAILABLE)
-            {
-                await OnDeviceConnectedAsync(null, null, "Bluetooth radio is not on.");
-                return false;
-            }
-
-            if (bluetoothLEDevice != null)
-            {
-                GattDeviceServicesResult result = await bluetoothLEDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
-
-                if (result.Status == GattCommunicationStatus.Success)
-                {
-                    var services = result.Services;
-
-                    foreach (var service in services)
-                    {
-                        if (service.Uuid == new Guid(LegoHubService))
-                        {
-                            var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(LegoHubCharacteristic));
-                            foreach (var characteristic in characteristics.Characteristics)
-                            {
-                                await OnDeviceConnectedAsync(controller, notificationManager, "");
-
-                                controller.HubCharacteristic = characteristic;
-                                await ToggleSubscribedForNotifications(controller);
-                                await controller.ConnectAsync();
-                                await controller.ExecuteCommandAsync(new HubFirmwareCommand());
-                            }
-                        }
-                    }
-                    return true;
-                }
-                else
-                {
-                    await OnDeviceConnectedAsync(null, null, "Device unreachable");
-                    return false;
-                }
-            }
-            else
-            {
-                await OnDeviceConnectedAsync(null, null, "Failed to connect to device.");
-                ConnectButton.IsEnabled = true;
-                return false;
-            }
-        }
-        #endregion
 
         private void ToggleControls_Click()
         {

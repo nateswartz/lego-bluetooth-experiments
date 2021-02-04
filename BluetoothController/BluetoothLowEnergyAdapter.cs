@@ -24,6 +24,8 @@ namespace BluetoothController
         private NotificationManager _notificationManager2;
         private List<string> _notifications = new List<string>();
 
+        public bool Scanning { get; private set; } = false;
+
 
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
 
@@ -46,6 +48,7 @@ namespace BluetoothController
             _watcher.Received += ReceivedHandler;
 
             _watcher.Start();
+            Scanning = true;
 
             async void ReceivedHandler(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
             {
@@ -81,19 +84,16 @@ namespace BluetoothController
             }
         }
 
-        // TODO: Add this back in if needed
-        //public void StopBleDeviceWatcher()
-        //{
-        //    if (_deviceWatcher != null)
-        //    {
-        //        // Unregister the event handlers.
-        //        _deviceWatcher.Added -= DeviceWatcher_Added;
-
-        //        // Stop the watcher.
-        //        _deviceWatcher.Stop();
-        //        _deviceWatcher = null;
-        //    }
-        //}
+        public void StopBleDeviceWatcher()
+        {
+            if (_watcher != null)
+            {
+                // Stop the watcher.
+                _watcher.Stop();
+                Scanning = false;
+                _watcher = null;
+            }
+        }
 
         private async Task<bool> Connect(HubController controller, NotificationManager notificationManager, Func<HubController, NotificationManager, string, Task> connectionHandler)
         {
