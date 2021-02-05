@@ -2,15 +2,12 @@
 using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
-using BluetoothController.Util;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Storage.Streams;
 
 namespace BluetoothController
 {
@@ -20,8 +17,6 @@ namespace BluetoothController
 
         private HubController _controller;
         private HubController _controller2;
-
-        private List<string> _notifications = new List<string>();
 
         public bool Scanning { get; private set; } = false;
 
@@ -69,12 +64,6 @@ namespace BluetoothController
                 Scanning = false;
                 _watcher = null;
             }
-        }
-
-        public async Task DisconnectAsync(HubController controller)
-        {
-            await ToggleSubscribedForNotifications(controller);
-            await controller.DisconnectAsync();
         }
 
         private async void ReceivedHandler(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
@@ -144,8 +133,7 @@ namespace BluetoothController
                         {
                             controller.HubCharacteristic = characteristic;
                             controller.AddEventHandler(new SystemTypeUpdateHubTypeEventHandler(controller));
-                            await ToggleSubscribedForNotifications(controller);
-                            await controller.ConnectAsync();
+                            await controller.ConnectAsync(_notificationHandler);
                             await connectionHandler(controller, "");
                             await controller.ExecuteCommandAsync(new HubFirmwareCommand());
                         }
@@ -165,104 +153,6 @@ namespace BluetoothController
             }
         }
 
-        private async Task<bool> ToggleSubscribedForNotifications(HubController controller)
-        {
-            if (!controller.SubscribedForNotifications)
-            {
-                // initialize status
-                GattCommunicationStatus status = GattCommunicationStatus.Unreachable;
-                var cccdValue = GattClientCharacteristicConfigurationDescriptorValue.Notify;
 
-                try
-                {
-                    controller.HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                    controller.SubscribedForNotifications = true;
-                    // BT_Code: Must write the CCCD in order for server to send indications.
-                    // We receive them in the ValueChanged event handler.
-                    status = await controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(cccdValue);
-
-                    if (status == GattCommunicationStatus.Success)
-                    {
-                        //_rootPage.NotifyUser("Successfully subscribed for value changes", NotifyType.StatusMessage);
-                        return true;
-                    }
-                    else
-                    {
-                        controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                        controller.SubscribedForNotifications = false;
-                        //_rootPage.NotifyUser($"Error registering for value changes: {status}", NotifyType.ErrorMessage);
-                        return false;
-                    }
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    // This usually happens when a device reports that it support indicate, but it actually doesn't.
-                    //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-                    return false;
-                }
-            }
-            else
-            {
-                try
-                {
-                    // BT_Code: Must write the CCCD in order for server to send notifications.
-                    // We receive them in the ValueChanged event handler.
-                    // Note that this sample configures either Indicate or Notify, but not both.
-                    var result = await
-                        controller.HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                            GattClientCharacteristicConfigurationDescriptorValue.None);
-
-                    if (result == GattCommunicationStatus.Success)
-                    {
-                        controller.SubscribedForNotifications = false;
-
-                        controller.HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                        controller.SubscribedForNotifications = false;
-                        //_rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
-                        return true;
-                    }
-                    else
-                    {
-                        //_rootPage.NotifyUser($"Error un-registering for notifications: {result}", NotifyType.ErrorMessage);
-                        return false;
-                    }
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    // This usually happens when a device reports that it supports notify, but it actually doesn't.
-                    //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-                    return false;
-                }
-            }
-        }
-
-        private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
-        {
-            HubController controller;
-            if (sender == _controller.HubCharacteristic)
-            {
-                controller = _controller;
-            }
-            else if (sender == _controller2.HubCharacteristic)
-            {
-                controller = _controller2;
-            }
-            else
-            {
-                return;
-            }
-
-            var output = new byte[args.CharacteristicValue.Length];
-            var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
-            dataReader.ReadBytes(output);
-            var notification = DataConverter.ByteArrayToString(output);
-            var message = await controller.ProcessNotification(notification);
-            _notifications.Add(message);
-            if (_notifications.Count > 10)
-            {
-                _notifications.RemoveAt(0);
-            }
-            await _notificationHandler(controller, message);
-        }
     }
 }

@@ -53,7 +53,7 @@ namespace BluetoothLibraryTester
                 await Task.Delay(6000);
                 Console.WriteLine("Disconnecting soon...");
                 await Task.Delay(2000);
-                await _adapter.DisconnectAsync(controller);
+                await controller.DisconnectAsync();
                 _adapter.StopBleDeviceWatcher();
                 Console.WriteLine("Disconnected");
                 await Task.CompletedTask;
