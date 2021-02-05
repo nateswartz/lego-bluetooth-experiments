@@ -23,9 +23,9 @@ namespace BluetoothLibraryTester
             }
         }
 
-        static async Task HandleNotification(string message)
+        static async Task HandleNotification(HubController controller, string message)
         {
-            Console.WriteLine(message);
+            Console.WriteLine($"{controller.HubType}: {message}");
             await Task.CompletedTask;
         }
 
@@ -41,6 +41,7 @@ namespace BluetoothLibraryTester
             {
                 Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
                 await controller.ExecuteCommandAsync(new HubFirmwareCommand());
+                await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
                 Console.WriteLine($"Setting LED Yellow...");
                 await controller.ExecuteCommandAsync(new LEDBoostCommand(LEDColors.Yellow));
                 await Task.Delay(500);

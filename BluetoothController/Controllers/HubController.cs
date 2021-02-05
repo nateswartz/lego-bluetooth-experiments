@@ -19,17 +19,17 @@ namespace BluetoothController.Controllers
 
     public class HubController
     {
-        public GattCharacteristic HubCharacteristic { get; set; }
-
-        public PortState PortState { get; set; } = new PortState();
-
-        public string SelectedBleDeviceId { get; set; }
-
         public HubType HubType { get; set; }
 
         public bool IsConnected { get; private set; }
 
-        public bool SubscribedForNotifications { get; set; }
+        internal PortState PortState { get; set; } = new PortState();
+
+        internal string SelectedBleDeviceId { get; set; }
+
+        internal bool SubscribedForNotifications { get; set; }
+
+        internal GattCharacteristic HubCharacteristic { get; set; }
 
         private Dictionary<string, List<IEventHandler>> _eventHandlers { get; set; }
 

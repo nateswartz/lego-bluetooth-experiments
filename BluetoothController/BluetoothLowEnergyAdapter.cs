@@ -33,11 +33,11 @@ namespace BluetoothController
 
         private Func<DiscoveredDevice, Task> _discoveryHandler;
         private Func<HubController, string, Task> _connectionHandler;
-        private Func<string, Task> _notificationHandler;
+        private Func<HubController, string, Task> _notificationHandler;
 
         public BluetoothLowEnergyAdapter(Func<DiscoveredDevice, Task> discoveryHandler,
                                          Func<HubController, string, Task> connectionHandler,
-                                         Func<string, Task> notificationHandler)
+                                         Func<HubController, string, Task> notificationHandler)
         {
             _controller = new HubController();
             _controller2 = new HubController();
@@ -262,7 +262,7 @@ namespace BluetoothController
             {
                 _notifications.RemoveAt(0);
             }
-            await _notificationHandler(message);
+            await _notificationHandler(controller, message);
         }
     }
 }

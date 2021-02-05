@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace LegoBoostController
 {
@@ -64,16 +63,6 @@ namespace LegoBoostController
 
             _textCommandsController.SelectedRobot = robot;
             SampleCommands.Text = _textCommandsController.SampleCommandsText;
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            if (string.IsNullOrEmpty(_controller?.SelectedBleDeviceId))
-            {
-                ConnectButton.IsEnabled = false;
-                DisconnectButton.IsEnabled = false;
-                ToggleButtons(false);
-            }
         }
 
         private void ScanButton_Click()
@@ -130,16 +119,17 @@ namespace LegoBoostController
             });
         }
 
-        private async Task OnNotificationAsync(string message)
+        private async Task OnNotificationAsync(HubController controller, string message)
         {
+            var taggedMessage = $"{controller.HubType}: {message}";
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                _notifications.Add(message);
+                _notifications.Add(taggedMessage);
                 if (_notifications.Count > 10)
                 {
                     _notifications.RemoveAt(0);
                 }
-                Debug.WriteLine(message);
+                Debug.WriteLine(taggedMessage);
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () => CharacteristicLatestValue.Text = string.Join(Environment.NewLine, _notifications));
             });
@@ -152,13 +142,11 @@ namespace LegoBoostController
             ToggleButtons(false);
             if (_controller?.IsConnected == true)
             {
-                await _controller.ExecuteCommandAsync(new DisconnectCommand());
-                _controller.DisconnectAsync();
+                await _controller.DisconnectAsync();
             }
             if (_controller2?.IsConnected == true)
             {
-                await _controller2.ExecuteCommandAsync(new DisconnectCommand());
-                _controller2.DisconnectAsync();
+                await _controller2.DisconnectAsync();
             }
         }
 
@@ -255,35 +243,35 @@ namespace LegoBoostController
 
         private async void ToggleColorDistanceNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", _controller.PortState.CurrentColorDistanceSensorPort, "08");
+            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", PortType.ColorDistanceSensor, "08");
         }
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
             // 01 - Speed; 02 - Angle
             var notificationType = ExternalMotorNotificationTypeToggle.IsOn ? "02" : "01";
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _controller.PortState.CurrentExternalMotorPort, notificationType);
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", PortType.Motor, notificationType);
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleTiltSensorNotificationsButton, "Tilt Sensor", "3a", "04");
+            await ToggleNotification(ToggleTiltSensorNotificationsButton, "Tilt Sensor", PortType.Tilt, "04");
         }
 
-        private async Task<bool> ToggleNotification(Button button, string sensorType, string port, string sensorMode)
+        private async Task<bool> ToggleNotification(Button button, string sensorType, PortType port, string sensorMode)
         {
-            bool notificationsEnabled;
+            bool enableNotifications;
             if (button.Content.ToString() == $"Enable {sensorType} Notifications")
             {
-                notificationsEnabled = false;
+                enableNotifications = false;
                 button.Content = $"Disable {sensorType} Notifications";
             }
             else
             {
-                notificationsEnabled = true;
+                enableNotifications = true;
                 button.Content = $"Enable {sensorType} Notifications";
             }
-            return await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(notificationsEnabled, port, sensorMode));
+            return await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, enableNotifications, port, sensorMode));
         }
 
         private async void GetHubNameButton_Click()
@@ -320,7 +308,7 @@ namespace LegoBoostController
 
         private async void SyncLEDMotorButton_Click()
         {
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", _controller.PortState.CurrentExternalMotorPort, "01");
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", PortType.Motor, "01");
 
             if (!_controller.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {
