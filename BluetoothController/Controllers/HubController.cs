@@ -48,7 +48,7 @@ namespace BluetoothController.Controllers
             return await SetHexValueAsync(command.HexCommand);
         }
 
-        public async Task<bool> SetHexValueAsync(string hex)
+        private async Task<bool> SetHexValueAsync(string hex)
         {
             if (hex.Contains(" "))
             {

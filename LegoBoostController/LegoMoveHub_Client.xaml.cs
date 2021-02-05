@@ -216,7 +216,7 @@ namespace LegoBoostController
             var text = CharacteristicWriteValue.Text;
             if (!string.IsNullOrEmpty(text))
             {
-                await selectedHub.SetHexValueAsync(text);
+                await selectedHub.ExecuteCommandAsync(new RawCommand(text));
             }
             else
             {
