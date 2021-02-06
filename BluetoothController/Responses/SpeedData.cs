@@ -14,7 +14,7 @@ namespace BluetoothController.Responses
 
         public override string ToString()
         {
-            return $"External Motor Speed Data: Speed = {Speed} - {Body}";
+            return $"External Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)}";
         }
     }
 }

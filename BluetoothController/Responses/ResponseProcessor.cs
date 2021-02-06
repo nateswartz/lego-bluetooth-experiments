@@ -53,7 +53,8 @@ namespace BluetoothController.Responses
                     {
                         return new ColorDistanceData(notification);
                     }
-                    if (sensorData.Port == portState.CurrentExternalMotorPort)
+                    if (sensorData.Port == portState.CurrentExternalMotorPort ||
+                        sensorData.Port == portState.CurrentTrainMotorPort)
                     {
                         var externalMotorData = new ExternalMotorData(notification);
                         switch (externalMotorData.DataType)
