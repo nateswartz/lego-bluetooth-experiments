@@ -30,16 +30,19 @@ namespace BluetoothController.Responses
                     var portInfo = new PortInfo(notification);
                     switch (portInfo.DeviceType)
                     {
-                        case DeviceType.LEDState:
+                        case IOType.LEDState:
                             return new LEDState(notification);
-                        case DeviceType.ColorDistanceState:
+                        case IOType.ColorDistanceState:
                             portState.CurrentColorDistanceSensorPort = portInfo.Port;
                             return new ColorDistanceState(notification);
-                        case DeviceType.ExternalMotorState:
+                        case IOType.ExternalMotorState:
                             portState.CurrentExternalMotorPort = portInfo.Port;
                             return new ExternalMotorState(notification);
-                        case DeviceType.InternalMotorState:
+                        case IOType.InternalMotorState:
                             return new InternalMotorState(notification);
+                        case IOType.TrainMotor:
+                            portState.CurrentTrainMotorPort = portInfo.Port;
+                            return new TrainMotorState(notification);
                     }
                     return portInfo;
                 case MessageType.Error:

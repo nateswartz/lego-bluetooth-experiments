@@ -41,13 +41,28 @@ namespace BluetoothLibraryTester
             {
                 Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
                 await controller.ExecuteCommandAsync(new HubFirmwareCommand());
-                await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
+                //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
                 Console.WriteLine($"Setting LED Yellow...");
                 await controller.ExecuteCommandAsync(new LEDBoostCommand(LEDColors.Yellow));
                 await Task.Delay(500);
-                Console.WriteLine($"Registering for Button notifications...");
-                await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
+                //Console.WriteLine($"Registering for Button notifications...");
+                //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
                 await Task.Delay(500);
+
+                Console.WriteLine("Registering for motor notifications");
+                await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.TrainMotor, "01"));
+                await Task.Delay(500);
+
+                Console.WriteLine("Running motor...");
+                await controller.ExecuteCommandAsync(new TrainMotorBoostCommand(controller));
+                await Task.Delay(500);
+                //Console.WriteLine("Running motor...");
+                //await controller.ExecuteCommandAsync(new MotorBoostCommand(Motors.A, 70, 2000, true, ""));
+                //await Task.Delay(500);
+                //Console.WriteLine("Running motor...");
+                //await controller.ExecuteCommandAsync(new MotorBoostCommand(Motors.A, 90, 2000, false, ""));
+                //await Task.Delay(500);
+
                 Console.WriteLine("Registering Event handler to change LED on Button press...");
                 controller.AddEventHandler(new ButtonToLEDEventHandler(controller));
                 await Task.Delay(6000);

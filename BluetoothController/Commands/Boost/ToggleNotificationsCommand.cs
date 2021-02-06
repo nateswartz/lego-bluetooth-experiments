@@ -6,7 +6,8 @@ namespace BluetoothController.Commands.Boost
     {
         Motor = 0,
         ColorDistanceSensor = 1,
-        Tilt = 2
+        Tilt = 2,
+        TrainMotor = 3
     }
 
     public class ToggleNotificationsCommand : IBoostCommand
@@ -27,6 +28,10 @@ namespace BluetoothController.Commands.Boost
                     break;
                 case PortType.ColorDistanceSensor:
                     port = controller.PortState.CurrentColorDistanceSensorPort;
+                    break;
+                // TODO: Get TrainMotor case working
+                case PortType.TrainMotor:
+                    port = controller.PortState.CurrentTrainMotorPort;
                     break;
             }
 

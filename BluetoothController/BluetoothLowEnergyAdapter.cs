@@ -3,6 +3,7 @@ using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
@@ -15,8 +16,7 @@ namespace BluetoothController
     {
         private BluetoothLEAdvertisementWatcher _watcher;
 
-        private HubController _controller;
-        private HubController _controller2;
+        private List<HubController> _controllers;
 
         public bool Scanning { get; private set; } = false;
 
@@ -26,6 +26,8 @@ namespace BluetoothController
         private const string LegoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
         private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
+        private object _lock = new object();
+
         private Func<DiscoveredDevice, Task> _discoveryHandler;
         private Func<HubController, string, Task> _connectionHandler;
         private Func<HubController, string, Task> _notificationHandler;
@@ -34,11 +36,10 @@ namespace BluetoothController
                                          Func<HubController, string, Task> connectionHandler,
                                          Func<HubController, string, Task> notificationHandler)
         {
-            _controller = new HubController();
-            _controller2 = new HubController();
             _discoveryHandler = discoveryHandler;
             _connectionHandler = connectionHandler;
             _notificationHandler = notificationHandler;
+            _controllers = new List<HubController>();
         }
 
         public void StartBleDeviceWatcher()
@@ -70,32 +71,32 @@ namespace BluetoothController
         {
             using (var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result)
             {
+                HubController controller;
+
                 if (device == null)
                     return;
 
-                if (string.IsNullOrEmpty(_controller.SelectedBleDeviceId) && device.Name == "LEGO Move Hub")
-                {
-                    _controller.SelectedBleDeviceId = device.DeviceId;
+                if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(LegoHubService)))
+                    return;
 
-                    await _discoveryHandler(new DiscoveredDevice
+                lock (_lock)
+                {
+                    if (_controllers.Any(c => c.SelectedBleDeviceId == device.DeviceId))
+                        return;
+
+                    controller = new HubController
                     {
-                        Name = device.Name,
-                        BluetoothDeviceId = device.DeviceId
-                    });
-                    await Connect(_controller, _connectionHandler);
+                        SelectedBleDeviceId = device.DeviceId
+                    };
+                    _controllers.Add(controller);
                 }
 
-                if (string.IsNullOrEmpty(_controller2.SelectedBleDeviceId) && device.Name == "Two Port Hub")
+                await _discoveryHandler(new DiscoveredDevice
                 {
-                    _controller2.SelectedBleDeviceId = device.DeviceId;
-
-                    await _discoveryHandler(new DiscoveredDevice
-                    {
-                        Name = device.Name,
-                        BluetoothDeviceId = device.DeviceId
-                    });
-                    await Connect(_controller2, _connectionHandler);
-                }
+                    Name = device.Name,
+                    BluetoothDeviceId = device.DeviceId
+                });
+                await Connect(controller, _connectionHandler);
             }
         }
 
