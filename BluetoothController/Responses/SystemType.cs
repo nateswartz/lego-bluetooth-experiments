@@ -8,7 +8,21 @@ namespace BluetoothController.Responses
 
         public SystemType(string body) : base(body)
         {
-            HubType = Body.Substring(10, 2) == "41" ? HubType.TwoPortHub : HubType.BoostMoveHub;
+            switch (Body.Substring(10, 2))
+            {
+                case "40":
+                    HubType = HubType.BoostMoveHub;
+                    break;
+                case "41":
+                    HubType = HubType.TwoPortHub;
+                    break;
+                case "42":
+                    HubType = HubType.TwoPortHandset;
+                    break;
+                default:
+                    HubType = HubType.Unknown;
+                    break;
+            }
             NotificationType = GetType().Name;
         }
 

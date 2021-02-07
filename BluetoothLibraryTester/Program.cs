@@ -25,9 +25,16 @@ namespace BluetoothLibraryTester
                 await Task.Delay(100);
             }
 
-            await RunCommands();
+            await GetName();
+            //await RunCommands();
 
             await Disconnect();
+        }
+
+        static async Task GetName()
+        {
+            await _controller.ExecuteCommandAsync(new HubNameCommand());
+            await Task.Delay(4000);
         }
 
         static async Task RunCommands()
@@ -72,7 +79,7 @@ namespace BluetoothLibraryTester
         {
             Console.WriteLine("Disconnecting soon...");
             await Task.Delay(2000);
-            await _controller.ExecuteCommandAsync(new ShutdownCommand());
+            await _controller.ExecuteCommandAsync(new DisconnectCommand());
             Console.WriteLine("Disconnected");
         }
 
@@ -92,7 +99,7 @@ namespace BluetoothLibraryTester
         {
             if (controller != null)
             {
-                _adapter.StopBleDeviceWatcher();
+                //_adapter.StopBleDeviceWatcher();
 
                 _controller = controller;
 
