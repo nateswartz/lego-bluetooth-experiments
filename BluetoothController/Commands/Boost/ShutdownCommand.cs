@@ -2,14 +2,14 @@
 
 namespace BluetoothController.Commands.Boost
 {
-    public class DisconnectCommand : IBoostCommand
+    public class ShutdownCommand : IBoostCommand
     {
         public string HexCommand { get; set; }
 
-        public DisconnectCommand()
+        public ShutdownCommand()
         {
             var messageType = "02"; // Hub Action
-            var actionType = "02"; // Disconnect
+            var actionType = "01"; // Disconnect
             HexCommand = CommandHelper.AddHeader($"{messageType}{actionType}");
         }
     }

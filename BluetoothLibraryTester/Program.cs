@@ -72,7 +72,7 @@ namespace BluetoothLibraryTester
         {
             Console.WriteLine("Disconnecting soon...");
             await Task.Delay(2000);
-            await _controller.DisconnectAsync();
+            await _controller.ExecuteCommandAsync(new ShutdownCommand());
             Console.WriteLine("Disconnected");
         }
 

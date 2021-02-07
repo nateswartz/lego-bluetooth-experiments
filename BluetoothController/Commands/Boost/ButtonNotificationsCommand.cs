@@ -1,4 +1,6 @@
-﻿namespace BluetoothController.Commands.Boost
+﻿using BluetoothController.Util;
+
+namespace BluetoothController.Commands.Boost
 {
     public class ButtonNotificationsCommand : IBoostCommand
     {
@@ -6,11 +8,10 @@
 
         public ButtonNotificationsCommand(bool enabled)
         {
-            var messageLength = "05"; // 5 bytes
             var messageType = "01"; // Device info
             var infoType = "02"; // Button
             var action = enabled ? "02" : "03";
-            HexCommand = $"{messageLength}00{messageType}{infoType}{action}";
+            HexCommand = CommandHelper.AddHeader($"{messageType}{infoType}{action}");
         }
     }
 }
