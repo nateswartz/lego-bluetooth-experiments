@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Models;
+using BluetoothController.Util;
 
 namespace BluetoothController.Commands.Boost
 {
@@ -27,7 +28,7 @@ namespace BluetoothController.Commands.Boost
                 power = (255 - powerPercentage).ToString("X");
             }
             power = power.PadLeft(2, '0');
-            HexCommand = $"0c0081{motorToRun}1109{time}{power}647f03";
+            HexCommand = CommandHelper.AddHeader($"81{motorToRun}1109{time}{power}647f03)");
         }
     }
 }

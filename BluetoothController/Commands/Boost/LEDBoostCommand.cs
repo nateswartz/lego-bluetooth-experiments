@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Models;
+using BluetoothController.Util;
 
 namespace BluetoothController.Commands.Boost
 {
@@ -8,7 +9,7 @@ namespace BluetoothController.Commands.Boost
 
         public LEDBoostCommand(LEDColor color)
         {
-            HexCommand = $"08008132115100{color.Code}";
+            HexCommand = CommandHelper.AddHeader($"8132115100{color.Code}");
         }
     }
 }

@@ -10,7 +10,7 @@ namespace BluetoothController.Commands.Boost
         {
             var messageType = "02"; // Hub Action
             var actionType = "02"; // Disconnect
-            HexCommand = CommandHelper.AddHeader($"{messageType}{actionType}");
+            HexCommand = CommandHelper.AddHeader($"{messageType}{actionType}"); ;
         }
     }
 }
