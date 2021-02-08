@@ -30,19 +30,22 @@ namespace BluetoothController.Responses
                     var portInfo = new PortInfo(notification);
                     switch (portInfo.DeviceType)
                     {
-                        case IOType.LEDState:
+                        case IOType.LED:
                             return new LEDState(notification);
-                        case IOType.ColorDistanceState:
+                        case IOType.ColorDistance:
                             portState.CurrentColorDistanceSensorPort = portInfo.Port;
                             return new ColorDistanceState(notification);
-                        case IOType.ExternalMotorState:
+                        case IOType.ExternalMotor:
                             portState.CurrentExternalMotorPort = portInfo.Port;
                             return new ExternalMotorState(notification);
-                        case IOType.InternalMotorState:
+                        case IOType.InternalMotor:
                             return new InternalMotorState(notification);
                         case IOType.TrainMotor:
                             portState.CurrentTrainMotorPort = portInfo.Port;
                             return new TrainMotorState(notification);
+                        case IOType.RemoteButton:
+                            portState.IsTwoHubRemote = true;
+                            return new RemoteButtonState(notification);
                     }
                     return portInfo;
                 case MessageType.Error:
@@ -73,6 +76,10 @@ namespace BluetoothController.Responses
                     if (sensorData.Port == VOLTAGE_SENSOR_PORT)
                     {
                         return new VoltageData(notification);
+                    }
+                    if (portState.IsTwoHubRemote && (sensorData.Port == "00" || sensorData.Port == "01"))
+                    {
+                        return new RemoteButtonData(notification);
                     }
                     return sensorData;
             }

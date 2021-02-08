@@ -1,7 +1,6 @@
 ﻿using BluetoothController;
 using BluetoothController.Commands.Boost;
 using BluetoothController.Controllers;
-using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using System;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ namespace BluetoothLibraryTester
             }
 
             await GetName();
-            //await RunCommands();
+            await RunCommands();
 
             await Disconnect();
         }
@@ -41,26 +40,26 @@ namespace BluetoothLibraryTester
         {
             await _controller.ExecuteCommandAsync(new HubFirmwareCommand());
             //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
-            Console.WriteLine($"Setting LED Yellow...");
-            await _controller.ExecuteCommandAsync(new LEDBoostCommand(LEDColors.Yellow));
+            Console.WriteLine($"Setting LED Pink...");
+            await _controller.ExecuteCommandAsync(new LEDBoostCommand(LEDColors.Pink));
             await Task.Delay(500);
             //Console.WriteLine($"Registering for Button notifications...");
             //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
             await Task.Delay(500);
 
-            Console.WriteLine("Registering for motor notifications");
-            await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, true, PortType.TrainMotor, "00"));
+            Console.WriteLine("Registering for remote button notifications");
+            await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, true, PortType.RemoteButtonA, "03"));
             await Task.Delay(500);
 
-            Console.WriteLine("Running motor...");
-            await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 50, true));
-            await Task.Delay(2000);
-            Console.WriteLine("Running motor...");
-            await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 20, true));
-            await Task.Delay(2000);
-            Console.WriteLine("Running motor...");
-            await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 0, true));
-            await Task.Delay(2000);
+            //Console.WriteLine("Running motor...");
+            //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 50, true));
+            //await Task.Delay(2000);
+            //Console.WriteLine("Running motor...");
+            //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 20, true));
+            //await Task.Delay(2000);
+            //Console.WriteLine("Running motor...");
+            //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 0, true));
+            //await Task.Delay(2000);
             //Console.WriteLine("Running motor...");
             //await controller.ExecuteCommandAsync(new MotorBoostCommand(Motors.A, 70, 2000, true, ""));
             //await Task.Delay(500);
@@ -68,8 +67,8 @@ namespace BluetoothLibraryTester
             //await controller.ExecuteCommandAsync(new MotorBoostCommand(Motors.A, 90, 2000, false, ""));
             //await Task.Delay(500);
 
-            Console.WriteLine("Registering Event handler to change LED on Button press...");
-            _controller.AddEventHandler(new ButtonToLEDEventHandler(_controller));
+            //Console.WriteLine("Registering Event handler to change LED on Button press...");
+            //_controller.AddEventHandler(new ButtonToLEDEventHandler(_controller));
             await Task.Delay(6000);
 
             await Task.CompletedTask;

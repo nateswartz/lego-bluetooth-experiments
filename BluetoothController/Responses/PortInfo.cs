@@ -5,10 +5,11 @@ namespace BluetoothController.Responses
     public enum IOType
     {
         TrainMotor = 2,
-        LEDState = 23,
-        ColorDistanceState = 37,
-        ExternalMotorState = 38,
-        InternalMotorState = 39
+        LED = 23,
+        ColorDistance = 37,
+        ExternalMotor = 38,
+        InternalMotor = 39,
+        RemoteButton = 55
     }
 
     public class PortInfo : Response
@@ -44,7 +45,7 @@ namespace BluetoothController.Responses
 
         public override string ToString()
         {
-            return $"Unknown Device on port: {PortLetter}({Port})";
+            return $"Unknown Device on port: {PortLetter}({Port}) - {Body}";
         }
     }
 }

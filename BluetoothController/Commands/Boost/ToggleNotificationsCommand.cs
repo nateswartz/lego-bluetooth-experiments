@@ -8,9 +8,11 @@ namespace BluetoothController.Commands.Boost
         Motor = 0,
         ColorDistanceSensor = 1,
         Tilt = 2,
-        TrainMotor = 3
+        TrainMotor = 3,
+        RemoteButtonA = 4,
+        RemoteButtonB = 5
     }
-
+    //0A-00-41-00-03-01-00-00-00-01
     public class ToggleNotificationsCommand : IBoostCommand
     {
         public string HexCommand { get; set; }
@@ -31,6 +33,12 @@ namespace BluetoothController.Commands.Boost
                     break;
                 case PortType.TrainMotor:
                     port = controller.PortState.CurrentTrainMotorPort;
+                    break;
+                case PortType.RemoteButtonA:
+                    port = "00";
+                    break;
+                case PortType.RemoteButtonB:
+                    port = "01";
                     break;
             }
 

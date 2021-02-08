@@ -1,15 +1,15 @@
 ﻿namespace BluetoothController.Responses
 {
-    public class TrainMotorState : PortInfo
+    public class RemoteButtonState : PortInfo
     {
-        public TrainMotorState(string body) : base(body)
+        public RemoteButtonState(string body) : base(body)
         {
             NotificationType = GetType().Name;
         }
 
         public override string ToString()
         {
-            return $"Train Motor on port: {PortLetter}({Port}) - {Body}";
+            return $"Remote Button on port: {PortLetter}({Port}) - {Body}";
         }
     }
 }
