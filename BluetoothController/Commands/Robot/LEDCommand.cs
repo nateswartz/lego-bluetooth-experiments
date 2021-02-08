@@ -19,7 +19,7 @@ namespace BluetoothController.Commands.Robot
             if (m.Groups.Count == 2)
             {
                 var color = m.Groups[1].Value;
-                var command = new LEDBoostCommand(LEDColors.GetByName(color));
+                var command = new LEDBoostCommand(controller, LEDColors.GetByName(color));
                 await controller.ExecuteCommandAsync(command);
             }
         }

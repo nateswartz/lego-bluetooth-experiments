@@ -52,7 +52,7 @@ namespace LegoBoostController
 
             var selectedHub = HubSelectCombo.SelectedItem as HubController;
 
-            await selectedHub.ExecuteCommandAsync(new LEDBoostCommand(color));
+            await selectedHub.ExecuteCommandAsync(new LEDBoostCommand(selectedHub, color));
         }
 
         private void RobotSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using BluetoothController;
 using BluetoothController.Commands.Boost;
 using BluetoothController.Controllers;
+using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using System;
 using System.Threading.Tasks;
@@ -40,16 +41,17 @@ namespace BluetoothLibraryTester
         {
             await _controller.ExecuteCommandAsync(new HubFirmwareCommand());
             //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
-            Console.WriteLine($"Setting LED Pink...");
-            await _controller.ExecuteCommandAsync(new LEDBoostCommand(LEDColors.Pink));
-            await Task.Delay(500);
+            //Console.WriteLine($"Setting LED Pink...");
+            //await _controller.ExecuteCommandAsync(new LEDBoostCommand(_controller, LEDColors.Pink));
+            //await Task.Delay(500);
             //Console.WriteLine($"Registering for Button notifications...");
             //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
+            _controller.AddEventHandler(new RemoteButtonToLEDEventHandler(_controller));
             await Task.Delay(500);
 
-            //Console.WriteLine("Registering for remote button notifications");
-            //await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, true, PortType.RemoteButtonA, "03"));
-            //await Task.Delay(500);
+            Console.WriteLine("Registering for remote button notifications");
+            await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, true, PortType.RemoteButtonA, "03"));
+            await Task.Delay(500);
 
             //Console.WriteLine("Running motor...");
             //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 50, true));
