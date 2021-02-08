@@ -9,7 +9,9 @@ namespace BluetoothController.Commands.Boost
 
         public LEDBoostCommand(LEDColor color)
         {
-            HexCommand = CommandHelper.AddHeader($"8132115100{color.Code}");
+            // TODO: For remote, port is 34, not 32
+            var port = "32";
+            HexCommand = CommandHelper.AddHeader($"81{port}115100{color.Code}");
         }
     }
 }

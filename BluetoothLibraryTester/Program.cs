@@ -47,9 +47,9 @@ namespace BluetoothLibraryTester
             //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
             await Task.Delay(500);
 
-            Console.WriteLine("Registering for remote button notifications");
-            await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, true, PortType.RemoteButtonA, "03"));
-            await Task.Delay(500);
+            //Console.WriteLine("Registering for remote button notifications");
+            //await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, true, PortType.RemoteButtonA, "03"));
+            //await Task.Delay(500);
 
             //Console.WriteLine("Running motor...");
             //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 50, true));
