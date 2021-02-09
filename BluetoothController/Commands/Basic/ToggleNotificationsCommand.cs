@@ -1,7 +1,7 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.Util;
 
-namespace BluetoothController.Commands.Boost
+namespace BluetoothController.Commands.Basic
 {
     public enum PortType
     {
@@ -13,7 +13,7 @@ namespace BluetoothController.Commands.Boost
         RemoteButtonB = 5
     }
     //0A-00-41-00-03-01-00-00-00-01
-    public class ToggleNotificationsCommand : IBoostCommand
+    public class ToggleNotificationsCommand : IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 

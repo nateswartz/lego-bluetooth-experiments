@@ -1,4 +1,4 @@
-﻿using BluetoothController.Commands.Boost;
+﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.Commands.Robot
 {
-    public abstract class MotorCommand
+    public abstract class MotorRobotCommand
     {
         public async Task RunAsync(HubController controller, string commandText, string clockwiseKeyword, Motor motor)
         {
@@ -17,7 +17,7 @@ namespace BluetoothController.Commands.Robot
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var clockWise = commandText.StartsWith(clockwiseKeyword);
-                var command = new MotorBoostCommand(Motors.External, speed, time, clockWise, controller.GetCurrentExternalMotorPort());
+                var command = new MotorCommand(Motors.External, speed, time, clockWise, controller.GetCurrentExternalMotorPort());
                 await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);
             }

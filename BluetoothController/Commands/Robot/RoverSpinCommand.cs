@@ -1,4 +1,4 @@
-﻿using BluetoothController.Commands.Boost;
+﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
@@ -23,7 +23,7 @@ namespace BluetoothController.Commands.Robot
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var direction = m.Groups[3].Value;
                 var motor = direction == "clockwise" ? Motors.A : Motors.B;
-                var command = new MotorBoostCommand(motor, speed, time, true, controller.GetCurrentExternalMotorPort());
+                var command = new MotorCommand(motor, speed, time, true, controller.GetCurrentExternalMotorPort());
                 await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);
             }

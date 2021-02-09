@@ -2,13 +2,13 @@
 using BluetoothController.Models;
 using BluetoothController.Util;
 
-namespace BluetoothController.Commands.Boost
+namespace BluetoothController.Commands.Basic
 {
-    public class LEDBoostCommand : IBoostCommand
+    public class LEDCommand : IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 
-        public LEDBoostCommand(HubController controller, LEDColor color)
+        public LEDCommand(HubController controller, LEDColor color)
         {
             string port = "00";
             switch (controller.HubType)

@@ -1,6 +1,6 @@
-﻿namespace BluetoothController.Commands.Boost
+﻿namespace BluetoothController.Commands.Basic
 {
-    public class DisconnectCommand : HubActionCommand, IBoostCommand
+    public class DisconnectCommand : HubActionCommand, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 

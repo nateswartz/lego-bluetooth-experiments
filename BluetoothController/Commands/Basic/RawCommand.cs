@@ -1,6 +1,6 @@
-﻿namespace BluetoothController.Commands.Boost
+﻿namespace BluetoothController.Commands.Basic
 {
-    public class RawCommand : IBoostCommand
+    public class RawCommand : IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 

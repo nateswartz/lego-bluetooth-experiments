@@ -1,4 +1,4 @@
-﻿using BluetoothController.Commands.Boost;
+﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.Commands.Robot
 {
-    public class LEDCommand : IRobotCommand
+    public class LEDRobotCommand : IRobotCommand
     {
         public IEnumerable<string> Keywords { get => new List<string> { "led" }; }
 
@@ -19,7 +19,7 @@ namespace BluetoothController.Commands.Robot
             if (m.Groups.Count == 2)
             {
                 var color = m.Groups[1].Value;
-                var command = new LEDBoostCommand(controller, LEDColors.GetByName(color));
+                var command = new LEDCommand(controller, LEDColors.GetByName(color));
                 await controller.ExecuteCommandAsync(command);
             }
         }

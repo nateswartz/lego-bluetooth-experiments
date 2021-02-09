@@ -1,4 +1,4 @@
-﻿using BluetoothController.Commands.Boost;
+﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;

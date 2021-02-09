@@ -1,5 +1,5 @@
 using BluetoothController;
-using BluetoothController.Commands.Boost;
+using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
@@ -52,7 +52,7 @@ namespace LegoBoostController
 
             var selectedHub = HubSelectCombo.SelectedItem as HubController;
 
-            await selectedHub.ExecuteCommandAsync(new LEDBoostCommand(selectedHub, color));
+            await selectedHub.ExecuteCommandAsync(new LEDCommand(selectedHub, color));
         }
 
         private void RobotSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -343,7 +343,7 @@ namespace LegoBoostController
             var clockwise = DirectionToggle.IsOn;
             if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
-                var command = new MotorBoostCommand((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise, _controller.GetCurrentExternalMotorPort());
+                var command = new MotorCommand((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise, _controller.GetCurrentExternalMotorPort());
                 await _controller.ExecuteCommandAsync(command);
             }
             else

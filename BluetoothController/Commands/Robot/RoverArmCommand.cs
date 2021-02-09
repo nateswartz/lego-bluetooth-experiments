@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.Commands.Robot
 {
-    public class RoverArmCommand : MotorCommand, IRobotCommand
+    public class RoverArmCommand : MotorRobotCommand, IRobotCommand
     {
         public IEnumerable<string> Keywords { get => new List<string> { "raise", "lower" }; }
 

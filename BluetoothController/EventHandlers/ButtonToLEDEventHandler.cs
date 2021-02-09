@@ -1,4 +1,4 @@
-﻿using BluetoothController.Commands.Boost;
+﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
@@ -30,7 +30,7 @@ namespace BluetoothController.EventHandlers
             {
                 color = LEDColors.Purple;
             }
-            var command = new LEDBoostCommand(_controller, color);
+            var command = new LEDCommand(_controller, color);
             await _controller.ExecuteCommandAsync(command);
         }
     }

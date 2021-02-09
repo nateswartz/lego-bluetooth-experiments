@@ -1,4 +1,4 @@
-﻿using BluetoothController.Commands.Boost;
+﻿using BluetoothController.Commands.Basic;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
@@ -50,7 +50,7 @@ namespace BluetoothController.Controllers
             return PortState.CurrentExternalMotorPort;
         }
 
-        public async Task<bool> ExecuteCommandAsync(IBoostCommand command)
+        public async Task<bool> ExecuteCommandAsync(IPoweredUpCommand command)
         {
             return await SetHexValueAsync(command.HexCommand);
         }

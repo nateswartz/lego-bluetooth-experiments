@@ -1,13 +1,13 @@
 ﻿using BluetoothController.Models;
 using BluetoothController.Util;
 
-namespace BluetoothController.Commands.Boost
+namespace BluetoothController.Commands.Basic
 {
-    public class MotorBoostCommand : IBoostCommand
+    public class MotorCommand : IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 
-        public MotorBoostCommand(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true, string currentExternalMotorPort = "")
+        public MotorCommand(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true, string currentExternalMotorPort = "")
         {
             string motorToRun = motor.Code;
             if (motor == Motors.External)

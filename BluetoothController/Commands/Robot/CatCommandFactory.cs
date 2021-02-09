@@ -9,7 +9,7 @@ namespace BluetoothController.Commands.Robot
         private IEnumerable<IRobotCommand> _commands =
             new List<IRobotCommand>
             {
-                new LEDCommand(),
+                new LEDRobotCommand(),
                 new CatMoveLegsCommand(),
                 new CatSitStandCommand(),
                 new CatMoveTailCommand(),

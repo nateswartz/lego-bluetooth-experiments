@@ -12,7 +12,7 @@ namespace BluetoothController.Commands.Robot
                 new RoverMoveCommand(),
                 new RoverSpinCommand(),
                 new RoverArmCommand(),
-                new LEDCommand()
+                new LEDRobotCommand()
             };
 
         public IRobotCommand GetCommand(string keyword)
