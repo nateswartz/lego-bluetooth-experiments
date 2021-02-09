@@ -1,12 +1,12 @@
 ﻿using BluetoothController.Util;
 
-namespace BluetoothController.Commands.Basic
+namespace BluetoothController.Commands.Abstract
 {
-    public abstract class TypedCommand
+    public abstract class CommandType
     {
         public string MessageType { get; set; }
 
-        public TypedCommand(string messageType)
+        public CommandType(string messageType)
         {
             MessageType = messageType;
         }

@@ -1,9 +1,10 @@
-﻿using BluetoothController.Controllers;
+﻿using BluetoothController.Commands.Abstract;
+using BluetoothController.Controllers;
 using BluetoothController.Models;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class LEDCommand : PortOutputCommand, IPoweredUpCommand
+    public class LEDCommand : PortOutputCommandType, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 

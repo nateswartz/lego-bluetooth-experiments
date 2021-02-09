@@ -1,8 +1,9 @@
-﻿using BluetoothController.Controllers;
+﻿using BluetoothController.Commands.Abstract;
+using BluetoothController.Controllers;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class TrainMotorCommand : PortOutputCommand, IPoweredUpCommand
+    public class TrainMotorCommand : PortOutputCommandType, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 

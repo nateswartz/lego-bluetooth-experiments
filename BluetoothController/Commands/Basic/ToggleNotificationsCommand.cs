@@ -1,4 +1,5 @@
-﻿using BluetoothController.Controllers;
+﻿using BluetoothController.Commands.Abstract;
+using BluetoothController.Controllers;
 
 namespace BluetoothController.Commands.Basic
 {
@@ -12,7 +13,7 @@ namespace BluetoothController.Commands.Basic
         RemoteButtonB = 5
     }
 
-    public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommand, IPoweredUpCommand
+    public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommandType, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 

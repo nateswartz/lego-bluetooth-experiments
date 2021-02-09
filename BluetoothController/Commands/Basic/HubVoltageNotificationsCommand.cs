@@ -1,6 +1,8 @@
-﻿namespace BluetoothController.Commands.Basic
+﻿using BluetoothController.Commands.Abstract;
+
+namespace BluetoothController.Commands.Basic
 {
-    public class HubVoltageNotificationsCommand : PortInputFormatSetupSingleCommand, IPoweredUpCommand
+    public class HubVoltageNotificationsCommand : PortInputFormatSetupSingleCommandType, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 
