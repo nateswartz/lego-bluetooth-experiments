@@ -1,9 +1,8 @@
 ﻿using BluetoothController.Models;
-using BluetoothController.Util;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class MotorCommand : IPoweredUpCommand
+    public class MotorCommand : PortOutputCommand, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 
@@ -18,7 +17,7 @@ namespace BluetoothController.Commands.Basic
             // For time, LSB first
             var time = timeInMS.ToString("X").PadLeft(4, '0');
             time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
-            var power = "";
+            string power;
             if (clockwise)
             {
                 power = powerPercentage.ToString("X");
@@ -28,7 +27,7 @@ namespace BluetoothController.Commands.Basic
                 power = (255 - powerPercentage).ToString("X");
             }
             power = power.PadLeft(2, '0');
-            HexCommand = CommandHelper.AddHeader($"81{motorToRun}1109{time}{power}647f03)");
+            HexCommand = AddHeader($"{motorToRun}1109{time}{power}647f03)");
         }
     }
 }

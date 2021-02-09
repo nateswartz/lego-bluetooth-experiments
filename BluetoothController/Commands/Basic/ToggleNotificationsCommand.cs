@@ -1,5 +1,4 @@
 ﻿using BluetoothController.Controllers;
-using BluetoothController.Util;
 
 namespace BluetoothController.Commands.Basic
 {
@@ -12,8 +11,8 @@ namespace BluetoothController.Commands.Basic
         RemoteButtonA = 4,
         RemoteButtonB = 5
     }
-    //0A-00-41-00-03-01-00-00-00-01
-    public class ToggleNotificationsCommand : IPoweredUpCommand
+
+    public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommand, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 
@@ -43,7 +42,7 @@ namespace BluetoothController.Commands.Basic
             }
 
             var state = enableNotifications ? "01" : "00"; // 01 - On; 00 - Off
-            HexCommand = CommandHelper.AddHeader($"41{port}{sensorMode}01000000{state}");
+            HexCommand = AddHeader($"{port}{sensorMode}01000000{state}");
         }
     }
 }

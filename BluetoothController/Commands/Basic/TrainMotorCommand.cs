@@ -1,15 +1,13 @@
 ﻿using BluetoothController.Controllers;
-using BluetoothController.Util;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class TrainMotorCommand : IPoweredUpCommand
+    public class TrainMotorCommand : PortOutputCommand, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 
         public TrainMotorCommand(HubController controller, int powerPercentage, bool clockwise)
         {
-            string commandType = "81"; // Port Output Command
             string motorToRun = controller.PortState.CurrentTrainMotorPort;
             string startupCompletion = "11"; // Execute immediately / Command feedback
             string subCommand = "51"; // WriteDirectModeData
@@ -23,7 +21,7 @@ namespace BluetoothController.Commands.Basic
                 power = (255 - powerPercentage).ToString("X");
             }
 
-            HexCommand = CommandHelper.AddHeader($"{commandType}{motorToRun}{startupCompletion}{subCommand}00{power}");
+            HexCommand = AddHeader($"{motorToRun}{startupCompletion}{subCommand}00{power}");
         }
     }
 }

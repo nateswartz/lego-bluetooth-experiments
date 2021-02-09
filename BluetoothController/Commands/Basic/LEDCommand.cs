@@ -1,10 +1,9 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.Models;
-using BluetoothController.Util;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class LEDCommand : IPoweredUpCommand
+    public class LEDCommand : PortOutputCommand, IPoweredUpCommand
     {
         public string HexCommand { get; set; }
 
@@ -21,7 +20,7 @@ namespace BluetoothController.Commands.Basic
                     port = "34";
                     break;
             }
-            HexCommand = CommandHelper.AddHeader($"81{port}115100{color.Code}");
+            HexCommand = AddHeader($"{port}115100{color.Code}");
         }
     }
 }
