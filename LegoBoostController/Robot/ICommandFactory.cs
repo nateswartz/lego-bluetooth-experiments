@@ -1,4 +1,4 @@
-﻿namespace BluetoothController.Commands.Robot
+﻿namespace LegoBoostController.Robot
 {
     public interface ICommandFactory
     {

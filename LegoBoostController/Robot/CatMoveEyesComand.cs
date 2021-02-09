@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace BluetoothController.Commands.Robot
+namespace LegoBoostController.Robot
 {
     public class CatMoveEyesCommand : IRobotCommand
     {

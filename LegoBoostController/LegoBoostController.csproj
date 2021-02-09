@@ -92,6 +92,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\TextCommandsController.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -101,6 +102,20 @@
     <Compile Include="LegoMoveHub_Client.xaml.cs">
       <DependentUpon>LegoMoveHub_Client.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Robot\CatCommandFactory.cs" />
+    <Compile Include="Robot\CatMoveEyesComand.cs" />
+    <Compile Include="Robot\CatMoveLegsCommand.cs" />
+    <Compile Include="Robot\CatMoveTailCommand.cs" />
+    <Compile Include="Robot\CatSitStandCommand.cs" />
+    <Compile Include="Robot\ICommandFactory.cs" />
+    <Compile Include="Robot\IRobotCommand.cs" />
+    <Compile Include="Robot\LEDRobotCommand.cs" />
+    <Compile Include="Robot\MotorRobotCommand.cs" />
+    <Compile Include="Robot\RoverArmCommand.cs" />
+    <Compile Include="Robot\RoverCommandFactory.cs" />
+    <Compile Include="Robot\RoverMoveCommand.cs" />
+    <Compile Include="Robot\RoverSpinCommand.cs" />
+    <Compile Include="Util\DisplayHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

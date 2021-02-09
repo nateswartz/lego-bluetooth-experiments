@@ -1,6 +1,6 @@
 ﻿using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
-namespace BluetoothController.Util
+namespace LegoBoostController.Util
 {
     /// <summary>
     ///     Represents the display of an attribute - both characteristics and services.

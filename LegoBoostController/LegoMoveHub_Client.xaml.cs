@@ -4,6 +4,7 @@ using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
+using LegoBoostController.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,7 +32,7 @@ namespace LegoBoostController
 
         List<LEDColor> _colors = LEDColors.All;
         List<Motor> _motors = Motors.All;
-        List<Robot> _robots = Enum.GetValues(typeof(Robot)).Cast<Robot>().ToList();
+        List<Controllers.Robot> _robots = Enum.GetValues(typeof(Controllers.Robot)).Cast<Controllers.Robot>().ToList();
         ObservableCollection<HubController> _hubs = new ObservableCollection<HubController>();
 
         #region UI Code
@@ -58,8 +59,8 @@ namespace LegoBoostController
         private void RobotSelectionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null) return;
-            var robot = (Robot)((ComboBox)sender).SelectedItem;
-            _rootPage.NotifyUser($"The selected robot is {Enum.GetName(typeof(Robot), robot)}", NotifyType.StatusMessage);
+            var robot = (Controllers.Robot)((ComboBox)sender).SelectedItem;
+            _rootPage.NotifyUser($"The selected robot is {Enum.GetName(typeof(Controllers.Robot), robot)}", NotifyType.StatusMessage);
 
             _textCommandsController.SelectedRobot = robot;
             SampleCommands.Text = _textCommandsController.SampleCommandsText;

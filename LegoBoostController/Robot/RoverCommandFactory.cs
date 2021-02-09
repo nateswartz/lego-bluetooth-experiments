@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BluetoothController.Commands.Robot
+namespace LegoBoostController.Robot
 {
-    public class CatCommandFactory : ICommandFactory
+    public class RoverCommandFactory : ICommandFactory
     {
         private IEnumerable<IRobotCommand> _commands =
             new List<IRobotCommand>
             {
-                new LEDRobotCommand(),
-                new CatMoveLegsCommand(),
-                new CatSitStandCommand(),
-                new CatMoveTailCommand(),
-                new CatMoveEyesCommand()
+                new RoverMoveCommand(),
+                new RoverSpinCommand(),
+                new RoverArmCommand(),
+                new LEDRobotCommand()
             };
 
         public IRobotCommand GetCommand(string keyword)
@@ -30,7 +29,7 @@ namespace BluetoothController.Commands.Robot
 
         public string GetCommandExamples()
         {
-            var examples = $"Cat:";
+            var examples = $"Rover:";
             foreach (var command in _commands)
             {
                 examples += $"{Environment.NewLine}{command.Description}";

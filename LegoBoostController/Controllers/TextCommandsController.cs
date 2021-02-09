@@ -1,9 +1,10 @@
-﻿using BluetoothController.Commands.Robot;
+﻿using BluetoothController.Controllers;
+using LegoBoostController.Robot;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace BluetoothController.Controllers
+namespace LegoBoostController.Controllers
 {
     public enum Robot
     {

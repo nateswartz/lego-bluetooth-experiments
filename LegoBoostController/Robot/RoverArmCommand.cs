@@ -3,7 +3,7 @@ using BluetoothController.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BluetoothController.Commands.Robot
+namespace LegoBoostController.Robot
 {
     public class RoverArmCommand : MotorRobotCommand, IRobotCommand
     {

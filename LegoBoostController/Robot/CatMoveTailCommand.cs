@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace BluetoothController.Commands.Robot
+namespace LegoBoostController.Robot
 {
-    public class RoverSpinCommand : IRobotCommand
+    public class CatMoveTailCommand : IRobotCommand
     {
-        public IEnumerable<string> Keywords { get => new List<string> { "spin" }; }
+        public IEnumerable<string> Keywords { get => new List<string> { "shaketail" }; }
 
-        public string Description { get => "Spin(Speed, Time, Direction[Clockwise/CounterClockwise])"; }
+        public string Description { get => "ShakeTail(Speed, Time, Direction[Left/Right])"; }
 
         public async Task RunAsync(HubController controller, string commandText)
         {
@@ -22,8 +22,7 @@ namespace BluetoothController.Commands.Robot
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var direction = m.Groups[3].Value;
-                var motor = direction == "clockwise" ? Motors.A : Motors.B;
-                var command = new MotorCommand(motor, speed, time, true, controller.GetCurrentExternalMotorPort());
+                var command = new MotorCommand(Motors.A, speed, time, direction == "right", controller.GetCurrentExternalMotorPort());
                 await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);
             }

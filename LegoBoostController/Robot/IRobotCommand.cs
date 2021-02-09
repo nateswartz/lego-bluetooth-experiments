@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BluetoothController.Commands.Robot
+namespace LegoBoostController.Robot
 {
     public interface IRobotCommand
     {
