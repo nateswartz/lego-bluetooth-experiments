@@ -135,8 +135,17 @@ namespace BluetoothController
                             controller.HubCharacteristic = characteristic;
                             controller.AddEventHandler(new SystemTypeUpdateHubTypeEventHandler(controller));
                             await controller.ConnectAsync(_notificationHandler);
-                            await connectionHandler(controller, "");
                             await controller.ExecuteCommandAsync(new HubFirmwareCommand());
+
+                            // Avoid race condition where System Type has not yet returned
+                            var counter = 0;
+                            while (controller.HubType == 0 && counter < 20)
+                            {
+                                await Task.Delay(50);
+                                counter++;
+                            }
+
+                            await connectionHandler(controller, "");
                         }
                     }
                     return true;

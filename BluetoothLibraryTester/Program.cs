@@ -12,7 +12,8 @@ namespace BluetoothLibraryTester
     {
         static BluetoothLowEnergyAdapter _adapter;
 
-        static HubController _controller;
+        static HubController _remoteController;
+        static HubController _hubController;
 
         static async Task Main(string[] args)
         {
@@ -20,37 +21,41 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_controller == null)
+            while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
-            await GetName();
+            await GetNames();
             await RunCommands();
 
             await Disconnect();
         }
 
-        static async Task GetName()
+        static async Task GetNames()
         {
-            await _controller.ExecuteCommandAsync(new HubNameCommand());
+            await _remoteController.ExecuteCommandAsync(new HubNameCommand());
+            await _hubController.ExecuteCommandAsync(new HubNameCommand());
+
             await Task.Delay(4000);
         }
 
         static async Task RunCommands()
         {
-            await _controller.ExecuteCommandAsync(new HubFirmwareCommand());
+            await _remoteController.ExecuteCommandAsync(new HubFirmwareCommand());
+            await _remoteController.ExecuteCommandAsync(new RawCommand("0203"));
             //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
             //Console.WriteLine($"Setting LED Pink...");
             //await _controller.ExecuteCommandAsync(new LEDBoostCommand(_controller, LEDColors.Pink));
             //await Task.Delay(500);
             //Console.WriteLine($"Registering for Button notifications...");
             //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
-            _controller.AddEventHandler(new RemoteButtonToLEDEventHandler(_controller));
+            _remoteController.AddEventHandler(new RemoteButtonToLEDEventHandler(_hubController));
             await Task.Delay(500);
 
             Console.WriteLine("Registering for remote button notifications");
-            await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, true, PortType.RemoteButtonA, "03"));
+            await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(_remoteController, true, PortType.RemoteButtonA, "03"));
+            await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(_remoteController, true, PortType.RemoteButtonB, "03"));
             await Task.Delay(500);
 
             //Console.WriteLine("Running motor...");
@@ -71,7 +76,7 @@ namespace BluetoothLibraryTester
 
             //Console.WriteLine("Registering Event handler to change LED on Button press...");
             //_controller.AddEventHandler(new ButtonToLEDEventHandler(_controller));
-            await Task.Delay(6000);
+            await Task.Delay(10000);
 
             await Task.CompletedTask;
         }
@@ -80,7 +85,8 @@ namespace BluetoothLibraryTester
         {
             Console.WriteLine("Disconnecting soon...");
             await Task.Delay(2000);
-            await _controller.ExecuteCommandAsync(new DisconnectCommand());
+            await _remoteController.ExecuteCommandAsync(new ShutdownCommand());
+            await _hubController.ExecuteCommandAsync(new ShutdownCommand());
             Console.WriteLine("Disconnected");
         }
 
@@ -102,7 +108,15 @@ namespace BluetoothLibraryTester
             {
                 //_adapter.StopBleDeviceWatcher();
 
-                _controller = controller;
+                if (controller.HubType == HubType.TwoPortHandset)
+                {
+                    _remoteController = controller;
+                }
+
+                if (controller.HubType == HubType.TwoPortHub)
+                {
+                    _hubController = controller;
+                }
 
                 Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
 
