@@ -1,6 +1,4 @@
-﻿using BluetoothController.Util;
-
-namespace BluetoothController.Commands.Abstract
+﻿namespace BluetoothController.Commands.Abstract
 {
     public abstract class CommandType
     {
@@ -10,9 +8,11 @@ namespace BluetoothController.Commands.Abstract
         {
             MessageType = messageType;
         }
+
         public string AddHeader(string command)
         {
-            return CommandHelper.AddHeader($"{MessageType}{command}");
+            var numBytes = (command.Length + 6) / 2;
+            return $"{numBytes:X2}00{MessageType}{command}";
         }
     }
 }

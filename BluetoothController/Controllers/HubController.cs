@@ -56,10 +56,7 @@ namespace BluetoothController.Controllers
 
         private async Task<bool> SetHexValueAsync(string hex)
         {
-            if (hex.Contains(" "))
-            {
-                hex = hex.Replace(" ", "");
-            }
+            hex = hex.Replace(" ", string.Empty);
             var bytes = DataConverter.HexStringToByteArray(hex);
 
             var writer = new DataWriter();
@@ -116,13 +113,8 @@ namespace BluetoothController.Controllers
 
             await TriggerActionsFromNotification(response);
 
-            return DecodeNotification(notification);
-        }
-
-        private string DecodeNotification(string notification)
-        {
-            var response = ResponseProcessor.CreateResponse(notification, PortState);
             var message = response.ToString();
+
             return message;
         }
 
