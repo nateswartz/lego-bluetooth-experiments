@@ -4,7 +4,7 @@ namespace BluetoothController.Commands.Abstract
 {
     public abstract class DeviceInfoCommandType : CommandType
     {
-        public DeviceInfoCommandType() : base(CommandTypes.DeviceInfo)
+        public DeviceInfoCommandType() : base(MessageTypes.HubProperty)
         {
         }
     }

@@ -4,7 +4,7 @@ namespace BluetoothController.Commands.Abstract
 {
     public abstract class HubActionCommandType : CommandType
     {
-        public HubActionCommandType() : base(CommandTypes.HubAction)
+        public HubActionCommandType() : base(MessageTypes.HubAction)
         {
         }
     }

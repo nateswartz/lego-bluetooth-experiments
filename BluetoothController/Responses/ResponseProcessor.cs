@@ -12,7 +12,7 @@ namespace BluetoothController.Responses
             var response = new Response(notification);
             switch (response.MessageType)
             {
-                case MessageType.DeviceInfo:
+                case MessageTypes.HubProperty:
                     var deviceInfo = new DeviceInfo(notification);
                     switch (deviceInfo.DeviceType)
                     {
@@ -26,7 +26,7 @@ namespace BluetoothController.Responses
                             return new SystemType(notification);
                     }
                     return deviceInfo;
-                case MessageType.PortInfo:
+                case MessageTypes.HubAttachedIO:
                     var portInfo = new PortInfo(notification);
                     switch (portInfo.DeviceType)
                     {
@@ -48,9 +48,9 @@ namespace BluetoothController.Responses
                             return new RemoteButtonState(notification);
                     }
                     return portInfo;
-                case MessageType.Error:
+                case MessageTypes.Error:
                     return new Error(notification);
-                case MessageType.SensorData:
+                case MessageTypes.PortValueSingle:
                     var sensorData = new SensorData(notification);
                     if (sensorData.Port == portState.CurrentColorDistanceSensorPort)
                     {
