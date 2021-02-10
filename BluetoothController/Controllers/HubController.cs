@@ -5,7 +5,6 @@ using BluetoothController.Responses;
 using BluetoothController.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
@@ -61,10 +60,7 @@ namespace BluetoothController.Controllers
             {
                 hex = hex.Replace(" ", "");
             }
-            var bytes = Enumerable.Range(0, hex.Length)
-                            .Where(x => x % 2 == 0)
-                            .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-                            .ToArray();
+            var bytes = DataConverter.HexStringToByteArray(hex);
 
             var writer = new DataWriter();
             writer.ByteOrder = ByteOrder.LittleEndian;
