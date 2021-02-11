@@ -21,7 +21,7 @@ namespace BluetoothController.Commands.Basic
                 power = (255 - powerPercentage).ToString("X");
             }
             power = power.PadLeft(2, '0');
-            HexCommand = AddHeader($"{port}1109{time}{power}647f03)");
+            HexCommand = AddHeader($"{port}1109{time}{power}647f03");
         }
     }
 }
