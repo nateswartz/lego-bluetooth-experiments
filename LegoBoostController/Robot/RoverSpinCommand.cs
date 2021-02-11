@@ -1,6 +1,5 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
-using BluetoothController.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -22,8 +21,8 @@ namespace LegoBoostController.Robot
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var direction = m.Groups[3].Value;
-                var motor = direction == "clockwise" ? Motors.A : Motors.B;
-                var command = new MotorCommand(motor, speed, time, true, controller.GetCurrentExternalMotorPort());
+                var port = direction == "clockwise" ? "00" : "01";
+                var command = new MotorCommand(port, speed, time, true);
                 await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);
             }

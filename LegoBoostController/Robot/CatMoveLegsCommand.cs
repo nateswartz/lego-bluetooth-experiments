@@ -1,5 +1,5 @@
 ﻿using BluetoothController.Controllers;
-using BluetoothController.Models;
+using LegoBoostController.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

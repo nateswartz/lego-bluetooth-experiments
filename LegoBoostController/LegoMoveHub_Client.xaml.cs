@@ -5,6 +5,7 @@ using BluetoothController.EventHandlers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
 using LegoBoostController.Controllers;
+using LegoBoostController.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -344,7 +345,9 @@ namespace LegoBoostController
             var clockwise = DirectionToggle.IsOn;
             if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
-                var command = new MotorCommand((Motor)MotorsCombo.SelectedItem, (int)MotorPowerSlider.Value, runTime, clockwise, _controller.GetCurrentExternalMotorPort());
+                var motor = (Motor)MotorsCombo.SelectedItem;
+                var port = motor.Name == "External" ? _controller.GetCurrentExternalMotorPort() : motor.Code;
+                var command = new MotorCommand(port, (int)MotorPowerSlider.Value, runTime, clockwise);
                 await _controller.ExecuteCommandAsync(command);
             }
             else

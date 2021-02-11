@@ -1,5 +1,4 @@
 ﻿using BluetoothController.Commands.Abstract;
-using BluetoothController.Models;
 
 namespace BluetoothController.Commands.Basic
 {
@@ -7,14 +6,8 @@ namespace BluetoothController.Commands.Basic
     {
         public string HexCommand { get; set; }
 
-        public MotorCommand(Motor motor, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true, string currentExternalMotorPort = "")
+        public MotorCommand(string port, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
         {
-            string motorToRun = motor.Code;
-            if (motor == Motors.External)
-            {
-                motorToRun = currentExternalMotorPort;
-            }
-
             // For time, LSB first
             var time = timeInMS.ToString("X").PadLeft(4, '0');
             time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
@@ -28,7 +21,7 @@ namespace BluetoothController.Commands.Basic
                 power = (255 - powerPercentage).ToString("X");
             }
             power = power.PadLeft(2, '0');
-            HexCommand = AddHeader($"{motorToRun}1109{time}{power}647f03)");
+            HexCommand = AddHeader($"{port}1109{time}{power}647f03)");
         }
     }
 }

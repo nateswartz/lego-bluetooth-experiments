@@ -102,6 +102,7 @@
     <Compile Include="LegoMoveHub_Client.xaml.cs">
       <DependentUpon>LegoMoveHub_Client.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\Motors.cs" />
     <Compile Include="Robot\CatCommandFactory.cs" />
     <Compile Include="Robot\CatMoveEyesComand.cs" />
     <Compile Include="Robot\CatMoveLegsCommand.cs" />
