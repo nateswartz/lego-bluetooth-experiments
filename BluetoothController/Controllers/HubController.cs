@@ -57,7 +57,15 @@ namespace BluetoothController.Controllers
         private async Task<bool> SetHexValueAsync(string hex)
         {
             hex = hex.Replace(" ", string.Empty);
-            var bytes = DataConverter.HexStringToByteArray(hex);
+            byte[] bytes;
+            try
+            {
+                bytes = DataConverter.HexStringToByteArray(hex);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException($"Invalid hex command provided: {hex}");
+            }
 
             var writer = new DataWriter();
             writer.ByteOrder = ByteOrder.LittleEndian;
