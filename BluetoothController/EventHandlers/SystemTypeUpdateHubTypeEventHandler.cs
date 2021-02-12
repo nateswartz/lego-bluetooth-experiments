@@ -29,26 +29,21 @@ namespace BluetoothController.EventHandlers
             switch (hubType)
             {
                 case HubType.BoostMoveHub:
-                    var boostHub = new BoostMoveHub();
-                    if (_controller.Hub != null && _controller.Hub.GetType() == typeof(BoostMoveHub))
-                    {
-                        boostHub.CurrentExternalMotorPort = ((BoostMoveHub)_controller.Hub).CurrentExternalMotorPort;
-                        boostHub.CurrentColorDistanceSensorPort = ((BoostMoveHub)_controller.Hub).CurrentColorDistanceSensorPort;
-                        boostHub.CurrentTrainMotorPort = ((BoostMoveHub)_controller.Hub).CurrentTrainMotorPort;
-                    }
-                    _controller.Hub = boostHub;
+                    if (_controller.Hub is BoostMoveHub)
+                        return;
+                    var moveHub = new BoostMoveHub();
+                    moveHub.ChangeablePorts = ((HubWithChangeablePorts)_controller.Hub).ChangeablePorts;
+                    _controller.Hub = moveHub;
                     break;
                 case HubType.TwoPortHandset:
-                    _controller.Hub = new RemoteHub();
+                    if (_controller.Hub == null)
+                        _controller.Hub = new RemoteHub();
                     break;
                 case HubType.TwoPortHub:
+                    if (_controller.Hub is TwoPortHub)
+                        return;
                     var twoPortHub = new TwoPortHub();
-                    if (_controller.Hub != null && _controller.Hub.GetType() == typeof(TwoPortHub))
-                    {
-                        twoPortHub.CurrentExternalMotorPort = ((TwoPortHub)_controller.Hub).CurrentExternalMotorPort;
-                        twoPortHub.CurrentColorDistanceSensorPort = ((TwoPortHub)_controller.Hub).CurrentColorDistanceSensorPort;
-                        twoPortHub.CurrentTrainMotorPort = ((TwoPortHub)_controller.Hub).CurrentTrainMotorPort;
-                    }
+                    twoPortHub.ChangeablePorts = ((HubWithChangeablePorts)_controller.Hub).ChangeablePorts;
                     _controller.Hub = twoPortHub;
                     break;
             }

@@ -19,6 +19,8 @@ namespace BluetoothController.EventHandlers
 
         public async Task HandleEventAsync(Response response)
         {
+            if (_controller.Hub != null)
+                return;
             _controller.Hub = new BoostMoveHub();
             await Task.CompletedTask;
         }

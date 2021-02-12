@@ -1,5 +1,7 @@
 ﻿using BluetoothController.Commands.Abstract;
 using BluetoothController.Hubs;
+using BluetoothController.Responses;
+using System.Linq;
 
 namespace BluetoothController.Commands.Basic
 {
@@ -7,9 +9,9 @@ namespace BluetoothController.Commands.Basic
     {
         public string HexCommand { get; set; }
 
-        public TrainMotorCommand(ModularHub hub, int powerPercentage, bool clockwise)
+        public TrainMotorCommand(HubWithChangeablePorts hub, int powerPercentage, bool clockwise)
         {
-            string motorToRun = hub.CurrentTrainMotorPort;
+            string motorToRun = hub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
             string startupCompletion = "11"; // Execute immediately / Command feedback
             string subCommand = "51"; // WriteDirectModeData
             string power;

@@ -5,6 +5,7 @@ using BluetoothController.Responses;
 using BluetoothController.Util;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
@@ -38,8 +39,8 @@ namespace BluetoothController.Controllers
 
         public string GetCurrentExternalMotorPort()
         {
-            if (Hub is ModularHub hub)
-                return hub.CurrentExternalMotorPort;
+            if (Hub is HubWithChangeablePorts hub)
+                return hub.GetPortsByDeviceType(IOType.ExternalMotor)?.First()?.PortID ?? "";
             return "";
         }
 
@@ -111,7 +112,7 @@ namespace BluetoothController.Controllers
 
         internal async Task<string> ProcessNotification(string notification)
         {
-            var response = ResponseProcessor.CreateResponse(notification, Hub);
+            var response = ResponseProcessor.CreateResponse(notification, this);
 
             await TriggerActionsFromNotification(response);
 

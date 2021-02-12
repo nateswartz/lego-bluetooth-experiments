@@ -1,6 +1,8 @@
 ﻿using BluetoothController.Commands.Abstract;
 using BluetoothController.Controllers;
 using BluetoothController.Hubs;
+using BluetoothController.Responses;
+using System.Linq;
 
 namespace BluetoothController.Commands.Basic
 {
@@ -26,14 +28,19 @@ namespace BluetoothController.Commands.Basic
                 case PortType.Tilt:
                     port = "3a";
                     break;
-                case PortType.Motor:
-                    port = ((ModularHub)controller.Hub).CurrentExternalMotorPort;
-                    break;
-                case PortType.ColorDistanceSensor:
-                    port = ((ModularHub)controller.Hub).CurrentColorDistanceSensorPort;
-                    break;
+                //case PortType.Motor:
+                //    port = ((ModularHub)controller.Hub).CurrentExternalMotorPort;
+                //    break;
+                //case PortType.ColorDistanceSensor:
+                //    port = ((ModularHub)controller.Hub).CurrentColorDistanceSensorPort;
+                //    break;
                 case PortType.TrainMotor:
-                    port = ((ModularHub)controller.Hub).CurrentTrainMotorPort;
+                    if (controller.Hub is HubWithChangeablePorts dynamicHub)
+                    {
+                        port = dynamicHub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
+                    }
+                    else
+                        return;
                     break;
                 case PortType.RemoteButtonA:
                     port = "00";
