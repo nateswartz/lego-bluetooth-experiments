@@ -33,25 +33,42 @@ namespace BluetoothController.Responses
                     var portInfo = new PortInfo(notification);
                     if (portInfo.Event == DeviceState.Detached)
                     {
-                        if (controller.Hub is HubWithChangeablePorts dynamicHub)
+                        if (controller.Hub is HubWithChangeablePorts hub)
                         {
-                            if (dynamicHub.GetPortsByDeviceType(IOType.TrainMotor).Any(p => p.PortID == portInfo.Port))
+                            if (hub.GetPortsByDeviceType(IOType.TrainMotor).Any(p => p.PortID == portInfo.Port))
                             {
-                                dynamicHub.GetPortByID(portInfo.Port).DeviceType = "";
+                                hub.GetPortByID(portInfo.Port).DeviceType = "";
                                 return new TrainMotorState(notification);
+                            }
+                            if (hub.GetPortsByDeviceType(IOType.ColorDistance).Any(p => p.PortID == portInfo.Port))
+                            {
+                                hub.GetPortByID(portInfo.Port).DeviceType = "";
+                                return new ColorDistanceState(notification);
                             }
                         }
                         return portInfo;
                     }
+                    if (controller.Hub == null)
+                        controller.Hub = new HubWithChangeablePorts();
+                    var dynamicHub = ((HubWithChangeablePorts)controller.Hub);
                     switch (portInfo.DeviceType)
                     {
                         //case IOType.LED:
                         //    return new LEDState(notification);
-                        //case IOType.ColorDistance:
-                        //    if (hub == null)
-                        //        hub = new HubWithChangeablePorts();
-                        //    ((HubWithChangeablePorts)hub).CurrentColorDistanceSensorPort = portInfo.Port;
-                        //    return new ColorDistanceState(notification);
+                        case IOType.ColorDistance:
+                            if (dynamicHub.GetPortByID(portInfo.Port) == null)
+                            {
+                                dynamicHub.ChangeablePorts.Add(new HubPort
+                                {
+                                    PortID = portInfo.Port,
+                                    DeviceType = IOType.ColorDistance
+                                });
+                            }
+                            else
+                            {
+                                dynamicHub.GetPortByID(portInfo.Port).DeviceType = IOType.ColorDistance;
+                            }
+                            return new ColorDistanceState(notification);
                         //case IOType.ExternalMotor:
                         //    if (hub == null)
                         //        hub = new ModularHub();
@@ -60,9 +77,6 @@ namespace BluetoothController.Responses
                         //case IOType.InternalMotor:
                         //    return new InternalMotorState(notification);
                         case IOType.TrainMotor:
-                            if (controller.Hub == null)
-                                controller.Hub = new HubWithChangeablePorts();
-                            var dynamicHub = ((HubWithChangeablePorts)controller.Hub);
                             if (dynamicHub.GetPortByID(portInfo.Port) == null)
                             {
                                 dynamicHub.ChangeablePorts.Add(new HubPort
