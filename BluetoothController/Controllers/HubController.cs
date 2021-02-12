@@ -192,7 +192,7 @@ namespace BluetoothController.Controllers
                         return false;
                     }
                 }
-                catch (UnauthorizedAccessException ex)
+                catch (UnauthorizedAccessException)
                 {
                     // This usually happens when a device reports that it support indicate, but it actually doesn't.
                     //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
@@ -223,7 +223,7 @@ namespace BluetoothController.Controllers
                         return false;
                     }
                 }
-                catch (UnauthorizedAccessException ex)
+                catch (UnauthorizedAccessException)
                 {
                     // This usually happens when a device reports that it supports notify, but it actually doesn't.
                     //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
