@@ -98,10 +98,10 @@ namespace BluetoothController.Responses
                     return new Error(notification);
                 case MessageTypes.PortValueSingle:
                     var sensorData = new SensorData(notification);
-                    //if (sensorData.Port == ((ModularHub)hub).CurrentColorDistanceSensorPort)
-                    //{
-                    //    return new ColorDistanceData(notification);
-                    //}
+                    if (((HubWithChangeablePorts)controller.Hub).GetPortByID(sensorData.Port).DeviceType == IOType.ColorDistance)
+                    {
+                        return new ColorDistanceData(notification);
+                    }
                     //if (sensorData.Port == ((ModularHub)hub).CurrentExternalMotorPort ||
                     //    sensorData.Port == ((ModularHub)hub).CurrentTrainMotorPort)
                     //{
