@@ -13,6 +13,8 @@ namespace BluetoothController.Responses
         public static Response CreateResponse(string notification, HubController controller)
         {
             var response = new Response(notification);
+
+            // Simple cases - hub agnostic
             switch (response.MessageType)
             {
                 case MessageTypes.HubProperty:
@@ -29,107 +31,117 @@ namespace BluetoothController.Responses
                             return new SystemType(notification);
                     }
                     return deviceInfo;
+                case MessageTypes.Error:
+                    return new Error(notification);
+            }
+
+            // Complex cases - hub dependent
+            switch (response.MessageType)
+            {
                 case MessageTypes.HubAttachedIO:
-                    var portInfo = new PortInfo(notification);
-                    if (portInfo.Event == DeviceState.Detached)
+                    return HandleIOAttached(controller, notification);
+                case MessageTypes.PortValueSingle:
+                    return HandlePortValueUpdate(controller, notification);
+            }
+            return response;
+        }
+
+        private static Response HandleIOAttached(HubController controller, string notification)
+        {
+            var portInfo = new PortInfo(notification);
+
+            if (portInfo.Event == DeviceState.Detached)
+            {
+                if (controller.Hub is HubWithChangeablePorts hub)
+                {
+                    if (hub.GetPortsByDeviceType(IOType.TrainMotor).Any(p => p.PortID == portInfo.Port))
                     {
-                        if (controller.Hub is HubWithChangeablePorts hub)
-                        {
-                            if (hub.GetPortsByDeviceType(IOType.TrainMotor).Any(p => p.PortID == portInfo.Port))
-                            {
-                                hub.GetPortByID(portInfo.Port).DeviceType = "";
-                                return new TrainMotorState(notification);
-                            }
-                            if (hub.GetPortsByDeviceType(IOType.ColorDistance).Any(p => p.PortID == portInfo.Port))
-                            {
-                                hub.GetPortByID(portInfo.Port).DeviceType = "";
-                                return new ColorDistanceState(notification);
-                            }
-                        }
-                        return portInfo;
+                        hub.GetPortByID(portInfo.Port).DeviceType = "";
+                        return new TrainMotorState(notification);
                     }
+                    if (hub.GetPortsByDeviceType(IOType.ColorDistance).Any(p => p.PortID == portInfo.Port))
+                    {
+                        hub.GetPortByID(portInfo.Port).DeviceType = "";
+                        return new ColorDistanceState(notification);
+                    }
+                }
+                return portInfo;
+            }
+
+            switch (portInfo.DeviceType)
+            {
+                case IOType.LED:
+                    return new LEDState(notification);
+                case IOType.ColorDistance:
+                case IOType.ExternalMotor:
+                case IOType.TrainMotor:
                     if (controller.Hub == null)
                         controller.Hub = new HubWithChangeablePorts();
                     var dynamicHub = ((HubWithChangeablePorts)controller.Hub);
-                    switch (portInfo.DeviceType)
+
+                    if (dynamicHub.GetPortByID(portInfo.Port) == null)
                     {
-                        //case IOType.LED:
-                        //    return new LEDState(notification);
-                        case IOType.ColorDistance:
-                            if (dynamicHub.GetPortByID(portInfo.Port) == null)
-                            {
-                                dynamicHub.ChangeablePorts.Add(new HubPort
-                                {
-                                    PortID = portInfo.Port,
-                                    DeviceType = IOType.ColorDistance
-                                });
-                            }
-                            else
-                            {
-                                dynamicHub.GetPortByID(portInfo.Port).DeviceType = IOType.ColorDistance;
-                            }
-                            return new ColorDistanceState(notification);
-                        //case IOType.ExternalMotor:
-                        //    if (hub == null)
-                        //        hub = new ModularHub();
-                        //    ((ModularHub)hub).CurrentExternalMotorPort = portInfo.Port;
-                        //    return new ExternalMotorState(notification);
-                        //case IOType.InternalMotor:
-                        //    return new InternalMotorState(notification);
-                        case IOType.TrainMotor:
-                            if (dynamicHub.GetPortByID(portInfo.Port) == null)
-                            {
-                                dynamicHub.ChangeablePorts.Add(new HubPort
-                                {
-                                    PortID = portInfo.Port,
-                                    DeviceType = IOType.TrainMotor
-                                });
-                            }
-                            else
-                            {
-                                dynamicHub.GetPortByID(portInfo.Port).DeviceType = IOType.TrainMotor;
-                            }
-                            return new TrainMotorState(notification);
-                        case IOType.RemoteButton:
-                            return new RemoteButtonState(notification);
+                        dynamicHub.ChangeablePorts.Add(new HubPort
+                        {
+                            PortID = portInfo.Port,
+                            DeviceType = portInfo.DeviceType
+                        });
                     }
-                    return portInfo;
-                case MessageTypes.Error:
-                    return new Error(notification);
-                case MessageTypes.PortValueSingle:
-                    var sensorData = new SensorData(notification);
-                    if (((HubWithChangeablePorts)controller.Hub).GetPortByID(sensorData.Port).DeviceType == IOType.ColorDistance)
+                    else
                     {
-                        return new ColorDistanceData(notification);
+                        dynamicHub.GetPortByID(portInfo.Port).DeviceType = portInfo.DeviceType;
                     }
-                    //if (sensorData.Port == ((ModularHub)hub).CurrentExternalMotorPort ||
-                    //    sensorData.Port == ((ModularHub)hub).CurrentTrainMotorPort)
-                    //{
-                    //    var externalMotorData = new ExternalMotorData(notification);
-                    //    switch (externalMotorData.DataType)
-                    //    {
-                    //        case MotorDataType.Angle:
-                    //            return new AngleData(notification);
-                    //        case MotorDataType.Speed:
-                    //            return new SpeedData(notification);
-                    //    }
-                    //    return new ExternalMotorData(notification);
-                    //}
-                    if (sensorData.Port == TILT_SENSOR_PORT)
-                    {
-                        return new TiltData(notification);
-                    }
-                    if (sensorData.Port == VOLTAGE_SENSOR_PORT)
-                    {
-                        return new VoltageData(notification);
-                    }
-                    if (controller.Hub.GetType() == typeof(RemoteHub) && (sensorData.Port == "00" || sensorData.Port == "01"))
-                    {
-                        return new RemoteButtonData(notification);
-                    }
-                    return sensorData;
+                    if (portInfo.DeviceType == IOType.ColorDistance)
+                        return new ColorDistanceState(notification);
+                    if (portInfo.DeviceType == IOType.ExternalMotor)
+                        return new ExternalMotorState(notification);
+                    if (portInfo.DeviceType == IOType.TrainMotor)
+                        return new TrainMotorState(notification);
+                    break;
+                case IOType.InternalMotor:
+                    return new InternalMotorState(notification);
+                case IOType.RemoteButton:
+                    return new RemoteButtonState(notification);
             }
-            return response;
+            return portInfo;
+        }
+
+        private static Response HandlePortValueUpdate(HubController controller, string notification)
+        {
+            var sensorData = new SensorData(notification);
+            if (controller.Hub is HubWithChangeablePorts hub)
+            {
+                if (hub.GetPortByID(sensorData.Port).DeviceType == IOType.ColorDistance)
+                {
+                    return new ColorDistanceData(notification);
+                }
+                if (hub.GetPortByID(sensorData.Port).DeviceType == IOType.ExternalMotor
+                    || hub.GetPortByID(sensorData.Port).DeviceType == IOType.TrainMotor)
+                {
+                    var externalMotorData = new ExternalMotorData(notification);
+                    switch (externalMotorData.DataType)
+                    {
+                        case MotorDataType.Angle:
+                            return new AngleData(notification);
+                        case MotorDataType.Speed:
+                            return new SpeedData(notification);
+                    }
+                    return new ExternalMotorData(notification);
+                }
+            }
+            if (sensorData.Port == TILT_SENSOR_PORT)
+            {
+                return new TiltData(notification);
+            }
+            if (sensorData.Port == VOLTAGE_SENSOR_PORT)
+            {
+                return new VoltageData(notification);
+            }
+            if (controller.Hub.GetType() == typeof(RemoteHub) && (sensorData.Port == "00" || sensorData.Port == "01"))
+            {
+                return new RemoteButtonData(notification);
+            }
+            return sensorData;
         }
     }
 }
