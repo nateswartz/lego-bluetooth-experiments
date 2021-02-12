@@ -1,5 +1,6 @@
 ﻿using BluetoothController.Commands.Abstract;
 using BluetoothController.Controllers;
+using BluetoothController.Hubs;
 using BluetoothController.Models;
 
 namespace BluetoothController.Commands.Basic
@@ -11,7 +12,7 @@ namespace BluetoothController.Commands.Basic
         public LEDCommand(HubController controller, LEDColor color)
         {
             string port = "00";
-            switch (controller.HubType)
+            switch (controller.Hub.HubType)
             {
                 case HubType.BoostMoveHub:
                 case HubType.TwoPortHub:

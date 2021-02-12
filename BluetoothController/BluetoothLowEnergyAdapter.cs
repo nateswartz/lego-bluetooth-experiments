@@ -133,13 +133,18 @@ namespace BluetoothController
                         foreach (var characteristic in characteristics.Characteristics)
                         {
                             controller.HubCharacteristic = characteristic;
+
+                            // Ensure Hub type is detected
                             controller.AddEventHandler(new SystemTypeUpdateHubTypeEventHandler(controller));
+                            controller.AddEventHandler(new RemoteButtonStateUpdateHubTypeEventHandler(controller));
+                            controller.AddEventHandler(new InternalMotorStateUpdateHubTypeEventHandler(controller));
+
                             await controller.ConnectAsync(_notificationHandler);
                             await controller.ExecuteCommandAsync(new HubFirmwareCommand());
 
                             // Avoid race condition where System Type has not yet returned
                             var counter = 0;
-                            while (controller.HubType == 0 && counter < 20)
+                            while (controller.Hub == null && counter < 20)
                             {
                                 await Task.Delay(50);
                                 counter++;

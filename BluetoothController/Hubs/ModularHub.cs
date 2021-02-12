@@ -1,10 +1,14 @@
-﻿namespace BluetoothController.Models
+﻿namespace BluetoothController.Hubs
 {
-    public class PortState
+    public class ModularHub : Hub
     {
         public string CurrentColorDistanceSensorPort { get; set; } = "";
         public string CurrentExternalMotorPort { get; set; } = "";
         public string CurrentTrainMotorPort { get; set; } = "";
-        public bool IsTwoHubRemote { get; set; } = false;
+
+        public ModularHub()
+        {
+            IsModular = true;
+        }
     }
 }

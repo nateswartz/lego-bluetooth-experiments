@@ -1,4 +1,4 @@
-﻿using BluetoothController.Controllers;
+﻿using BluetoothController.Hubs;
 
 namespace BluetoothController.Responses
 {

@@ -1,4 +1,5 @@
-﻿using BluetoothController.Models;
+﻿using BluetoothController.Hubs;
+using BluetoothController.Models;
 
 namespace BluetoothController.Responses
 {
@@ -7,7 +8,7 @@ namespace BluetoothController.Responses
         const string TILT_SENSOR_PORT = "3a";
         const string VOLTAGE_SENSOR_PORT = "3c";
 
-        public static Response CreateResponse(string notification, PortState portState)
+        public static Response CreateResponse(string notification, Hub hub)
         {
             var response = new Response(notification);
             switch (response.MessageType)
@@ -33,18 +34,23 @@ namespace BluetoothController.Responses
                         case IOType.LED:
                             return new LEDState(notification);
                         case IOType.ColorDistance:
-                            portState.CurrentColorDistanceSensorPort = portInfo.Port;
+                            if (hub == null)
+                                hub = new ModularHub();
+                            ((ModularHub)hub).CurrentColorDistanceSensorPort = portInfo.Port;
                             return new ColorDistanceState(notification);
                         case IOType.ExternalMotor:
-                            portState.CurrentExternalMotorPort = portInfo.Port;
+                            if (hub == null)
+                                hub = new ModularHub();
+                            ((ModularHub)hub).CurrentExternalMotorPort = portInfo.Port;
                             return new ExternalMotorState(notification);
                         case IOType.InternalMotor:
                             return new InternalMotorState(notification);
                         case IOType.TrainMotor:
-                            portState.CurrentTrainMotorPort = portInfo.Port;
+                            if (hub == null)
+                                hub = new ModularHub();
+                            ((ModularHub)hub).CurrentTrainMotorPort = portInfo.Port;
                             return new TrainMotorState(notification);
                         case IOType.RemoteButton:
-                            portState.IsTwoHubRemote = true;
                             return new RemoteButtonState(notification);
                     }
                     return portInfo;
@@ -52,12 +58,12 @@ namespace BluetoothController.Responses
                     return new Error(notification);
                 case MessageTypes.PortValueSingle:
                     var sensorData = new SensorData(notification);
-                    if (sensorData.Port == portState.CurrentColorDistanceSensorPort)
+                    if (sensorData.Port == ((ModularHub)hub).CurrentColorDistanceSensorPort)
                     {
                         return new ColorDistanceData(notification);
                     }
-                    if (sensorData.Port == portState.CurrentExternalMotorPort ||
-                        sensorData.Port == portState.CurrentTrainMotorPort)
+                    if (sensorData.Port == ((ModularHub)hub).CurrentExternalMotorPort ||
+                        sensorData.Port == ((ModularHub)hub).CurrentTrainMotorPort)
                     {
                         var externalMotorData = new ExternalMotorData(notification);
                         switch (externalMotorData.DataType)
@@ -77,7 +83,7 @@ namespace BluetoothController.Responses
                     {
                         return new VoltageData(notification);
                     }
-                    if (portState.IsTwoHubRemote && (sensorData.Port == "00" || sensorData.Port == "01"))
+                    if (hub.GetType() == typeof(RemoteHub) && (sensorData.Port == "00" || sensorData.Port == "01"))
                     {
                         return new RemoteButtonData(notification);
                     }

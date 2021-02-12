@@ -1,6 +1,6 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.EventHandlers;
-using BluetoothController.Models;
+using BluetoothController.Hubs;
 using BluetoothController.Responses;
 using BluetoothController.Util;
 using System;
@@ -11,21 +11,13 @@ using Windows.Storage.Streams;
 
 namespace BluetoothController.Controllers
 {
-    public enum HubType
-    {
-        BoostMoveHub = 1,
-        TwoPortHub = 2,
-        TwoPortHandset = 3,
-        Unknown = 4
-    }
-
     public class HubController
     {
-        public HubType HubType { get; set; }
-
         public bool IsConnected { get; private set; }
 
-        internal PortState PortState { get; set; } = new PortState();
+        public HubType HubType { get { return Hub?.HubType ?? HubType.Unknown; } }
+
+        internal Hub Hub { get; set; }
 
         internal string SelectedBleDeviceId { get; set; }
 
@@ -46,7 +38,9 @@ namespace BluetoothController.Controllers
 
         public string GetCurrentExternalMotorPort()
         {
-            return PortState.CurrentExternalMotorPort;
+            if (Hub.IsModular)
+                return ((ModularHub)Hub).CurrentExternalMotorPort;
+            return "";
         }
 
         public async Task<bool> ExecuteCommandAsync(IPoweredUpCommand command)
@@ -91,7 +85,7 @@ namespace BluetoothController.Controllers
 
         public override string ToString()
         {
-            return $"{Enum.GetName(typeof(HubType), HubType)} ({SelectedBleDeviceId})";
+            return $"{Enum.GetName(typeof(HubType), Hub.HubType)} ({SelectedBleDeviceId})";
         }
 
         private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)
@@ -117,7 +111,7 @@ namespace BluetoothController.Controllers
 
         internal async Task<string> ProcessNotification(string notification)
         {
-            var response = ResponseProcessor.CreateResponse(notification, PortState);
+            var response = ResponseProcessor.CreateResponse(notification, Hub);
 
             await TriggerActionsFromNotification(response);
 

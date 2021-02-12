@@ -2,6 +2,7 @@
 using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
+using BluetoothController.Hubs;
 using BluetoothController.Models;
 using System;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace BluetoothLibraryTester
 
         static HubController _remoteController;
         static HubController _hubController;
+        static HubController _boostController;
 
         static async Task Main(string[] args)
         {
@@ -21,22 +23,32 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_remoteController == null || _hubController == null)
+            while (_boostController == null)
+            //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
             await GetNames();
-            await RunCommands();
+            await RunMotorCommand();
 
             await Disconnect();
         }
 
         static async Task GetNames()
         {
-            await _remoteController.ExecuteCommandAsync(new HubNameCommand());
-            await _hubController.ExecuteCommandAsync(new HubNameCommand());
+            await _boostController.ExecuteCommandAsync(new HubNameCommand());
+            //await _remoteController.ExecuteCommandAsync(new HubNameCommand());
+            //await _hubController.ExecuteCommandAsync(new HubNameCommand());
 
+            await Task.Delay(4000);
+        }
+
+        static async Task RunMotorCommand()
+        {
+            await _boostController.ExecuteCommandAsync(new HubFirmwareCommand());
+            await Task.Delay(1000);
+            await _boostController.ExecuteCommandAsync(new MotorCommand("01", 50, 2000, true));
             await Task.Delay(4000);
         }
 
@@ -85,8 +97,9 @@ namespace BluetoothLibraryTester
         {
             Console.WriteLine("Disconnecting soon...");
             await Task.Delay(2000);
-            await _remoteController.ExecuteCommandAsync(new ShutdownCommand());
-            await _hubController.ExecuteCommandAsync(new ShutdownCommand());
+            //await _remoteController.ExecuteCommandAsync(new ShutdownCommand());
+            //await _hubController.ExecuteCommandAsync(new ShutdownCommand());
+            await _boostController.ExecuteCommandAsync(new ShutdownCommand());
             Console.WriteLine("Disconnected");
         }
 
@@ -116,6 +129,11 @@ namespace BluetoothLibraryTester
                 if (controller.HubType == HubType.TwoPortHub)
                 {
                     _hubController = controller;
+                }
+
+                if (controller.HubType == HubType.BoostMoveHub)
+                {
+                    _boostController = controller;
                 }
 
                 Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
