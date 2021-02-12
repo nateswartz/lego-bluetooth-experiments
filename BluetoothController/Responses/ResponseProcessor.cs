@@ -29,6 +29,15 @@ namespace BluetoothController.Responses
                     return deviceInfo;
                 case MessageTypes.HubAttachedIO:
                     var portInfo = new PortInfo(notification);
+                    if (portInfo.Event == DeviceState.Detached)
+                    {
+                        if (hub is ModularHub modularHub)
+                        {
+                            if (modularHub.CurrentTrainMotorPort == portInfo.Port)
+                                return new TrainMotorState(notification);
+                        }
+                        return portInfo;
+                    }
                     switch (portInfo.DeviceType)
                     {
                         case IOType.LED:

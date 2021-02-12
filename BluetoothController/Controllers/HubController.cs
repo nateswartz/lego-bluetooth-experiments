@@ -38,8 +38,8 @@ namespace BluetoothController.Controllers
 
         public string GetCurrentExternalMotorPort()
         {
-            if (Hub.IsModular)
-                return ((ModularHub)Hub).CurrentExternalMotorPort;
+            if (Hub is ModularHub hub)
+                return hub.CurrentExternalMotorPort;
             return "";
         }
 

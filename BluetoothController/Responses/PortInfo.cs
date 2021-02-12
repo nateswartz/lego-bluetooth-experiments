@@ -30,7 +30,6 @@ namespace BluetoothController.Responses
         {
             Port = body.Substring(6, 2);
             Event = (DeviceState)Convert.ToInt32(body.Substring(8, 2), 16);
-            DeviceType = body.Substring(10, 2);
             switch (Port)
             {
                 case "00":
@@ -49,6 +48,8 @@ namespace BluetoothController.Responses
                     PortLetter = "?";
                     break;
             }
+            if (Event != DeviceState.Detached)
+                DeviceType = body.Substring(10, 2);
             NotificationType = GetType().Name;
         }
 

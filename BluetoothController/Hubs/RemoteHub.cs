@@ -5,7 +5,6 @@
         public RemoteHub()
         {
             HubType = HubType.TwoPortHandset;
-            IsModular = false;
         }
     }
 }
