@@ -2,26 +2,35 @@
 
 namespace BluetoothController.Responses
 {
-    public enum IOType
+    public static class IOType
     {
-        TrainMotor = 2,
-        LED = 23,
-        ColorDistance = 37,
-        ExternalMotor = 38,
-        InternalMotor = 39,
-        RemoteButton = 55
+        public const string TrainMotor = "02";
+        public const string LED = "17";
+        public const string ColorDistance = "25";
+        public const string ExternalMotor = "26";
+        public const string InternalMotor = "27";
+        public const string RemoteButton = "37";
+    }
+
+    public enum DeviceState
+    {
+        Detached,
+        Attached,
+        AttachedVirtual
     }
 
     public class PortInfo : Response
     {
         public string Port { get; set; }
         public string PortLetter { get; set; }
-        public IOType DeviceType { get; set; }
+        public string DeviceType { get; set; }
+        public DeviceState Event { get; set; }
 
         public PortInfo(string body) : base(body)
         {
             Port = body.Substring(6, 2);
-            DeviceType = (IOType)Convert.ToInt32(body.Substring(10, 2), 16);
+            Event = (DeviceState)Convert.ToInt32(body.Substring(8, 2), 16);
+            DeviceType = body.Substring(10, 2);
             switch (Port)
             {
                 case "00":
@@ -45,7 +54,7 @@ namespace BluetoothController.Responses
 
         public override string ToString()
         {
-            return $"Unknown Device on port: {PortLetter}({Port}) - {Body}";
+            return $"Unknown Device {Event} on port {Port} [{Body}]";
         }
     }
 }

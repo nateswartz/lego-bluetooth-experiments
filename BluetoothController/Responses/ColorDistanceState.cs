@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"Color Distance Sensor on port: {PortLetter}({Port})";
+            return $"Color Distance Sensor {Event} on port {PortLetter}({Port}) [{Body}]";
         }
     }
 }
