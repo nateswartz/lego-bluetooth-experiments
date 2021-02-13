@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BluetoothController.Responses
+namespace BluetoothController.Responses.State
 {
     public static class IOType
     {
@@ -10,6 +10,8 @@ namespace BluetoothController.Responses
         public const string ExternalMotor = "26";
         public const string InternalMotor = "27";
         public const string RemoteButton = "37";
+        public const string TiltSensor = "3a";
+        public const string VoltageSensor = "3c";
     }
 
     public enum DeviceState
@@ -19,14 +21,14 @@ namespace BluetoothController.Responses
         AttachedVirtual
     }
 
-    public class PortInfo : Response
+    public class PortState : Response
     {
         public string Port { get; set; }
         public string PortLetter { get; set; }
         public string DeviceType { get; set; }
         public DeviceState Event { get; set; }
 
-        public PortInfo(string body) : base(body)
+        public PortState(string body) : base(body)
         {
             Port = body.Substring(6, 2);
             Event = (DeviceState)Convert.ToInt32(body.Substring(8, 2), 16);

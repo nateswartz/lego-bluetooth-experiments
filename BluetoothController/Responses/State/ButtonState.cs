@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BluetoothController.Responses
+namespace BluetoothController.Responses.State
 {
     public enum ButtonState
     {

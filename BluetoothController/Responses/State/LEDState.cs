@@ -1,6 +1,6 @@
-﻿namespace BluetoothController.Responses
+﻿namespace BluetoothController.Responses.State
 {
-    public class LEDState : PortInfo
+    public class LEDState : PortState
     {
         public LEDState(string body) : base(body)
         {

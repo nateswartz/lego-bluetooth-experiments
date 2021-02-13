@@ -1,6 +1,6 @@
-﻿namespace BluetoothController.Responses
+﻿namespace BluetoothController.Responses.State
 {
-    public class RemoteButtonState : PortInfo
+    public class RemoteButtonState : PortState
     {
         public RemoteButtonState(string body) : base(body)
         {

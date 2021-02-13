@@ -1,6 +1,6 @@
 ﻿using BluetoothController.Commands.Abstract;
 using BluetoothController.Hubs;
-using BluetoothController.Responses;
+using BluetoothController.Responses.State;
 using System.Linq;
 
 namespace BluetoothController.Commands.Basic

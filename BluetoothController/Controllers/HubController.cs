@@ -2,6 +2,7 @@
 using BluetoothController.EventHandlers;
 using BluetoothController.Hubs;
 using BluetoothController.Responses;
+using BluetoothController.Responses.State;
 using BluetoothController.Util;
 using System;
 using System.Collections.Generic;

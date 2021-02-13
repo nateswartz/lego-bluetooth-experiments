@@ -1,6 +1,6 @@
-﻿namespace BluetoothController.Responses
+﻿namespace BluetoothController.Responses.State
 {
-    public class ExternalMotorState : PortInfo
+    public class ExternalMotorState : PortState
     {
         public ExternalMotorState(string body) : base(body)
         {

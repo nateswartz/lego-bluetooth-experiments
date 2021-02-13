@@ -1,4 +1,4 @@
-﻿namespace BluetoothController.Responses
+﻿namespace BluetoothController.Responses.Data
 {
     public class AngleData : ExternalMotorData
     {

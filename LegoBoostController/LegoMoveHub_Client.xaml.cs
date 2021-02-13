@@ -4,7 +4,7 @@ using BluetoothController.Controllers;
 using BluetoothController.EventHandlers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
-using BluetoothController.Responses;
+using BluetoothController.Responses.State;
 using LegoBoostController.Controllers;
 using LegoBoostController.Models;
 using System;

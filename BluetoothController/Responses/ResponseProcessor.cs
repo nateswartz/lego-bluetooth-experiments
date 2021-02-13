@@ -1,15 +1,14 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
+using BluetoothController.Responses.Data;
+using BluetoothController.Responses.State;
 using System.Linq;
 
 namespace BluetoothController.Responses
 {
     public static class ResponseProcessor
     {
-        const string TILT_SENSOR_PORT = "3a";
-        const string VOLTAGE_SENSOR_PORT = "3c";
-
         public static Response CreateResponse(string notification, HubController controller)
         {
             var response = new Response(notification);
@@ -48,7 +47,7 @@ namespace BluetoothController.Responses
 
         private static Response HandleIOAttached(HubController controller, string notification)
         {
-            var portInfo = new PortInfo(notification);
+            var portInfo = new PortState(notification);
 
             if (portInfo.Event == DeviceState.Detached)
             {
@@ -58,6 +57,11 @@ namespace BluetoothController.Responses
                     {
                         hub.GetPortByID(portInfo.Port).DeviceType = "";
                         return new TrainMotorState(notification);
+                    }
+                    if (hub.GetPortsByDeviceType(IOType.ExternalMotor).Any(p => p.PortID == portInfo.Port))
+                    {
+                        hub.GetPortByID(portInfo.Port).DeviceType = "";
+                        return new ExternalMotorState(notification);
                     }
                     if (hub.GetPortsByDeviceType(IOType.ColorDistance).Any(p => p.PortID == portInfo.Port))
                     {
@@ -102,6 +106,10 @@ namespace BluetoothController.Responses
                     return new InternalMotorState(notification);
                 case IOType.RemoteButton:
                     return new RemoteButtonState(notification);
+                case IOType.VoltageSensor:
+                    return new VoltageState(notification);
+                case IOType.TiltSensor:
+                    return new TiltState(notification);
             }
             return portInfo;
         }
@@ -129,11 +137,11 @@ namespace BluetoothController.Responses
                     return new ExternalMotorData(notification);
                 }
             }
-            if (sensorData.Port == TILT_SENSOR_PORT)
+            if (sensorData.Port == IOType.TiltSensor)
             {
                 return new TiltData(notification);
             }
-            if (sensorData.Port == VOLTAGE_SENSOR_PORT)
+            if (sensorData.Port == IOType.VoltageSensor)
             {
                 return new VoltageData(notification);
             }

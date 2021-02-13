@@ -1,6 +1,6 @@
-﻿namespace BluetoothController.Responses
+﻿namespace BluetoothController.Responses.State
 {
-    public class ColorDistanceState : PortInfo
+    public class ColorDistanceState : PortState
     {
         public ColorDistanceState(string body) : base(body)
         {

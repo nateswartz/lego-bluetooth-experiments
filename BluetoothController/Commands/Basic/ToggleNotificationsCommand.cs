@@ -1,7 +1,7 @@
 ﻿using BluetoothController.Commands.Abstract;
 using BluetoothController.Controllers;
 using BluetoothController.Hubs;
-using BluetoothController.Responses;
+using BluetoothController.Responses.State;
 using System.Linq;
 
 namespace BluetoothController.Commands.Basic
@@ -28,6 +28,7 @@ namespace BluetoothController.Commands.Basic
                 case PortType.Tilt:
                     port = "3a";
                     break;
+                // TODO: Re-enable
                 //case PortType.Motor:
                 //    port = ((ModularHub)controller.Hub).CurrentExternalMotorPort;
                 //    break;
