@@ -48,6 +48,8 @@ namespace BluetoothLibraryTester
         {
             await _boostController.ExecuteCommandAsync(new HubFirmwareCommand());
             await Task.Delay(1000);
+            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(_boostController, true, PortType.Motor, "01"));
+            await Task.Delay(3000);
             await _boostController.ExecuteCommandAsync(new MotorCommand("01", 50, 2000, true));
             await Task.Delay(4000);
         }

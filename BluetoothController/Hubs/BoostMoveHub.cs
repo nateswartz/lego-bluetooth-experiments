@@ -4,7 +4,7 @@
     {
         public BoostMoveHub()
         {
-            HubType = HubType.TwoPortHub;
+            HubType = HubType.BoostMoveHub;
         }
     }
 }

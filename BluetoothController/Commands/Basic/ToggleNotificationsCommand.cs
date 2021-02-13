@@ -28,17 +28,26 @@ namespace BluetoothController.Commands.Basic
                 case PortType.Tilt:
                     port = "3a";
                     break;
-                // TODO: Re-enable
-                //case PortType.Motor:
-                //    port = ((ModularHub)controller.Hub).CurrentExternalMotorPort;
-                //    break;
-                //case PortType.ColorDistanceSensor:
-                //    port = ((ModularHub)controller.Hub).CurrentColorDistanceSensorPort;
-                //    break;
-                case PortType.TrainMotor:
-                    if (controller.Hub is HubWithChangeablePorts dynamicHub)
+                case PortType.Motor:
+                    if (controller.Hub is HubWithChangeablePorts motorHub)
                     {
-                        port = dynamicHub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
+                        port = motorHub.GetPortsByDeviceType(IOType.ExternalMotor).First().PortID;
+                    }
+                    else
+                        return;
+                    break;
+                case PortType.ColorDistanceSensor:
+                    if (controller.Hub is HubWithChangeablePorts colorHub)
+                    {
+                        port = colorHub.GetPortsByDeviceType(IOType.ColorDistance).First().PortID;
+                    }
+                    else
+                        return;
+                    break;
+                case PortType.TrainMotor:
+                    if (controller.Hub is HubWithChangeablePorts trainHub)
+                    {
+                        port = trainHub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
                     }
                     else
                         return;
