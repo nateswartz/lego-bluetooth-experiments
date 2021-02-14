@@ -40,9 +40,7 @@ namespace BluetoothController.Controllers
 
         public string GetCurrentExternalMotorPort()
         {
-            if (Hub is HubWithChangeablePorts hub)
-                return hub.GetPortsByDeviceType(IOType.ExternalMotor)?.First()?.PortID ?? "";
-            return "";
+            return Hub.GetPortsByDeviceType(IOType.ExternalMotor)?.First()?.PortID ?? "";
         }
 
         public async Task<bool> ExecuteCommandAsync(IPoweredUpCommand command)

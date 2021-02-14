@@ -1,6 +1,6 @@
 ﻿namespace BluetoothController.Hubs
 {
-    public class BoostMoveHub : HubWithChangeablePorts
+    public class BoostMoveHub : Hub
     {
         public BoostMoveHub()
         {

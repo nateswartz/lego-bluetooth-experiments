@@ -1,7 +1,22 @@
-﻿namespace BluetoothController.Hubs
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace BluetoothController.Hubs
 {
-    public abstract class Hub
+    public class Hub
     {
         public HubType HubType;
+
+        public List<HubPort> Ports = new List<HubPort>();
+
+        public HubPort GetPortByID(string portID)
+        {
+            return Ports.FirstOrDefault(p => p?.PortID == portID);
+        }
+
+        public IEnumerable<HubPort> GetPortsByDeviceType(string deviceType)
+        {
+            return Ports.Where(p => p?.DeviceType == deviceType);
+        }
     }
 }

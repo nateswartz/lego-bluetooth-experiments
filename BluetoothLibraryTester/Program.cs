@@ -22,14 +22,14 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_boostController == null)
+            while (_remoteController == null)
             //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
             await GetNames();
-            await RunMotorCommand();
+            await RunCommands();
 
             await Disconnect();
         }
@@ -61,7 +61,7 @@ namespace BluetoothLibraryTester
             await _remoteController.ExecuteCommandAsync(new RawCommand("0203"));
             //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
             //Console.WriteLine($"Setting LED Pink...");
-            //await _controller.ExecuteCommandAsync(new LEDBoostCommand(_controller, LEDColors.Pink));
+            await _remoteController.ExecuteCommandAsync(new LEDCommand(_remoteController, LEDColors.Pink));
             //await Task.Delay(500);
             //Console.WriteLine($"Registering for Button notifications...");
             //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));

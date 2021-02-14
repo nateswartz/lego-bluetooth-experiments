@@ -1,6 +1,5 @@
 ﻿using BluetoothController.Commands.Abstract;
 using BluetoothController.Controllers;
-using BluetoothController.Hubs;
 using BluetoothController.Responses.State;
 using System.Linq;
 
@@ -22,6 +21,7 @@ namespace BluetoothController.Commands.Basic
 
         public ToggleNotificationsCommand(HubController controller, bool enableNotifications, NotificationDeviceType portType, string sensorMode)
         {
+            var hub = controller.Hub;
             string port = "00";
             switch (portType)
             {
@@ -29,26 +29,20 @@ namespace BluetoothController.Commands.Basic
                     port = "3a";
                     break;
                 case NotificationDeviceType.Motor:
-                    if (controller.Hub is HubWithChangeablePorts motorHub)
-                    {
-                        port = motorHub.GetPortsByDeviceType(IOType.ExternalMotor).First().PortID;
-                    }
+                    if (hub.GetPortsByDeviceType((IOType.ExternalMotor)).Any())
+                        port = controller.Hub.GetPortsByDeviceType(IOType.ExternalMotor).First().PortID;
                     else
                         return;
                     break;
                 case NotificationDeviceType.ColorDistanceSensor:
-                    if (controller.Hub is HubWithChangeablePorts colorHub)
-                    {
-                        port = colorHub.GetPortsByDeviceType(IOType.ColorDistance).First().PortID;
-                    }
+                    if (hub.GetPortsByDeviceType((IOType.ColorDistance)).Any())
+                        port = hub.GetPortsByDeviceType(IOType.ColorDistance).First().PortID;
                     else
                         return;
                     break;
                 case NotificationDeviceType.TrainMotor:
-                    if (controller.Hub is HubWithChangeablePorts trainHub)
-                    {
-                        port = trainHub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
-                    }
+                    if (hub.GetPortsByDeviceType((IOType.TrainMotor)).Any())
+                        port = hub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
                     else
                         return;
                     break;

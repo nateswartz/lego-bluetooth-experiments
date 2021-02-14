@@ -1,6 +1,6 @@
 ﻿namespace BluetoothController.Hubs
 {
-    public class TwoPortHub : HubWithChangeablePorts
+    public class TwoPortHub : Hub
     {
         public TwoPortHub()
         {

@@ -9,7 +9,7 @@ namespace BluetoothController.Commands.Basic
     {
         public string HexCommand { get; set; }
 
-        public TrainMotorCommand(HubWithChangeablePorts hub, int powerPercentage, bool clockwise)
+        public TrainMotorCommand(Hub hub, int powerPercentage, bool clockwise)
         {
             string motorToRun = hub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
             string startupCompletion = "11"; // Execute immediately / Command feedback

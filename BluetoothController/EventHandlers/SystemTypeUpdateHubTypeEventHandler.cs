@@ -33,19 +33,23 @@ namespace BluetoothController.EventHandlers
                         return;
                     var moveHub = new BoostMoveHub();
                     if (_controller.Hub != null)
-                        moveHub.ChangeablePorts = ((HubWithChangeablePorts)_controller.Hub).ChangeablePorts;
+                        moveHub.Ports = _controller.Hub.Ports;
                     _controller.Hub = moveHub;
                     break;
                 case HubType.TwoPortHandset:
-                    if (_controller.Hub == null)
-                        _controller.Hub = new RemoteHub();
+                    if (_controller.Hub is RemoteHub)
+                        return;
+                    var remoteHub = new RemoteHub();
+                    if (_controller.Hub != null)
+                        remoteHub.Ports = _controller.Hub.Ports;
+                    _controller.Hub = remoteHub;
                     break;
                 case HubType.TwoPortHub:
                     if (_controller.Hub is TwoPortHub)
                         return;
                     var twoPortHub = new TwoPortHub();
                     if (_controller.Hub != null)
-                        twoPortHub.ChangeablePorts = ((HubWithChangeablePorts)_controller.Hub).ChangeablePorts;
+                        twoPortHub.Ports = _controller.Hub.Ports;
                     _controller.Hub = twoPortHub;
                     break;
             }
