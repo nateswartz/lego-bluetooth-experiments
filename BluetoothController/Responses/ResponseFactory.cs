@@ -116,6 +116,8 @@ namespace BluetoothController.Responses
                     return new RemoteButtonState(portInfo.Body);
                 case IOType.VoltageSensor:
                     return new VoltageState(portInfo.Body);
+                case IOType.CurrentSensor:
+                    return new CurrentState(portInfo.Body);
                 case IOType.TiltSensor:
                     return new TiltState(portInfo.Body);
             }
@@ -125,6 +127,7 @@ namespace BluetoothController.Responses
         private static Response HandlePortValueUpdate(HubController controller, string notification)
         {
             var sensorData = new SensorData(notification);
+
             if (controller.Hub is HubWithChangeablePorts hub)
             {
                 if (hub.GetPortByID(sensorData.Port)?.DeviceType == IOType.ColorDistance)
@@ -145,14 +148,17 @@ namespace BluetoothController.Responses
                     return new ExternalMotorData(notification);
                 }
             }
-            if (sensorData.Port == IOType.TiltSensor)
+
+            // TODO: Map this to the device, since it's not guaranteed
+            if (sensorData.Port == "3a")
             {
                 return new TiltData(notification);
             }
-            if (sensorData.Port == IOType.VoltageSensor)
+            if (sensorData.Port == "3c")
             {
                 return new VoltageData(notification);
             }
+
             if (controller.Hub.GetType() == typeof(RemoteHub) && (sensorData.Port == "00" || sensorData.Port == "01"))
             {
                 return new RemoteButtonData(notification);

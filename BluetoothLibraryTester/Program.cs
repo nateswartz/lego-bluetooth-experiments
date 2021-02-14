@@ -1,7 +1,6 @@
 ﻿using BluetoothController;
 using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
-using BluetoothController.EventHandlers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
 using System;
@@ -23,24 +22,26 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_boostController == null)
+            while (_remoteController == null)
             //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
             await GetNames();
-            await RunMotorCommand();
+            await RunCommands();
 
             await Disconnect();
         }
 
         static async Task GetNames()
         {
-            await _boostController.ExecuteCommandAsync(new HubNameCommand());
-            //await _remoteController.ExecuteCommandAsync(new HubNameCommand());
-            //await _hubController.ExecuteCommandAsync(new HubNameCommand());
-
+            if (_boostController != null)
+                await _boostController.ExecuteCommandAsync(new HubNameCommand());
+            if (_remoteController != null)
+                await _remoteController.ExecuteCommandAsync(new HubNameCommand());
+            if (_hubController != null)
+                await _hubController.ExecuteCommandAsync(new HubNameCommand());
             await Task.Delay(4000);
         }
 
@@ -64,7 +65,7 @@ namespace BluetoothLibraryTester
             //await Task.Delay(500);
             //Console.WriteLine($"Registering for Button notifications...");
             //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
-            _remoteController.AddEventHandler(new RemoteButtonToLEDEventHandler(_hubController));
+            //_remoteController.AddEventHandler(new RemoteButtonToLEDEventHandler(_hubController));
             await Task.Delay(500);
 
             Console.WriteLine("Registering for remote button notifications");
@@ -99,9 +100,12 @@ namespace BluetoothLibraryTester
         {
             Console.WriteLine("Disconnecting soon...");
             await Task.Delay(2000);
-            //await _remoteController.ExecuteCommandAsync(new ShutdownCommand());
-            //await _hubController.ExecuteCommandAsync(new ShutdownCommand());
-            await _boostController.ExecuteCommandAsync(new ShutdownCommand());
+            if (_boostController != null)
+                await _boostController.ExecuteCommandAsync(new ShutdownCommand());
+            if (_remoteController != null)
+                await _remoteController.ExecuteCommandAsync(new ShutdownCommand());
+            if (_hubController != null)
+                await _hubController.ExecuteCommandAsync(new ShutdownCommand());
             Console.WriteLine("Disconnected");
         }
 

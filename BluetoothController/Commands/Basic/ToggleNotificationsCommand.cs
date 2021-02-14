@@ -61,7 +61,8 @@ namespace BluetoothController.Commands.Basic
             }
 
             var state = enableNotifications ? "01" : "00"; // 01 - On; 00 - Off
-            HexCommand = AddHeader($"{port}{sensorMode}01000000{state}");
+            var deltaInterval = "01000000"; // value must change by this interval to trigger a message, protects against jitter
+            HexCommand = AddHeader($"{port}{sensorMode}{deltaInterval}{state}");
         }
     }
 }

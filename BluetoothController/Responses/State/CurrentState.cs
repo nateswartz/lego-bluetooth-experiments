@@ -1,15 +1,15 @@
 ﻿namespace BluetoothController.Responses.State
 {
-    public class VoltageState : PortState
+    public class CurrentState : PortState
     {
-        public VoltageState(string body) : base(body)
+        public CurrentState(string body) : base(body)
         {
             NotificationType = GetType().Name;
         }
 
         public override string ToString()
         {
-            return $"Voltage Sensor {Event} on port ({Port}) [{Body}]";
+            return $"Current Sensor {Event} on port ({Port}) [{Body}]";
         }
     }
 }

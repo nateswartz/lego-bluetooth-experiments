@@ -6,6 +6,7 @@ namespace BluetoothController.Responses.State
     {
         public const string TrainMotor = "02";
         public const string VoltageSensor = "14";
+        public const string CurrentSensor = "15";
         public const string LED = "17";
         public const string ColorDistance = "25";
         public const string ExternalMotor = "26";
