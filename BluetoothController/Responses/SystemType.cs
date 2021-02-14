@@ -2,7 +2,7 @@
 
 namespace BluetoothController.Responses
 {
-    public class SystemType : DeviceInfo
+    public class SystemType : HubInfo
     {
         public HubType HubType { get; }
 

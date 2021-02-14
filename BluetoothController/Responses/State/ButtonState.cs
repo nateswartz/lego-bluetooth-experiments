@@ -8,7 +8,7 @@ namespace BluetoothController.Responses.State
         Pressed = 1
     }
 
-    public class ButtonStateMessage : DeviceInfo
+    public class ButtonStateMessage : HubInfo
     {
         public ButtonState State { get; set; }
 

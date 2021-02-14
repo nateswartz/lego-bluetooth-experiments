@@ -14,6 +14,12 @@ namespace BluetoothController.Responses.State
         public const string VoltageSensor = "3c";
     }
 
+    public static class PortType
+    {
+        public const string TiltSensor = "3a";
+        public const string VoltageSensor = "3c";
+    }
+
     public enum DeviceState
     {
         Detached,

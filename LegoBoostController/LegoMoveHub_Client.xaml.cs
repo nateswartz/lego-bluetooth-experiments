@@ -246,22 +246,22 @@ namespace LegoBoostController
 
         private async void ToggleColorDistanceNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", PortType.ColorDistanceSensor, "08");
+            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", NotificationDeviceType.ColorDistanceSensor, "08");
         }
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
             // 01 - Speed; 02 - Angle
             var notificationType = ExternalMotorNotificationTypeToggle.IsOn ? "02" : "01";
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", PortType.Motor, notificationType);
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", NotificationDeviceType.Motor, notificationType);
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleTiltSensorNotificationsButton, "Tilt Sensor", PortType.Tilt, "04");
+            await ToggleNotification(ToggleTiltSensorNotificationsButton, "Tilt Sensor", NotificationDeviceType.Tilt, "04");
         }
 
-        private async Task<bool> ToggleNotification(Button button, string sensorType, PortType port, string sensorMode)
+        private async Task<bool> ToggleNotification(Button button, string sensorType, NotificationDeviceType deviceType, string sensorMode)
         {
             bool enableNotifications;
             if (button.Content.ToString() == $"Enable {sensorType} Notifications")
@@ -274,7 +274,7 @@ namespace LegoBoostController
                 enableNotifications = true;
                 button.Content = $"Enable {sensorType} Notifications";
             }
-            return await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, enableNotifications, port, sensorMode));
+            return await _controller.ExecuteCommandAsync(new ToggleNotificationsCommand(_controller, enableNotifications, deviceType, sensorMode));
         }
 
         private async void GetHubNameButton_Click()
@@ -311,7 +311,7 @@ namespace LegoBoostController
 
         private async void SyncLEDMotorButton_Click()
         {
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", PortType.Motor, "01");
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", NotificationDeviceType.Motor, "01");
 
             if (!_controller.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {

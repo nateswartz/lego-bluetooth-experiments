@@ -3,7 +3,7 @@ using System.Text;
 
 namespace BluetoothController.Responses
 {
-    public class HubName : DeviceInfo
+    public class HubName : HubInfo
     {
         public string Name { get; set; }
 

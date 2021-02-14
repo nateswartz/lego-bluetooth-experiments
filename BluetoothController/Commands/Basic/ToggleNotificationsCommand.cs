@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace BluetoothController.Commands.Basic
 {
-    public enum PortType
+    public enum NotificationDeviceType
     {
         Motor = 0,
         ColorDistanceSensor = 1,
@@ -20,15 +20,15 @@ namespace BluetoothController.Commands.Basic
     {
         public string HexCommand { get; set; }
 
-        public ToggleNotificationsCommand(HubController controller, bool enableNotifications, PortType portType, string sensorMode)
+        public ToggleNotificationsCommand(HubController controller, bool enableNotifications, NotificationDeviceType portType, string sensorMode)
         {
             string port = "00";
             switch (portType)
             {
-                case PortType.Tilt:
+                case NotificationDeviceType.Tilt:
                     port = "3a";
                     break;
-                case PortType.Motor:
+                case NotificationDeviceType.Motor:
                     if (controller.Hub is HubWithChangeablePorts motorHub)
                     {
                         port = motorHub.GetPortsByDeviceType(IOType.ExternalMotor).First().PortID;
@@ -36,7 +36,7 @@ namespace BluetoothController.Commands.Basic
                     else
                         return;
                     break;
-                case PortType.ColorDistanceSensor:
+                case NotificationDeviceType.ColorDistanceSensor:
                     if (controller.Hub is HubWithChangeablePorts colorHub)
                     {
                         port = colorHub.GetPortsByDeviceType(IOType.ColorDistance).First().PortID;
@@ -44,7 +44,7 @@ namespace BluetoothController.Commands.Basic
                     else
                         return;
                     break;
-                case PortType.TrainMotor:
+                case NotificationDeviceType.TrainMotor:
                     if (controller.Hub is HubWithChangeablePorts trainHub)
                     {
                         port = trainHub.GetPortsByDeviceType(IOType.TrainMotor).First().PortID;
@@ -52,10 +52,10 @@ namespace BluetoothController.Commands.Basic
                     else
                         return;
                     break;
-                case PortType.RemoteButtonA:
+                case NotificationDeviceType.RemoteButtonA:
                     port = "00";
                     break;
-                case PortType.RemoteButtonB:
+                case NotificationDeviceType.RemoteButtonB:
                     port = "01";
                     break;
             }

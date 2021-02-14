@@ -48,7 +48,7 @@ namespace BluetoothLibraryTester
         {
             await _boostController.ExecuteCommandAsync(new HubFirmwareCommand());
             await Task.Delay(1000);
-            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(_boostController, true, PortType.Motor, "01"));
+            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(_boostController, true, NotificationDeviceType.Tilt, "04"));
             await Task.Delay(3000);
             await _boostController.ExecuteCommandAsync(new MotorCommand("01", 50, 2000, true));
             await Task.Delay(4000);
@@ -68,8 +68,8 @@ namespace BluetoothLibraryTester
             await Task.Delay(500);
 
             Console.WriteLine("Registering for remote button notifications");
-            await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(_remoteController, true, PortType.RemoteButtonA, "03"));
-            await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(_remoteController, true, PortType.RemoteButtonB, "03"));
+            await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(_remoteController, true, NotificationDeviceType.RemoteButtonA, "03"));
+            await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(_remoteController, true, NotificationDeviceType.RemoteButtonB, "03"));
             await Task.Delay(500);
 
             //Console.WriteLine("Running motor...");

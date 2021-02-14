@@ -1,6 +1,6 @@
 ﻿namespace BluetoothController.Responses
 {
-    public class FirmwareVersion : DeviceInfo
+    public class FirmwareVersion : HubInfo
     {
         public string Version { get; set; }
 
