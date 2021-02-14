@@ -7,75 +7,83 @@ using System.Linq;
 
 namespace BluetoothController.Responses
 {
-    public static class ResponseProcessor
+    public static class ResponseFactory
     {
         public static Response CreateResponse(string notification, HubController controller)
         {
-            var response = new Response(notification);
+            var messageType = GetMessageType(notification);
 
-            // Simple cases - hub agnostic
-            switch (response.MessageType)
+            switch (messageType)
             {
                 case MessageTypes.HubProperty:
-                    var deviceInfo = new HubInfo(notification);
-                    switch (deviceInfo.DeviceType)
-                    {
-                        case HubInfoType.HubName:
-                            return new HubName(notification);
-                        case HubInfoType.ButtonState:
-                            return new ButtonStateMessage(notification);
-                        case HubInfoType.FirmwareVersion:
-                            return new FirmwareVersion(notification);
-                        case HubInfoType.SystemType:
-                            return new SystemType(notification);
-                    }
-                    return deviceInfo;
+                    return HandleHubProperty(controller, notification);
                 case MessageTypes.Error:
                     return new Error(notification);
-            }
-
-            // Complex cases - hub dependent
-            switch (response.MessageType)
-            {
-                case MessageTypes.HubAttachedIO:
-                    return HandleIOAttached(controller, notification);
+                case MessageTypes.HubAttachedDetachedIO:
+                    return HandleIOConnectionStateChange(controller, notification);
                 case MessageTypes.PortValueSingle:
                     return HandlePortValueUpdate(controller, notification);
             }
-            return response;
+            return new Response(notification);
         }
 
-        private static Response HandleIOAttached(HubController controller, string notification)
+        private static Response HandleHubProperty(HubController controller, string notification)
+        {
+            var deviceInfo = new HubInfo(notification);
+            switch (deviceInfo.DeviceType)
+            {
+                case HubInfoType.HubName:
+                    return new HubName(notification);
+                case HubInfoType.ButtonState:
+                    return new ButtonStateMessage(notification);
+                case HubInfoType.FirmwareVersion:
+                    return new FirmwareVersion(notification);
+                case HubInfoType.SystemType:
+                    return new SystemType(notification);
+            }
+            return deviceInfo;
+        }
+
+        private static Response HandleIOConnectionStateChange(HubController controller, string notification)
         {
             var portInfo = new PortState(notification);
 
             if (portInfo.Event == DeviceState.Detached)
             {
-                if (controller.Hub is HubWithChangeablePorts hub)
-                {
-                    if (hub.GetPortsByDeviceType(IOType.TrainMotor).Any(p => p.PortID == portInfo.Port))
-                    {
-                        hub.GetPortByID(portInfo.Port).DeviceType = "";
-                        return new TrainMotorState(notification);
-                    }
-                    if (hub.GetPortsByDeviceType(IOType.ExternalMotor).Any(p => p.PortID == portInfo.Port))
-                    {
-                        hub.GetPortByID(portInfo.Port).DeviceType = "";
-                        return new ExternalMotorState(notification);
-                    }
-                    if (hub.GetPortsByDeviceType(IOType.ColorDistance).Any(p => p.PortID == portInfo.Port))
-                    {
-                        hub.GetPortByID(portInfo.Port).DeviceType = "";
-                        return new ColorDistanceState(notification);
-                    }
-                }
-                return portInfo;
+                return HandleIODetached(controller, portInfo);
             }
+            return HandleIOAttached(controller, portInfo);
+        }
 
+        private static Response HandleIODetached(HubController controller, PortState portInfo)
+        {
+            if (controller.Hub is HubWithChangeablePorts hub)
+            {
+                if (hub.GetPortsByDeviceType(IOType.TrainMotor).Any(p => p.PortID == portInfo.Port))
+                {
+                    hub.GetPortByID(portInfo.Port).DeviceType = "";
+                    return new TrainMotorState(portInfo.Body);
+                }
+                if (hub.GetPortsByDeviceType(IOType.ExternalMotor).Any(p => p.PortID == portInfo.Port))
+                {
+                    hub.GetPortByID(portInfo.Port).DeviceType = "";
+                    return new ExternalMotorState(portInfo.Body);
+                }
+                if (hub.GetPortsByDeviceType(IOType.ColorDistance).Any(p => p.PortID == portInfo.Port))
+                {
+                    hub.GetPortByID(portInfo.Port).DeviceType = "";
+                    return new ColorDistanceState(portInfo.Body);
+                }
+            }
+            return portInfo;
+        }
+
+        private static Response HandleIOAttached(HubController controller, PortState portInfo)
+        {
             switch (portInfo.DeviceType)
             {
                 case IOType.LED:
-                    return new LEDState(notification);
+                    return new LEDState(portInfo.Body);
                 case IOType.ColorDistance:
                 case IOType.ExternalMotor:
                 case IOType.TrainMotor:
@@ -96,23 +104,20 @@ namespace BluetoothController.Responses
                         dynamicHub.GetPortByID(portInfo.Port).DeviceType = portInfo.DeviceType;
                     }
                     if (portInfo.DeviceType == IOType.ColorDistance)
-                        return new ColorDistanceState(notification);
+                        return new ColorDistanceState(portInfo.Body);
                     if (portInfo.DeviceType == IOType.ExternalMotor)
-                        return new ExternalMotorState(notification);
+                        return new ExternalMotorState(portInfo.Body);
                     if (portInfo.DeviceType == IOType.TrainMotor)
-                        return new TrainMotorState(notification);
+                        return new TrainMotorState(portInfo.Body);
                     break;
                 case IOType.InternalMotor:
-                    return new InternalMotorState(notification);
+                    return new InternalMotorState(portInfo.Body);
                 case IOType.RemoteButton:
-                    return new RemoteButtonState(notification);
-            }
-            switch (portInfo.Port)
-            {
-                case PortType.VoltageSensor:
-                    return new VoltageState(notification);
-                case PortType.TiltSensor:
-                    return new TiltState(notification);
+                    return new RemoteButtonState(portInfo.Body);
+                case IOType.VoltageSensor:
+                    return new VoltageState(portInfo.Body);
+                case IOType.TiltSensor:
+                    return new TiltState(portInfo.Body);
             }
             return portInfo;
         }
@@ -153,6 +158,11 @@ namespace BluetoothController.Responses
                 return new RemoteButtonData(notification);
             }
             return sensorData;
+        }
+
+        private static string GetMessageType(string notification)
+        {
+            return notification.Substring(4, 2);
         }
     }
 }

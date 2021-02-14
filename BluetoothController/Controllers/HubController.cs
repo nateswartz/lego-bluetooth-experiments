@@ -113,7 +113,7 @@ namespace BluetoothController.Controllers
 
         internal async Task<string> ProcessNotification(string notification)
         {
-            var response = ResponseProcessor.CreateResponse(notification, this);
+            var response = ResponseFactory.CreateResponse(notification, this);
 
             await TriggerActionsFromNotification(response);
 
