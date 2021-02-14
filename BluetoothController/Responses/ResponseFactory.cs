@@ -87,6 +87,7 @@ namespace BluetoothController.Responses
                 case IOType.ColorDistance:
                 case IOType.ExternalMotor:
                 case IOType.TrainMotor:
+                case IOType.TiltSensor:
                     if (controller.Hub == null)
                         controller.Hub = new HubWithChangeablePorts();
                     var dynamicHub = ((HubWithChangeablePorts)controller.Hub);
@@ -109,6 +110,8 @@ namespace BluetoothController.Responses
                         return new ExternalMotorState(portInfo.Body);
                     if (portInfo.DeviceType == IOType.TrainMotor)
                         return new TrainMotorState(portInfo.Body);
+                    if (portInfo.DeviceType == IOType.TiltSensor)
+                        return new TiltState(portInfo.Body);
                     break;
                 case IOType.InternalMotor:
                     return new InternalMotorState(portInfo.Body);
@@ -118,8 +121,6 @@ namespace BluetoothController.Responses
                     return new VoltageState(portInfo.Body);
                 case IOType.CurrentSensor:
                     return new CurrentState(portInfo.Body);
-                case IOType.TiltSensor:
-                    return new TiltState(portInfo.Body);
             }
             return portInfo;
         }
@@ -147,18 +148,17 @@ namespace BluetoothController.Responses
                     }
                     return new ExternalMotorData(notification);
                 }
+                if (hub.GetPortByID(sensorData.Port)?.DeviceType == IOType.TiltSensor)
+                {
+                    return new TiltData(notification);
+                }
             }
 
             // TODO: Map this to the device, since it's not guaranteed
-            if (sensorData.Port == "3a")
-            {
-                return new TiltData(notification);
-            }
             if (sensorData.Port == "3c")
             {
                 return new VoltageData(notification);
             }
-
             if (controller.Hub.GetType() == typeof(RemoteHub) && (sensorData.Port == "00" || sensorData.Port == "01"))
             {
                 return new RemoteButtonData(notification);

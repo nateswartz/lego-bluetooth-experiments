@@ -22,14 +22,14 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_remoteController == null)
+            while (_boostController == null)
             //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
             await GetNames();
-            await RunCommands();
+            await RunMotorCommand();
 
             await Disconnect();
         }
