@@ -2,16 +2,6 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public enum NotificationDeviceType
-    {
-        Motor = 0,
-        ColorDistanceSensor = 1,
-        Tilt = 2,
-        TrainMotor = 3,
-        RemoteButtonA = 4,
-        RemoteButtonB = 5
-    }
-
     public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommandType, IPoweredUpCommand
     {
         public string HexCommand { get; set; }

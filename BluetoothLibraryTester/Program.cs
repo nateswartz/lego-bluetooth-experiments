@@ -24,14 +24,14 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_remoteController == null)
+            while (_boostController == null)
             //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
             await GetNames();
-            await RunCommands();
+            await RunInternalMotorCommand();
 
             await Disconnect();
         }
@@ -56,6 +56,17 @@ namespace BluetoothLibraryTester
             await Task.Delay(3000);
             await _boostController.ExecuteCommandAsync(new MotorCommand("01", 50, 2000, true));
             await Task.Delay(4000);
+        }
+
+        static async Task RunInternalMotorCommand()
+        {
+            await Task.Delay(1000);
+            var internalMotor = _boostController.GetPortIdsByDeviceType(IOType.InternalMotor).Last();
+            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(internalMotor, true, "01"));
+            await Task.Delay(3000);
+            await _boostController.ExecuteCommandAsync(new MotorCommand(internalMotor, 50, 2000, true));
+            await Task.Delay(4000);
+
         }
 
         static async Task RunCommands()
