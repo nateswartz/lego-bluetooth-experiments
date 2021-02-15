@@ -3,7 +3,6 @@ using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
-using BluetoothController.Responses.State;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,7 +43,7 @@ namespace BluetoothLibraryTester
                 await _remoteController.ExecuteCommandAsync(new HubNameCommand());
             if (_hubController != null)
                 await _hubController.ExecuteCommandAsync(new HubNameCommand());
-            await Task.Delay(4000);
+            await Task.Delay(2000);
         }
 
         static async Task RunMotorCommand()
@@ -62,10 +61,10 @@ namespace BluetoothLibraryTester
         {
             await Task.Delay(1000);
             var internalMotor = _boostController.GetPortIdsByDeviceType(IOType.InternalMotor).Last();
-            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(internalMotor, true, "01"));
-            await Task.Delay(3000);
+            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(internalMotor, true, "02"));
+            await Task.Delay(2000);
             await _boostController.ExecuteCommandAsync(new MotorCommand(internalMotor, 50, 2000, true));
-            await Task.Delay(4000);
+            await Task.Delay(2000);
 
         }
 
@@ -114,7 +113,7 @@ namespace BluetoothLibraryTester
         static async Task Disconnect()
         {
             Console.WriteLine("Disconnecting soon...");
-            await Task.Delay(2000);
+            await Task.Delay(1000);
             if (_boostController != null)
                 await _boostController.ExecuteCommandAsync(new ShutdownCommand());
             if (_remoteController != null)

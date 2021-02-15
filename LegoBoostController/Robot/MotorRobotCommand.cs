@@ -1,6 +1,6 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
-using BluetoothController.Responses.State;
+using BluetoothController.Models;
 using LegoBoostController.Models;
 using System;
 using System.Linq;
