@@ -1,7 +1,9 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
+using BluetoothController.Responses.State;
 using LegoBoostController.Models;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -17,7 +19,7 @@ namespace LegoBoostController.Robot
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var clockWise = commandText.StartsWith(clockwiseKeyword);
-                var port = motor.Name == "External" ? controller.GetCurrentExternalMotorPort() : motor.Code;
+                var port = motor.Name == "External" ? controller.GetPortIdsByDeviceType(IOType.ExternalMotor).First() : motor.Code;
                 var command = new MotorCommand(port, speed, time, clockWise);
                 await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);

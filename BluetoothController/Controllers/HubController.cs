@@ -2,7 +2,6 @@
 using BluetoothController.EventHandlers;
 using BluetoothController.Hubs;
 using BluetoothController.Responses;
-using BluetoothController.Responses.State;
 using BluetoothController.Util;
 using System;
 using System.Collections.Generic;
@@ -36,11 +35,6 @@ namespace BluetoothController.Controllers
         public HubController()
         {
             _eventHandlers = new Dictionary<string, List<IEventHandler>>();
-        }
-
-        public string GetCurrentExternalMotorPort()
-        {
-            return Hub.GetPortsByDeviceType(IOType.ExternalMotor)?.First()?.PortID ?? "";
         }
 
         public async Task<bool> ExecuteCommandAsync(IPoweredUpCommand command)
@@ -81,6 +75,11 @@ namespace BluetoothController.Controllers
             IsConnected = false;
             await ExecuteCommandAsync(new DisconnectCommand());
             await ToggleSubscribedForNotificationsAsync(null);
+        }
+
+        public IEnumerable<string> GetPortIdsByDeviceType(string deviceType)
+        {
+            return Hub.GetPortsByDeviceType(deviceType).Select(h => h.PortID);
         }
 
         public override string ToString()
