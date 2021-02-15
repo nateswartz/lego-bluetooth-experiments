@@ -26,7 +26,10 @@ namespace BluetoothController.Commands.Basic
             switch (portType)
             {
                 case NotificationDeviceType.Tilt:
-                    port = "3a";
+                    if (hub.GetPortsByDeviceType((IOType.TiltSensor)).Any())
+                        port = controller.Hub.GetPortsByDeviceType(IOType.TiltSensor).First().PortID;
+                    else
+                        return;
                     break;
                 case NotificationDeviceType.Motor:
                     if (hub.GetPortsByDeviceType((IOType.ExternalMotor)).Any())

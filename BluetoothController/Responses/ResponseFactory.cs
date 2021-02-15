@@ -78,46 +78,39 @@ namespace BluetoothController.Responses
 
         private static Response HandleIOAttached(HubController controller, PortState portInfo)
         {
+            if (controller.Hub == null)
+                controller.Hub = new Hub();
+            var hub = controller.Hub;
+
+            if (hub.GetPortByID(portInfo.Port) == null)
+            {
+                hub.Ports.Add(new HubPort
+                {
+                    PortID = portInfo.Port,
+                    DeviceType = portInfo.DeviceType
+                });
+            }
+            else
+            {
+                hub.GetPortByID(portInfo.Port).DeviceType = portInfo.DeviceType;
+            }
+
             switch (portInfo.DeviceType)
             {
                 case IOType.LED:
+                    return new LEDState(portInfo.Body);
                 case IOType.ColorDistance:
+                    return new ColorDistanceState(portInfo.Body);
                 case IOType.ExternalMotor:
+                    return new ExternalMotorState(portInfo.Body);
                 case IOType.TrainMotor:
+                    return new TrainMotorState(portInfo.Body);
                 case IOType.TiltSensor:
+                    return new TiltState(portInfo.Body);
                 case IOType.RemoteButton:
+                    return new RemoteButtonState(portInfo.Body);
                 case IOType.VoltageSensor:
-                    if (controller.Hub == null)
-                        controller.Hub = new Hub();
-                    var hub = controller.Hub;
-
-                    if (hub.GetPortByID(portInfo.Port) == null)
-                    {
-                        hub.Ports.Add(new HubPort
-                        {
-                            PortID = portInfo.Port,
-                            DeviceType = portInfo.DeviceType
-                        });
-                    }
-                    else
-                    {
-                        hub.GetPortByID(portInfo.Port).DeviceType = portInfo.DeviceType;
-                    }
-                    if (portInfo.DeviceType == IOType.ColorDistance)
-                        return new ColorDistanceState(portInfo.Body);
-                    if (portInfo.DeviceType == IOType.ExternalMotor)
-                        return new ExternalMotorState(portInfo.Body);
-                    if (portInfo.DeviceType == IOType.TrainMotor)
-                        return new TrainMotorState(portInfo.Body);
-                    if (portInfo.DeviceType == IOType.TiltSensor)
-                        return new TiltState(portInfo.Body);
-                    if (portInfo.DeviceType == IOType.RemoteButton)
-                        return new RemoteButtonState(portInfo.Body);
-                    if (portInfo.DeviceType == IOType.VoltageSensor)
-                        return new VoltageState(portInfo.Body);
-                    if (portInfo.DeviceType == IOType.LED)
-                        return new LEDState(portInfo.Body);
-                    break;
+                    return new VoltageState(portInfo.Body);
                 case IOType.InternalMotor:
                     return new InternalMotorState(portInfo.Body);
                 case IOType.CurrentSensor:

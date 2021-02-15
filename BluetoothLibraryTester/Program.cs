@@ -60,7 +60,7 @@ namespace BluetoothLibraryTester
             await _remoteController.ExecuteCommandAsync(new HubFirmwareCommand());
             await _remoteController.ExecuteCommandAsync(new RawCommand("0203"));
             //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
-            //Console.WriteLine($"Setting LED Pink...");
+            Console.WriteLine($"Setting LED Pink...");
             await _remoteController.ExecuteCommandAsync(new LEDCommand(_remoteController, LEDColors.Pink));
             //await Task.Delay(500);
             //Console.WriteLine($"Registering for Button notifications...");
