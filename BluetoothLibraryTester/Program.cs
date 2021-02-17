@@ -23,14 +23,14 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_remoteController == null)
+            while (_boostController == null)
             //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
             await GetNames();
-            await RunCommands();
+            await RunMotorCommand(_boostController);
 
             await Disconnect();
         }
@@ -46,15 +46,15 @@ namespace BluetoothLibraryTester
             await Task.Delay(2000);
         }
 
-        static async Task RunMotorCommand()
+        static async Task RunMotorCommand(HubController controller)
         {
-            await _boostController.ExecuteCommandAsync(new HubFirmwareCommand());
+            await controller.ExecuteCommandAsync(new HubFirmwareCommand());
             await Task.Delay(1000);
-            var tiltPort = _boostController.GetPortIdsByDeviceType(IOType.TiltSensor).Single();
-            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(tiltPort, true, "04"));
-            await Task.Delay(3000);
-            await _boostController.ExecuteCommandAsync(new MotorCommand("01", 50, 2000, true));
-            await Task.Delay(4000);
+            var motor = controller.GetPortIdsByDeviceType(IOType.ExternalMotor).Single();
+            await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(motor, true, "02"));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new MotorCommand(motor, 50, 1000, true));
+            await Task.Delay(1000);
         }
 
         static async Task RunInternalMotorCommand()

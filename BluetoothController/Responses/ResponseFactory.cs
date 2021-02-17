@@ -24,9 +24,16 @@ namespace BluetoothController.Responses
                 case MessageTypes.PortValueSingle:
                     return HandlePortValueUpdate(controller, notification);
                 case MessageTypes.PortInputFormatSingle:
-                    return new PortNotificationState(notification);
+                    return HandleNotificationStateUpdate(controller, notification);
             }
             return new Response(notification);
+        }
+
+        private static Response HandleNotificationStateUpdate(HubController controller, string notification)
+        {
+            var portState = new PortNotificationState(notification);
+            controller.Hub.GetPortByID(portState.Port).NotificationMode = portState.Mode;
+            return portState;
         }
 
         private static Response HandleHubProperty(HubController controller, string notification)
@@ -125,14 +132,15 @@ namespace BluetoothController.Responses
         {
             var sensorData = new SensorData(notification);
             var hub = controller.Hub;
+            var port = hub.GetPortByID(sensorData.Port);
 
-            switch (hub.GetPortByID(sensorData.Port)?.DeviceType)
+            switch (port?.DeviceType)
             {
                 case IOType.ColorDistance:
                     return new ColorDistanceData(notification);
                 case IOType.ExternalMotor:
                 case IOType.TrainMotor:
-                    return new ExternalMotorData(notification);
+                    return new ExternalMotorData(notification, port.NotificationMode);
                 case IOType.TiltSensor:
                     return new TiltData(notification);
                 case IOType.RemoteButton:

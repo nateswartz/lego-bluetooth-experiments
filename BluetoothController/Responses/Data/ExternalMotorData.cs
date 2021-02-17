@@ -9,10 +9,10 @@ namespace BluetoothController.Responses.Data
 
         public int Speed { get; set; }
 
-        public ExternalMotorData(string body) : base(body)
+        public ExternalMotorData(string body, string mode) : base(body)
         {
             _dataType = Length;
-            if (_dataType == "05")
+            if (mode == "01")
             {
                 Speed = Convert.ToInt32(body.Substring(8, 2), 16);
             }
