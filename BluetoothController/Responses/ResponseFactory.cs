@@ -23,6 +23,8 @@ namespace BluetoothController.Responses
                     return HandleIOConnectionStateChange(controller, notification);
                 case MessageTypes.PortValueSingle:
                     return HandlePortValueUpdate(controller, notification);
+                case MessageTypes.PortInputFormatSingle:
+                    return new PortNotificationState(notification);
             }
             return new Response(notification);
         }
