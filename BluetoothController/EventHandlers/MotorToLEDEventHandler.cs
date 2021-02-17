@@ -12,7 +12,7 @@ namespace BluetoothController.EventHandlers
     {
         private readonly HubController _controller;
 
-        public Type HandledEvent { get; } = typeof(SpeedData);
+        public Type HandledEvent { get; } = typeof(ExternalMotorData);
 
         public MotorToLEDEventHandler(HubController controller)
         {
@@ -21,7 +21,7 @@ namespace BluetoothController.EventHandlers
 
         public async Task HandleEventAsync(Response response)
         {
-            var data = (SpeedData)response;
+            var data = (ExternalMotorData)response;
             var color = LEDColors.Red;
             if (data.Speed > 30)
             {

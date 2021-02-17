@@ -132,14 +132,6 @@ namespace BluetoothController.Responses
                     return new ColorDistanceData(notification);
                 case IOType.ExternalMotor:
                 case IOType.TrainMotor:
-                    var externalMotorData = new ExternalMotorData(notification);
-                    switch (externalMotorData.DataType)
-                    {
-                        case MotorDataType.Angle:
-                            return new AngleData(notification);
-                        case MotorDataType.Speed:
-                            return new SpeedData(notification);
-                    }
                     return new ExternalMotorData(notification);
                 case IOType.TiltSensor:
                     return new TiltData(notification);

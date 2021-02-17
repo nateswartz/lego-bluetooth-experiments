@@ -2,25 +2,31 @@
 
 namespace BluetoothController.Responses.Data
 {
-    public enum MotorDataType
-    {
-        Angle = 8,
-        Speed = 5
-    }
-
+    // TODO: Base dataType off of the notification mode that was registered for the port
     public class ExternalMotorData : SensorData
     {
-        public MotorDataType DataType { get; set; }
+        private string _dataType;
+
+        public int Speed { get; set; }
 
         public ExternalMotorData(string body) : base(body)
         {
-            DataType = (MotorDataType)Convert.ToInt32(Length, 16);
+            _dataType = Length;
+            if (_dataType == "05")
+            {
+                Speed = Convert.ToInt32(body.Substring(8, 2), 16);
+            }
+
             NotificationType = GetType().Name;
         }
 
         public override string ToString()
         {
-            return $"External Motor Sensor Data: {DataType} - {Body}";
+            if (_dataType == "08")
+                return $"External Motor Angle Data: {Body}";
+            if (_dataType == "05")
+                return $"External Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)}";
+            return $"External Motor Sensor Data: {Body}";
         }
     }
 }
