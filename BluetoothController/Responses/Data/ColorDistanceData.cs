@@ -9,6 +9,8 @@ namespace BluetoothController.Responses.Data
         public int Inches { get; set; }
         private bool _extended;
 
+        // TODO: This varies depending on the subscription to the sensor. 
+        // It needs to know what subscription was used
         public ColorDistanceData(string body) : base(body)
         {
             if (body.Length > 10)
