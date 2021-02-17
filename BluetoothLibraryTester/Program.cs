@@ -23,14 +23,14 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_boostController == null)
+            while (_remoteController == null)
             //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
             }
 
             await GetNames();
-            await RunInternalMotorCommand();
+            await RunCommands();
 
             await Disconnect();
         }
@@ -60,10 +60,10 @@ namespace BluetoothLibraryTester
         static async Task RunInternalMotorCommand()
         {
             await Task.Delay(1000);
-            var internalMotor = _boostController.GetPortIdsByDeviceType(IOType.InternalMotor).Last();
-            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(internalMotor, true, "02"));
-            await Task.Delay(2000);
-            await _boostController.ExecuteCommandAsync(new MotorCommand(internalMotor, 50, 2000, true));
+            var port = _boostController.GetPortIdsByDeviceType(IOType.ColorDistance).Last();
+            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "08"));
+            await Task.Delay(10000);
+            //await _boostController.ExecuteCommandAsync(new MotorCommand(motor, 50, 2000, true));
             await Task.Delay(2000);
 
         }
@@ -71,7 +71,7 @@ namespace BluetoothLibraryTester
         static async Task RunCommands()
         {
             await _remoteController.ExecuteCommandAsync(new HubFirmwareCommand());
-            await _remoteController.ExecuteCommandAsync(new RawCommand("0203"));
+            //await _remoteController.ExecuteCommandAsync(new RawCommand("0203"));
             //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
             Console.WriteLine($"Setting LED Pink...");
             await _remoteController.ExecuteCommandAsync(new LEDCommand(_remoteController, LEDColors.Pink));
