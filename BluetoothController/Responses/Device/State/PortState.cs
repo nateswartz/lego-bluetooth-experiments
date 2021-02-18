@@ -1,7 +1,7 @@
 ﻿using BluetoothController.Models;
 using System;
 
-namespace BluetoothController.Responses.State
+namespace BluetoothController.Responses.Device.State
 {
     public class PortState : Response
     {

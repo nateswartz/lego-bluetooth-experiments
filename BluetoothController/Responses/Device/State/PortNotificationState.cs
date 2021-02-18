@@ -1,4 +1,4 @@
-﻿namespace BluetoothController.Responses.State
+﻿namespace BluetoothController.Responses.Device.State
 {
     public class PortNotificationState : Response
     {

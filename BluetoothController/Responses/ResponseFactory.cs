@@ -1,9 +1,9 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
-using BluetoothController.Responses.Data;
+using BluetoothController.Responses.Device.Data;
+using BluetoothController.Responses.Device.State;
 using BluetoothController.Responses.Hub;
-using BluetoothController.Responses.State;
 using System.Linq;
 
 namespace BluetoothController.Responses

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BluetoothController.Responses.Data
+namespace BluetoothController.Responses.Device.Data
 {
     public class ExternalMotorData : SensorData
     {

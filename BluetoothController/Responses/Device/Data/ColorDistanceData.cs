@@ -1,7 +1,7 @@
 ﻿using BluetoothController.Models;
 using System;
 
-namespace BluetoothController.Responses.Data
+namespace BluetoothController.Responses.Device.Data
 {
     public class ColorDistanceData : SensorData
     {

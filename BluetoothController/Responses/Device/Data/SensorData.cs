@@ -1,4 +1,4 @@
-﻿namespace BluetoothController.Responses.Data
+﻿namespace BluetoothController.Responses.Device.Data
 {
     public class SensorData : Response
     {
