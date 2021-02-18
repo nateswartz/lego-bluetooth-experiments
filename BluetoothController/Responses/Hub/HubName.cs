@@ -1,7 +1,7 @@
 ﻿using BluetoothController.Util;
 using System.Text;
 
-namespace BluetoothController.Responses
+namespace BluetoothController.Responses.Hub
 {
     public class HubName : HubInfo
     {

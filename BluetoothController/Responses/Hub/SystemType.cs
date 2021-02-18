@@ -1,6 +1,6 @@
 ﻿using BluetoothController.Hubs;
 
-namespace BluetoothController.Responses
+namespace BluetoothController.Responses.Hub
 {
     public class SystemType : HubInfo
     {

@@ -18,7 +18,7 @@ namespace BluetoothController.Controllers
 
         public HubType HubType { get { return Hub?.HubType ?? HubType.Unknown; } }
 
-        internal Hub Hub { get; set; }
+        internal LegoHub Hub { get; set; }
 
         internal string SelectedBleDeviceId { get; set; }
 

@@ -2,6 +2,7 @@
 using BluetoothController.Hubs;
 using BluetoothController.Models;
 using BluetoothController.Responses.Data;
+using BluetoothController.Responses.Hub;
 using BluetoothController.Responses.State;
 using System.Linq;
 
@@ -17,6 +18,8 @@ namespace BluetoothController.Responses
             {
                 case MessageTypes.HubProperty:
                     return HandleHubProperty(controller, notification);
+                case MessageTypes.HubAction:
+                    return HandleHubActionResponse(notification);
                 case MessageTypes.Error:
                     return new Error(notification);
                 case MessageTypes.HubAttachedDetachedIO:
@@ -27,6 +30,11 @@ namespace BluetoothController.Responses
                     return HandleNotificationStateUpdate(controller, notification);
             }
             return new Response(notification);
+        }
+
+        private static Response HandleHubActionResponse(string notification)
+        {
+            return new HubActionResponse(notification);
         }
 
         private static Response HandleNotificationStateUpdate(HubController controller, string notification)
@@ -88,7 +96,7 @@ namespace BluetoothController.Responses
         private static Response HandleIOAttached(HubController controller, PortState portInfo)
         {
             if (controller.Hub == null)
-                controller.Hub = new Hub();
+                controller.Hub = new LegoHub();
             var hub = controller.Hub;
 
             if (hub.GetPortByID(portInfo.Port) == null)

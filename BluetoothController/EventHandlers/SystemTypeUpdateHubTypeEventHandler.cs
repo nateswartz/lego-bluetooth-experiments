@@ -1,5 +1,6 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.Responses;
+using BluetoothController.Responses.Hub;
 using System;
 using System.Threading.Tasks;
 

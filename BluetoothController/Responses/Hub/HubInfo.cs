@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BluetoothController.Responses
+namespace BluetoothController.Responses.Hub
 {
     public enum HubInfoType
     {

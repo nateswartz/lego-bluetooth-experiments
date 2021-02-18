@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace BluetoothController.Hubs
 {
-    public class Hub
+    public class LegoHub
     {
         public HubType HubType;
 
