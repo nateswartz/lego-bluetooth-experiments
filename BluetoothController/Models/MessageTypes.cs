@@ -7,6 +7,7 @@
         public const string HubAttachedDetachedIO = "04";
         public const string Error = "05";
         public const string PortInputFormatSetupSingle = "41";
+        public const string PortInputFormatSetupCombined = "42";
         public const string PortValueSingle = "45";
         public const string PortInputFormatSingle = "47";
         public const string PortOutput = "81";

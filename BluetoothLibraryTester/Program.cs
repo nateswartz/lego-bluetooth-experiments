@@ -29,18 +29,17 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            while (_hubController == null)
+            var targetHub = _hubController;
+
+            while (targetHub == null)
             //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
+                targetHub = _hubController;
             }
 
             await GetNames();
-            Console.WriteLine("Shutting down");
-            await Task.Delay(1000);
-            await _hubController.ExecuteCommandAsync(new ShutdownCommand());
-            await Task.Delay(4000);
-            //await RunMotorCommand(_boostController);
+            await RunMotorCommand(targetHub);
 
             await Disconnect();
         }
@@ -60,11 +59,15 @@ namespace BluetoothLibraryTester
         {
             await controller.ExecuteCommandAsync(new HubFirmwareCommand());
             await Task.Delay(1000);
-            var motor = controller.GetPortIdsByDeviceType(IOType.ExternalMotor).Single();
-            await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(motor, true, "02"));
+            var motor = controller.GetPortIdsByDeviceType(IOType.TrainMotor).Single();
+            await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(motor, true, "00"));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new MotorCommand(motor, 50, 1000, true));
+
+            await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, 50, true));
             await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, 25, true));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, 0, true));
         }
 
         static async Task RunInternalMotorCommand()

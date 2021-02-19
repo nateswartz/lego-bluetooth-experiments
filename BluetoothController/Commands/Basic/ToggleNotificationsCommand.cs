@@ -14,6 +14,7 @@ namespace BluetoothController.Commands.Basic
         //      00 is just color, 01 is just distance, 02 seems to send a value which increments every time something gets close
         //      03 is distance, increasing as something is closer,
         //      08 is color and distance
+        // For Train Motor, only 00 seems to work
         public ToggleNotificationsCommand(string portId, bool enableNotifications, string sensorMode)
         {
             var state = enableNotifications ? "01" : "00"; // 01 - On; 00 - Off

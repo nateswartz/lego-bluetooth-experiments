@@ -12,7 +12,7 @@ namespace BluetoothController.Responses
     {
         public static Response CreateResponse(string notification, HubController controller)
         {
-            var messageType = GetMessageType(notification);
+            var messageType = notification.Substring(4, 2);
 
             switch (messageType)
             {
@@ -158,11 +158,6 @@ namespace BluetoothController.Responses
             }
 
             return sensorData;
-        }
-
-        private static string GetMessageType(string notification)
-        {
-            return notification.Substring(4, 2);
         }
     }
 }
