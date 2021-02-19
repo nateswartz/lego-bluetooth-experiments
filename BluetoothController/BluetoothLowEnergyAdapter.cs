@@ -78,15 +78,15 @@ namespace BluetoothController
                 if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(LegoHubService)))
                     return;
 
+                controller = new HubController
+                {
+                    SelectedBleDeviceId = device.DeviceId
+                };
+
                 lock (_lock)
                 {
-                    if (_controllers.Any(c => c.SelectedBleDeviceId == device.DeviceId))
+                    if (_controllers.Any(c => c.SelectedBleDeviceId == controller.SelectedBleDeviceId))
                         return;
-
-                    controller = new HubController
-                    {
-                        SelectedBleDeviceId = device.DeviceId
-                    };
                     _controllers.Add(controller);
                 }
 
