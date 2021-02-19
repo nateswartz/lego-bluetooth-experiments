@@ -145,7 +145,7 @@ namespace BluetoothController.Responses
             switch (port?.DeviceType)
             {
                 case IOType.ColorDistance:
-                    return new ColorDistanceData(notification);
+                    return new ColorDistanceData(notification, port.NotificationMode);
                 case IOType.ExternalMotor:
                 case IOType.TrainMotor:
                     return new ExternalMotorData(notification, port.NotificationMode);

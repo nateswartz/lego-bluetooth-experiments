@@ -29,17 +29,16 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Searching for devices...");
             _adapter.StartBleDeviceWatcher();
 
-            var targetHub = _hubController;
+            HubController targetHub = null;
 
             while (targetHub == null)
-            //while (_remoteController == null || _hubController == null)
             {
                 await Task.Delay(100);
-                targetHub = _hubController;
+                targetHub = _boostController;
             }
 
             await GetNames();
-            await RunMotorCommand(targetHub);
+            await ColorDistanceSensorTesting(targetHub);
 
             await Disconnect();
         }
@@ -53,6 +52,13 @@ namespace BluetoothLibraryTester
             if (_hubController != null)
                 await _hubController.ExecuteCommandAsync(new HubNameCommand());
             await Task.Delay(2000);
+        }
+
+        static async Task ColorDistanceSensorTesting(HubController controller)
+        {
+            var port = controller.GetPortIdsByDeviceType(IOType.ColorDistance).Single();
+            await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "08"));
+            await Task.Delay(4000);
         }
 
         static async Task RunMotorCommand(HubController controller)
