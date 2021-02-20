@@ -2,7 +2,7 @@
 
 namespace BluetoothController.Responses.Device.Data
 {
-    public enum RemoteButtonFlag
+    internal enum RemoteButtonFlag
     {
         Plus = 1,
         Red = 2,
