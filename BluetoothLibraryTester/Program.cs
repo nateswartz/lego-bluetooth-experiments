@@ -34,11 +34,11 @@ namespace BluetoothLibraryTester
             while (targetHub == null)
             {
                 await Task.Delay(100);
-                targetHub = _boostController;
+                targetHub = _hubController;
             }
 
             await GetNames();
-            await ColorDistanceSensorTesting(targetHub);
+            await RunMotorCommand(targetHub);
 
             await Disconnect();
         }
@@ -69,9 +69,12 @@ namespace BluetoothLibraryTester
             await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(motor, true, "00"));
             await Task.Delay(1000);
 
-            await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, 50, true));
-            await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, 25, true));
+            for (var i = 0; i <= 50; i += 10)
+            {
+                Console.WriteLine($"Running motor at {i}");
+                await Task.Delay(3500);
+                await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, i, true));
+            }
             await Task.Delay(1000);
             await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, 0, true));
         }

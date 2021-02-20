@@ -147,8 +147,9 @@ namespace BluetoothController.Responses
                 case IOType.ColorDistance:
                     return new ColorDistanceData(notification, port.NotificationMode);
                 case IOType.ExternalMotor:
-                case IOType.TrainMotor:
                     return new ExternalMotorData(notification, port.NotificationMode);
+                case IOType.TrainMotor:
+                    return new TrainMotorData(notification);
                 case IOType.TiltSensor:
                     return new TiltData(notification);
                 case IOType.RemoteButton:

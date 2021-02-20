@@ -78,8 +78,6 @@ namespace BluetoothController
                 if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(LegoHubService)))
                     return;
 
-                Console.WriteLine("Found LEGO device...");
-
                 controller = new HubController
                 {
                     SelectedBleDeviceId = device.DeviceId

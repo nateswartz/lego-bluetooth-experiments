@@ -13,7 +13,7 @@ namespace BluetoothController.Commands.Basic
             string power;
             if (clockwise && powerPercentage != 0)
             {
-                power = powerPercentage.ToString("X");
+                power = powerPercentage.ToString("X").PadLeft(2, '0');
             }
             else
             {
