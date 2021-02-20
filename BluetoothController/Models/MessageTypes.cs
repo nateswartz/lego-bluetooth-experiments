@@ -11,5 +11,6 @@
         public const string PortValueSingle = "45";
         public const string PortInputFormatSingle = "47";
         public const string PortOutput = "81";
+        public const string PortOutputFeedback = "82";
     }
 }

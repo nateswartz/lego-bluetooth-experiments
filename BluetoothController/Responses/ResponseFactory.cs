@@ -19,7 +19,7 @@ namespace BluetoothController.Responses
                 case MessageTypes.HubProperty:
                     return HandleHubProperty(controller, notification);
                 case MessageTypes.HubAction:
-                    return HandleHubActionResponse(notification);
+                    return new HubActionResponse(notification);
                 case MessageTypes.Error:
                     return new Error(notification);
                 case MessageTypes.HubAttachedDetachedIO:
@@ -28,13 +28,10 @@ namespace BluetoothController.Responses
                     return HandlePortValueUpdate(controller, notification);
                 case MessageTypes.PortInputFormatSingle:
                     return HandleNotificationStateUpdate(controller, notification);
+                case MessageTypes.PortOutputFeedback:
+                    return new PortOutputFeedback(notification);
             }
             return new Response(notification);
-        }
-
-        private static Response HandleHubActionResponse(string notification)
-        {
-            return new HubActionResponse(notification);
         }
 
         private static Response HandleNotificationStateUpdate(HubController controller, string notification)
