@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"Current Sensor {Event} on port ({Port}) [{Body}]";
+            return $"Current Sensor {StateChangeEvent} on port ({Port}) [{Body}]";
         }
     }
 }

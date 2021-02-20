@@ -20,10 +20,15 @@
         {
             var action = $"performing unknown action {ActionType}";
 
-            if (ActionType == "31")
-                action = "disconnecting";
-            if (ActionType == "30")
-                action = "shutting down";
+            switch (ActionType)
+            {
+                case "31":
+                    action = "disconnecting";
+                    break;
+                case "30":
+                    action = "shutting down";
+                    break;
+            }
 
             return $"Hub {action} [{Body}]";
         }

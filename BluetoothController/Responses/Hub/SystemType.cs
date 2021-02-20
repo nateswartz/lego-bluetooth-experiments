@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Hubs;
+using System;
 
 namespace BluetoothController.Responses.Hub
 {
@@ -26,6 +27,6 @@ namespace BluetoothController.Responses.Hub
             NotificationType = GetType().Name;
         }
 
-        public override string ToString() => $"System Type: {Body}";
+        public override string ToString() => $"System Type {Enum.GetName(typeof(HubType), HubType)} [{Body}]";
     }
 }

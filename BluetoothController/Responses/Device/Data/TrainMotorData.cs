@@ -16,7 +16,7 @@ namespace BluetoothController.Responses.Device.Data
 
         public override string ToString()
         {
-            return $"Train Motor Speed Percentage: {Speed} [{Body}]";
+            return $"Train Motor ({Port}) Speed Percentage: {Speed} [{Body}]";
         }
     }
 }

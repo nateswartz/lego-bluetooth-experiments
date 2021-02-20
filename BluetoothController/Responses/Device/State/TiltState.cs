@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"Tilt Sensor {Event} on port ({Port}) [{Body}]";
+            return $"Tilt Sensor {StateChangeEvent} on port ({Port}) [{Body}]";
         }
     }
 }

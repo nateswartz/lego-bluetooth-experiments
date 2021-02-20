@@ -8,12 +8,12 @@ namespace BluetoothController.Responses.Device.State
         public string Port { get; set; }
         public string PortLetter { get; set; }
         public string DeviceType { get; set; }
-        public DeviceState Event { get; set; }
+        public DeviceState StateChangeEvent { get; set; }
 
         public PortState(string body) : base(body)
         {
             Port = body.Substring(6, 2);
-            Event = (DeviceState)Convert.ToInt32(body.Substring(8, 2), 16);
+            StateChangeEvent = (DeviceState)Convert.ToInt32(body.Substring(8, 2), 16);
             switch (Port)
             {
                 case "00":
@@ -32,14 +32,14 @@ namespace BluetoothController.Responses.Device.State
                     PortLetter = "?";
                     break;
             }
-            if (Event != DeviceState.Detached)
+            if (StateChangeEvent != DeviceState.Detached)
                 DeviceType = body.Substring(10, 2);
             NotificationType = GetType().Name;
         }
 
         public override string ToString()
         {
-            return $"Unknown Device {Event} on port {Port} [{Body}]";
+            return $"Unknown Device {StateChangeEvent} on port {Port} [{Body}]";
         }
     }
 }

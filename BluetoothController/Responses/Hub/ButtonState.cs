@@ -18,6 +18,6 @@ namespace BluetoothController.Responses.Hub
             NotificationType = GetType().Name;
         }
 
-        public override string ToString() => $"Button State: {Enum.GetName(typeof(ButtonState), State)}";
+        public override string ToString() => $"Button State: {Enum.GetName(typeof(ButtonState), State)} [{Body}]";
     }
 }

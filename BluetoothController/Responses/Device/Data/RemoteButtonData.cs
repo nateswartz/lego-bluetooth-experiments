@@ -26,7 +26,7 @@ namespace BluetoothController.Responses.Device.Data
 
         public override string ToString()
         {
-            return $"Remote Button ({Port}) Data: [{(PlusPressed ? "+" : "")}{(RedPressed ? "R" : "")}{(MinusPressed ? "-" : "")}] : {Body}";
+            return $"Remote Button ({Port}) Data: {(PlusPressed ? "+" : "")}{(RedPressed ? "R" : "")}{(MinusPressed ? "-" : "")} [{Body}]";
         }
     }
 }

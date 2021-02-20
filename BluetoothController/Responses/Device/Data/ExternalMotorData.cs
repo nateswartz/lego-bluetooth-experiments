@@ -10,7 +10,7 @@ namespace BluetoothController.Responses.Device.Data
         public ExternalMotorData(string body, string mode) : base(body)
         {
             Mode = mode;
-            if (mode == "01")
+            if (Mode == "01")
             {
                 Speed = Convert.ToInt32(body.Substring(8, 2), 16);
             }
@@ -20,11 +20,15 @@ namespace BluetoothController.Responses.Device.Data
 
         public override string ToString()
         {
-            if (Mode == "02")
-                return $"External Motor Angle Data: {Body}";
-            if (Mode == "01")
-                return $"External Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)}";
-            return $"External Motor Sensor Data: {Body}";
+            switch (Mode)
+            {
+                case "02":
+                    return $"External Motor ({Port}) Angle Data [{Body}]";
+                case "01":
+                    return $"External Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)} [{Body}]";
+                default:
+                    return $"External Motor ({Port}) Data [{Body}]";
+            }
         }
     }
 }

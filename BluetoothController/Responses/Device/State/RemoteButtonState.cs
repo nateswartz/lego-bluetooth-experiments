@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"Remote Button {Event} on port {PortLetter}({Port}) [{Body}]";
+            return $"Remote Button {StateChangeEvent} on port {PortLetter}({Port}) [{Body}]";
         }
     }
 }

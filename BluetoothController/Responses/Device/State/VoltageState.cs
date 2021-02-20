@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"Voltage Sensor {Event} on port ({Port}) [{Body}]";
+            return $"Voltage Sensor {StateChangeEvent} on port ({Port}) [{Body}]";
         }
     }
 }

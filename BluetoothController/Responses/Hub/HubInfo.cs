@@ -10,7 +10,7 @@ namespace BluetoothController.Responses.Hub
         SystemType = 11
     }
 
-    public class HubInfo : Response
+    public abstract class HubInfo : Response
     {
         public HubInfoType DeviceType { get; set; }
 

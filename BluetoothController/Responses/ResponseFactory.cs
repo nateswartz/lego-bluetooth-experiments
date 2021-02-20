@@ -65,7 +65,7 @@ namespace BluetoothController.Responses
         {
             var portInfo = new PortState(notification);
 
-            if (portInfo.Event == DeviceState.Detached)
+            if (portInfo.StateChangeEvent == DeviceState.Detached)
             {
                 return HandleIODetached(controller, portInfo);
             }

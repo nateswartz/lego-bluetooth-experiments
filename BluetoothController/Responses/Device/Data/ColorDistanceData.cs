@@ -36,15 +36,15 @@ namespace BluetoothController.Responses.Device.Data
         public override string ToString()
         {
             if (Mode == "00")
-                return $"Color/Distance Sensor Data: Color - {Color} [{Body}]";
+                return $"Color/Distance ({Port}) Data: Color - {Color} [{Body}]";
             else if (Mode == "01")
-                return $"Color/Distance Sensor Data: Inches - {Inches} [{Body}]";
+                return $"Color/Distance ({Port}) Data: Inches - {Inches} [{Body}]";
             else if (Mode == "02")
-                return $"Color/Distance Sensor Data: ProximityCounter - {ProximityCounter} [{Body}]";
+                return $"Color/Distance ({Port}) Data: ProximityCounter - {ProximityCounter} [{Body}]";
             else if (Mode == "08")
-                return $"Color/Distance Sensor Data: Color - {Color}; Inches - {Inches} [{Body}]";
+                return $"Color/Distance ({Port}) Data: Color - {Color}; Inches - {Inches} [{Body}]";
             else
-                return $"Color/Distance Sensor Data: For Unhandled Notification Mode {Mode} [{Body}]";
+                return $"Color/Distance ({Port}) Data: For Unhandled Notification Mode {Mode} [{Body}]";
         }
     }
 }

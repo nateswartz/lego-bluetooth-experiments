@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"LED {Event} on port {Port} [{Body}]";
+            return $"LED {StateChangeEvent} on port {Port} [{Body}]";
         }
     }
 }

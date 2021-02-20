@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"Tilt Sensor Data: {Body}";
+            return $"Tilt ({Port}) Data [{Body}]";
         }
     }
 }

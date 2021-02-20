@@ -11,6 +11,6 @@
             NotificationType = GetType().Name;
         }
 
-        public override string ToString() => $"Firmware Version: {Version}";
+        public override string ToString() => $"Firmware Version: {Version} [{Body}]";
     }
 }

@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"External Motor {Event} on port {PortLetter}({Port}) [{Body}]";
+            return $"External Motor {StateChangeEvent} on port {PortLetter}({Port}) [{Body}]";
         }
     }
 }

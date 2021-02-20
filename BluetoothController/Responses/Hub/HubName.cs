@@ -14,6 +14,6 @@ namespace BluetoothController.Responses.Hub
             NotificationType = GetType().Name;
         }
 
-        public override string ToString() => $"Hub Name: {Name}";
+        public override string ToString() => $"Hub Name: {Name} [{Body}]";
     }
 }

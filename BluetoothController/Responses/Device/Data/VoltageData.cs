@@ -14,7 +14,7 @@ namespace BluetoothController.Responses.Device.Data
 
         public override string ToString()
         {
-            return $"Voltage Sensor Data ({Port}) : {Voltage} - {Body}";
+            return $"Voltage Sensor ({Port}) Data: {Voltage} [{Body}]";
         }
     }
 }
