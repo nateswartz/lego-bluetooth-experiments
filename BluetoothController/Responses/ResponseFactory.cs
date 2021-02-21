@@ -72,19 +72,19 @@ namespace BluetoothController.Responses
         private static Response HandleIODetached(HubController controller, PortState portInfo)
         {
             var hub = controller.Hub;
-            if (hub.GetPortsByDeviceType(IOType.TrainMotor).Any(p => p.PortID == portInfo.Port))
+            if (hub.GetPortsByDeviceType(IOTypes.TrainMotor).Any(p => p.PortID == portInfo.Port))
             {
-                hub.GetPortByID(portInfo.Port).DeviceType = "";
+                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
                 return new TrainMotorState(portInfo.Body);
             }
-            if (hub.GetPortsByDeviceType(IOType.ExternalMotor).Any(p => p.PortID == portInfo.Port))
+            if (hub.GetPortsByDeviceType(IOTypes.ExternalMotor).Any(p => p.PortID == portInfo.Port))
             {
-                hub.GetPortByID(portInfo.Port).DeviceType = "";
+                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
                 return new ExternalMotorState(portInfo.Body);
             }
-            if (hub.GetPortsByDeviceType(IOType.ColorDistance).Any(p => p.PortID == portInfo.Port))
+            if (hub.GetPortsByDeviceType(IOTypes.ColorDistance).Any(p => p.PortID == portInfo.Port))
             {
-                hub.GetPortByID(portInfo.Port).DeviceType = "";
+                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
                 return new ColorDistanceState(portInfo.Body);
             }
             return portInfo;
@@ -109,27 +109,25 @@ namespace BluetoothController.Responses
                 hub.GetPortByID(portInfo.Port).DeviceType = portInfo.DeviceType;
             }
 
-            switch (portInfo.DeviceType)
-            {
-                case IOType.LED:
-                    return new LEDState(portInfo.Body);
-                case IOType.ColorDistance:
-                    return new ColorDistanceState(portInfo.Body);
-                case IOType.ExternalMotor:
-                    return new ExternalMotorState(portInfo.Body);
-                case IOType.TrainMotor:
-                    return new TrainMotorState(portInfo.Body);
-                case IOType.TiltSensor:
-                    return new TiltState(portInfo.Body);
-                case IOType.RemoteButton:
-                    return new RemoteButtonState(portInfo.Body);
-                case IOType.VoltageSensor:
-                    return new VoltageState(portInfo.Body);
-                case IOType.InternalMotor:
-                    return new InternalMotorState(portInfo.Body);
-                case IOType.CurrentSensor:
-                    return new CurrentState(portInfo.Body);
-            }
+            if (portInfo.DeviceType == IOTypes.LED)
+                return new LEDState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.ColorDistance)
+                return new ColorDistanceState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.ExternalMotor)
+                return new ExternalMotorState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.TrainMotor)
+                return new TrainMotorState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.TiltSensor)
+                return new TiltState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.RemoteButton)
+                return new RemoteButtonState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.VoltageSensor)
+                return new VoltageState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.InternalMotor)
+                return new InternalMotorState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.CurrentSensor)
+                return new CurrentState(portInfo.Body);
+
             return portInfo;
         }
 
@@ -139,21 +137,18 @@ namespace BluetoothController.Responses
             var hub = controller.Hub;
             var port = hub.GetPortByID(sensorData.Port);
 
-            switch (port?.DeviceType)
-            {
-                case IOType.ColorDistance:
-                    return new ColorDistanceData(notification, port.NotificationMode);
-                case IOType.ExternalMotor:
-                    return new ExternalMotorData(notification, port.NotificationMode);
-                case IOType.TrainMotor:
-                    return new TrainMotorData(notification);
-                case IOType.TiltSensor:
-                    return new TiltData(notification);
-                case IOType.RemoteButton:
-                    return new RemoteButtonData(notification);
-                case IOType.VoltageSensor:
-                    return new VoltageData(notification);
-            }
+            if (port?.DeviceType == IOTypes.ColorDistance)
+                return new ColorDistanceData(notification, port.NotificationMode);
+            if (port?.DeviceType == IOTypes.ExternalMotor)
+                return new ExternalMotorData(notification, port.NotificationMode);
+            if (port?.DeviceType == IOTypes.TrainMotor)
+                return new TrainMotorData(notification);
+            if (port?.DeviceType == IOTypes.TiltSensor)
+                return new TiltData(notification);
+            if (port?.DeviceType == IOTypes.RemoteButton)
+                return new RemoteButtonData(notification);
+            if (port?.DeviceType == IOTypes.VoltageSensor)
+                return new VoltageData(notification);
 
             return sensorData;
         }

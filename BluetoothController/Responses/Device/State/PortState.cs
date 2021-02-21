@@ -7,7 +7,7 @@ namespace BluetoothController.Responses.Device.State
     {
         public string Port { get; set; }
         public string PortLetter { get; set; }
-        public string DeviceType { get; set; }
+        public IOType DeviceType { get; set; }
         public DeviceState StateChangeEvent { get; set; }
 
         public PortState(string body) : base(body)
@@ -33,7 +33,7 @@ namespace BluetoothController.Responses.Device.State
                     break;
             }
             if (StateChangeEvent != DeviceState.Detached)
-                DeviceType = body.Substring(10, 2);
+                DeviceType = IOTypes.GetByCode(body.Substring(10, 2));
             NotificationType = GetType().Name;
         }
 

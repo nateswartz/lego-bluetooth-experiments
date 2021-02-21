@@ -11,7 +11,7 @@ namespace BluetoothController.Commands.Basic
 
         public LEDCommand(HubController controller, LEDColor color)
         {
-            var port = controller.Hub.GetPortsByDeviceType(IOType.LED).First().PortID;
+            var port = controller.Hub.GetPortsByDeviceType(IOTypes.LED).First().PortID;
             HexCommand = AddHeader($"{port}115100{color.Code}");
         }
     }

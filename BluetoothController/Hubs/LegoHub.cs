@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BluetoothController.Models;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BluetoothController.Hubs
@@ -14,9 +15,9 @@ namespace BluetoothController.Hubs
             return Ports.FirstOrDefault(p => p?.PortID == portID);
         }
 
-        public IEnumerable<HubPort> GetPortsByDeviceType(string deviceType)
+        public IEnumerable<HubPort> GetPortsByDeviceType(IOType deviceType)
         {
-            return Ports.Where(p => p?.DeviceType == deviceType);
+            return Ports.Where(p => p?.DeviceType.Code == deviceType.Code);
         }
     }
 }

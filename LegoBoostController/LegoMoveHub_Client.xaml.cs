@@ -247,22 +247,22 @@ namespace LegoBoostController
 
         private async void ToggleColorDistanceNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", IOType.ColorDistance, "08");
+            await ToggleNotification(ToggleColorDistanceNotificationsButton, "Color/Distance", IOTypes.ColorDistance, "08");
         }
 
         private async void ToggleExternalMotorNotificationsButton_Click()
         {
             // 01 - Speed; 02 - Angle
             var notificationType = ExternalMotorNotificationTypeToggle.IsOn ? "02" : "01";
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", IOType.ExternalMotor, notificationType);
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", IOTypes.ExternalMotor, notificationType);
         }
 
         private async void ToggleTiltSensorNotificationsButton_Click()
         {
-            await ToggleNotification(ToggleTiltSensorNotificationsButton, "Tilt Sensor", IOType.TiltSensor, "04");
+            await ToggleNotification(ToggleTiltSensorNotificationsButton, "Tilt Sensor", IOTypes.TiltSensor, "04");
         }
 
-        private async Task<bool> ToggleNotification(Button button, string sensorType, string deviceType, string sensorMode)
+        private async Task<bool> ToggleNotification(Button button, string sensorType, IOType deviceType, string sensorMode)
         {
             bool enableNotifications;
             if (button.Content.ToString() == $"Enable {sensorType} Notifications")
@@ -313,7 +313,7 @@ namespace LegoBoostController
 
         private async void SyncLEDMotorButton_Click()
         {
-            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", IOType.ExternalMotor, "01");
+            await ToggleNotification(ToggleExternalMotorNotificationsButton, "External Motor", IOTypes.ExternalMotor, "01");
 
             if (!_controller.IsHandlerRegistered(typeof(ExternalMotorState), typeof(MotorToLEDEventHandler)))
             {
@@ -349,7 +349,7 @@ namespace LegoBoostController
             if (MotorsCombo.SelectedItem != null && hasRunTime)
             {
                 var motor = (Motor)MotorsCombo.SelectedItem;
-                var port = motor.Name == "External" ? _controller.GetPortIdsByDeviceType(IOType.ExternalMotor).First() : motor.Code;
+                var port = motor.Name == "External" ? _controller.GetPortIdsByDeviceType(IOTypes.ExternalMotor).First() : motor.Code;
                 var command = new MotorCommand(port, (int)MotorPowerSlider.Value, runTime, clockwise);
                 await _controller.ExecuteCommandAsync(command);
             }

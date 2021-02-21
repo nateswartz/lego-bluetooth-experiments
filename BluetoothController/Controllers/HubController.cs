@@ -1,6 +1,7 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.EventHandlers;
 using BluetoothController.Hubs;
+using BluetoothController.Models;
 using BluetoothController.Responses;
 using BluetoothController.Util;
 using System;
@@ -77,7 +78,7 @@ namespace BluetoothController.Controllers
             await ToggleSubscribedForNotificationsAsync(null);
         }
 
-        public IEnumerable<string> GetPortIdsByDeviceType(string deviceType)
+        public IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType)
         {
             return Hub.GetPortsByDeviceType(deviceType).Select(h => h.PortID);
         }

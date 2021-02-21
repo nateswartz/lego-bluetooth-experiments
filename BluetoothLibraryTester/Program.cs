@@ -56,7 +56,7 @@ namespace BluetoothLibraryTester
 
         static async Task ColorDistanceSensorTesting(HubController controller)
         {
-            var port = controller.GetPortIdsByDeviceType(IOType.ColorDistance).Single();
+            var port = controller.GetPortIdsByDeviceType(IOTypes.ColorDistance).Single();
             await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "08"));
             await Task.Delay(4000);
         }
@@ -65,7 +65,7 @@ namespace BluetoothLibraryTester
         {
             await controller.ExecuteCommandAsync(new HubFirmwareCommand());
             await Task.Delay(1000);
-            var motor = controller.GetPortIdsByDeviceType(IOType.TrainMotor).Single();
+            var motor = controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).Single();
             await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(motor, true, "00"));
             await Task.Delay(1000);
 
@@ -82,7 +82,7 @@ namespace BluetoothLibraryTester
         static async Task RunInternalMotorCommand()
         {
             await Task.Delay(1000);
-            var port = _boostController.GetPortIdsByDeviceType(IOType.ColorDistance).Last();
+            var port = _boostController.GetPortIdsByDeviceType(IOTypes.ColorDistance).Last();
             await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "08"));
             await Task.Delay(10000);
             //await _boostController.ExecuteCommandAsync(new MotorCommand(motor, 50, 2000, true));
@@ -104,7 +104,7 @@ namespace BluetoothLibraryTester
             await Task.Delay(500);
 
             Console.WriteLine("Registering for remote button notifications");
-            var remoteButtons = _remoteController.GetPortIdsByDeviceType(IOType.RemoteButton);
+            var remoteButtons = _remoteController.GetPortIdsByDeviceType(IOTypes.RemoteButton);
             foreach (var button in remoteButtons)
                 await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(button, true, "03"));
             await Task.Delay(500);
