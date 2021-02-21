@@ -12,25 +12,23 @@ namespace BluetoothController.Responses
     {
         public static Response CreateResponse(string notification, HubController controller)
         {
-            var messageType = notification.Substring(4, 2);
+            var messageType = MessageTypes.GetByCode(notification.Substring(4, 2));
 
-            switch (messageType)
-            {
-                case MessageTypes.HubProperty:
-                    return HandleHubProperty(controller, notification);
-                case MessageTypes.HubAction:
-                    return new HubActionResponse(notification);
-                case MessageTypes.Error:
-                    return new Error(notification);
-                case MessageTypes.HubAttachedDetachedIO:
-                    return HandleIOConnectionStateChange(controller, notification);
-                case MessageTypes.PortValueSingle:
-                    return HandlePortValueUpdate(controller, notification);
-                case MessageTypes.PortInputFormatSingle:
-                    return HandleNotificationStateUpdate(controller, notification);
-                case MessageTypes.PortOutputFeedback:
-                    return new PortOutputFeedback(notification);
-            }
+            if (messageType == MessageTypes.HubProperty)
+                return HandleHubProperty(controller, notification);
+            if (messageType == MessageTypes.HubAction)
+                return new HubActionResponse(notification);
+            if (messageType == MessageTypes.Error)
+                return new Error(notification);
+            if (messageType == MessageTypes.HubAttachedDetachedIO)
+                return HandleIOConnectionStateChange(controller, notification);
+            if (messageType == MessageTypes.PortValueSingle)
+                return HandlePortValueUpdate(controller, notification);
+            if (messageType == MessageTypes.PortInputFormatSingle)
+                return HandleNotificationStateUpdate(controller, notification);
+            if (messageType == MessageTypes.PortOutputFeedback)
+                return new PortOutputFeedback(notification);
+
             return new Response(notification);
         }
 

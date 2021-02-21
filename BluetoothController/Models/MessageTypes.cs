@@ -1,16 +1,46 @@
-﻿namespace BluetoothController.Models
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace BluetoothController.Models
 {
+    public class MessageType
+    {
+        public string Code { get; set; }
+
+        public MessageType(string code)
+        {
+            Code = code;
+        }
+
+        public override string ToString()
+        {
+            return Code;
+        }
+    }
+
     public static class MessageTypes
     {
-        public const string HubProperty = "01";
-        public const string HubAction = "02";
-        public const string HubAttachedDetachedIO = "04";
-        public const string Error = "05";
-        public const string PortInputFormatSetupSingle = "41";
-        public const string PortInputFormatSetupCombined = "42";
-        public const string PortValueSingle = "45";
-        public const string PortInputFormatSingle = "47";
-        public const string PortOutput = "81";
-        public const string PortOutputFeedback = "82";
+        public static MessageType HubProperty = new MessageType("01");
+        public static MessageType HubAction = new MessageType("02");
+        public static MessageType HubAttachedDetachedIO = new MessageType("04");
+        public static MessageType Error = new MessageType("05");
+        public static MessageType PortInputFormatSetupSingle = new MessageType("41");
+        public static MessageType PortInputFormatSetupCombined = new MessageType("42");
+        public static MessageType PortValueSingle = new MessageType("45");
+        public static MessageType PortInputFormatSingle = new MessageType("47");
+        public static MessageType PortOutput = new MessageType("81");
+        public static MessageType PortOutputFeedback = new MessageType("82");
+
+        private static List<MessageType> All = new List<MessageType>
+        {
+            HubProperty, HubAction, HubAttachedDetachedIO, Error, PortInputFormatSetupSingle, PortInputFormatSetupCombined,
+            PortValueSingle, PortInputFormatSingle, PortOutput, PortOutputFeedback
+        };
+
+        public static MessageType GetByCode(string code)
+        {
+            return All.Where(c => c.Code.ToLower() == code.ToLower())
+                      .First();
+        }
     }
 }

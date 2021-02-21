@@ -1,10 +1,12 @@
-﻿namespace BluetoothController.Commands.Abstract
+﻿using BluetoothController.Models;
+
+namespace BluetoothController.Commands.Abstract
 {
     public abstract class CommandType
     {
-        public string MessageType { get; set; }
+        public MessageType MessageType { get; set; }
 
-        public CommandType(string messageType)
+        public CommandType(MessageType messageType)
         {
             MessageType = messageType;
         }

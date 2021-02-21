@@ -9,17 +9,12 @@ namespace BluetoothController.Responses
 
         public Error(string body) : base(body)
         {
-            var failedCommandType = Body.Substring(6, 2);
-            switch (failedCommandType)
-            {
-                case MessageTypes.HubProperty:
-                    FailedCommandType = "Device Info";
-                    break;
-                case MessageTypes.HubAction:
-                    FailedCommandType = "Hub Action";
-                    break;
-            }
+            var failedCommandType = MessageTypes.GetByCode(Body.Substring(6, 2));
 
+            if (failedCommandType == MessageTypes.HubProperty)
+                FailedCommandType = "Device Info";
+            if (failedCommandType == MessageTypes.HubAction)
+                FailedCommandType = "Hub Action";
 
             var errorType = Body.Substring(8, 2);
             switch (errorType)

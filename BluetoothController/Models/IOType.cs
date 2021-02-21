@@ -26,7 +26,7 @@ namespace BluetoothController.Models
         public static IOType TiltSensor = new IOType("28");
         public static IOType RemoteButton = new IOType("37");
 
-        public static List<IOType> All = new List<IOType>
+        private static List<IOType> All = new List<IOType>
         {
             TrainMotor, VoltageSensor, CurrentSensor, LED, ColorDistance, ExternalMotor, InternalMotor, TiltSensor, RemoteButton
         };
