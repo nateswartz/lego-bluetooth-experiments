@@ -23,7 +23,7 @@ namespace LegoBoostController.Robot
                 var speed = Convert.ToInt32(m.Groups[1].Value);
                 var time = Convert.ToInt32(m.Groups[2].Value);
                 var direction = m.Groups[3].Value;
-                var command = new MotorCommand(controller.GetPortIdsByDeviceType(IOType.ExternalMotor).First(), speed, time, direction == "left");
+                var command = new MotorCommand(controller.GetPortIdsByDeviceType(IOTypes.ExternalMotor).First(), speed, time, direction == "left");
                 await controller.ExecuteCommandAsync(command);
                 await Task.Delay(time);
             }
