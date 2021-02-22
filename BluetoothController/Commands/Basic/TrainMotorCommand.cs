@@ -13,11 +13,11 @@ namespace BluetoothController.Commands.Basic
             string power;
             if (clockwise && powerPercentage != 0)
             {
-                power = powerPercentage.ToString("X").PadLeft(2, '0');
+                power = $"{powerPercentage:X2}";
             }
             else
             {
-                power = (255 - powerPercentage).ToString("X");
+                power = $"{(255 - powerPercentage):X2}";
             }
 
             HexCommand = AddHeader($"{port}{startupCompletion}{subCommand}00{power}");

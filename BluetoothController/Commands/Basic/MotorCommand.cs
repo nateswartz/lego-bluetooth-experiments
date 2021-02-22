@@ -9,18 +9,17 @@ namespace BluetoothController.Commands.Basic
         public MotorCommand(string port, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
         {
             // For time, LSB first
-            var time = timeInMS.ToString("X").PadLeft(4, '0');
+            var time = $"{timeInMS:X4}";
             time = $"{time[2]}{time[3]}{time[0]}{time[1]}";
             string power;
             if (clockwise)
             {
-                power = powerPercentage.ToString("X");
+                power = $"{powerPercentage:X2}";
             }
             else
             {
-                power = (255 - powerPercentage).ToString("X");
+                power = $"{(255 - powerPercentage):X2}";
             }
-            power = power.PadLeft(2, '0');
             HexCommand = AddHeader($"{port}1109{time}{power}647f03");
         }
     }
