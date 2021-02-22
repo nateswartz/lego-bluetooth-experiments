@@ -37,9 +37,6 @@ namespace BluetoothController.Responses.Device.State
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Unknown Device {StateChangeEvent} on port {Port} [{Body}]";
-        }
+        public override string ToString() => $"Unknown Device {StateChangeEvent} on port {Port} [{Body}]";
     }
 }

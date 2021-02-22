@@ -12,9 +12,6 @@ namespace BluetoothController.Responses.Device.Data
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Voltage Sensor ({Port}) Data: {Voltage} [{Body}]";
-        }
+        public override string ToString() => $"Voltage Sensor ({Port}) Data: {Voltage} [{Body}]";
     }
 }

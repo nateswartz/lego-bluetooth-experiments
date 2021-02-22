@@ -32,9 +32,6 @@ namespace BluetoothController.Responses
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Error: {ErrorType} (Response Body: {Body})";
-        }
+        public override string ToString() => $"Error: {ErrorType} (Response Body: {Body})";
     }
 }

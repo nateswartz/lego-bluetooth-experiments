@@ -14,9 +14,6 @@ namespace BluetoothController.Responses.Device.Data
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Train Motor ({Port}) Speed Percentage: {Speed} [{Body}]";
-        }
+        public override string ToString() => $"Train Motor ({Port}) Speed Percentage: {Speed} [{Body}]";
     }
 }

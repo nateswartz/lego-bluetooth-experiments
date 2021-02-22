@@ -7,9 +7,6 @@
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Tilt Sensor {StateChangeEvent} on port ({Port}) [{Body}]";
-        }
+        public override string ToString() => $"Tilt Sensor {StateChangeEvent} on port ({Port}) [{Body}]";
     }
 }

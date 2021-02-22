@@ -7,9 +7,6 @@
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Tilt ({Port}) Data [{Body}]";
-        }
+        public override string ToString() => $"Tilt Data ({Port}) [{Body}]";
     }
 }
