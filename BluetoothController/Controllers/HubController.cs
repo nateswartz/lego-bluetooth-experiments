@@ -38,7 +38,7 @@ namespace BluetoothController.Controllers
             _eventHandlers = new Dictionary<string, List<IEventHandler>>();
         }
 
-        public async Task<bool> ExecuteCommandAsync(IPoweredUpCommand command)
+        public async Task<bool> ExecuteCommandAsync(ICommand command)
         {
             return await SetHexValueAsync(command.HexCommand);
         }

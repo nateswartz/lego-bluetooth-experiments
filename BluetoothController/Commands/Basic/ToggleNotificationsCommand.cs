@@ -2,7 +2,7 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommandType, IPoweredUpCommand
+    public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommandType, ICommand
     {
         public string HexCommand { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class MotorCommand : PortOutputCommandType, IPoweredUpCommand
+    public class MotorCommand : PortOutputCommandType, ICommand
     {
         public string HexCommand { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class ButtonNotificationsCommand : DeviceInfoCommandType, IPoweredUpCommand
+    public class ButtonNotificationsCommand : DeviceInfoCommandType, ICommand
     {
         public string HexCommand { get; set; }
 

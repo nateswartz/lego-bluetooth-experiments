@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class LEDCommand : PortOutputCommandType, IPoweredUpCommand
+    public class LEDCommand : PortOutputCommandType, ICommand
     {
         public string HexCommand { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class ShutdownCommand : HubActionCommandType, IPoweredUpCommand
+    public class ShutdownCommand : HubActionCommandType, ICommand
     {
         public string HexCommand { get; set; }
 
