@@ -7,9 +7,6 @@
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Voltage Sensor {StateChangeEvent} on port ({Port}) [{Body}]";
-        }
+        public override string ToString() => $"Voltage Sensor {StateChangeEvent} on port ({Port}) [{Body}]";
     }
 }

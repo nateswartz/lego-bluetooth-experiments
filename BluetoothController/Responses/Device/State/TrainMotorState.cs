@@ -7,9 +7,6 @@
             NotificationType = GetType().Name;
         }
 
-        public override string ToString()
-        {
-            return $"Train Motor {StateChangeEvent} on port {PortLetter}({Port}) [{Body}]";
-        }
+        public override string ToString() => $"Train Motor {StateChangeEvent} on port {PortLetter}({Port}) [{Body}]";
     }
 }
