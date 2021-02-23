@@ -13,7 +13,7 @@ namespace BluetoothController.Commands.Basic
     {
         public PortInfoCommand(string portId, InfoType infoType)
         {
-            HexCommand = AddHeader($"{portId}{infoType:X2}");
+            HexCommand = AddHeader($"{portId}{(int)infoType:X2}");
         }
     }
 }
