@@ -24,6 +24,7 @@ namespace BluetoothController.Models
         public static MessageType HubAction = new MessageType("02");
         public static MessageType HubAttachedDetachedIO = new MessageType("04");
         public static MessageType Error = new MessageType("05");
+        public static MessageType PortInformation = new MessageType("21");
         public static MessageType PortInputFormatSetupSingle = new MessageType("41");
         public static MessageType PortInputFormatSetupCombined = new MessageType("42");
         public static MessageType PortValueSingle = new MessageType("45");
@@ -33,7 +34,7 @@ namespace BluetoothController.Models
 
         private static List<MessageType> All = new List<MessageType>
         {
-            HubProperty, HubAction, HubAttachedDetachedIO, Error, PortInputFormatSetupSingle, PortInputFormatSetupCombined,
+            HubProperty, HubAction, HubAttachedDetachedIO, Error, PortInformation, PortInputFormatSetupSingle, PortInputFormatSetupCombined,
             PortValueSingle, PortInputFormatSingle, PortOutput, PortOutputFeedback
         };
 
