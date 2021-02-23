@@ -33,8 +33,10 @@ namespace BluetoothController.Models
 
         public static IOType GetByCode(string code)
         {
-            return All.Where(c => c.Code.ToLower() == code.ToLower())
-                      .First();
+            var ioType = All.Where(c => c.Code.ToLower() == code.ToLower())
+                      .FirstOrDefault();
+
+            return ioType == null ? new IOType(code) : ioType;
         }
     }
 }

@@ -34,11 +34,11 @@ namespace BluetoothLibraryTester
             while (targetHub == null)
             {
                 await Task.Delay(100);
-                targetHub = _hubController;
+                targetHub = _remoteController;
             }
 
             await GetNames();
-            await RunMotorCommand(targetHub);
+            await PortInfoTesting(targetHub);
 
             await Disconnect();
         }
