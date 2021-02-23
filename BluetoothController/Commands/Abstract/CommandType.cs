@@ -1,9 +1,12 @@
-﻿using BluetoothController.Models;
+﻿using BluetoothController.Commands.Basic;
+using BluetoothController.Models;
 
 namespace BluetoothController.Commands.Abstract
 {
-    public abstract class CommandType
+    public abstract class CommandType : ICommand
     {
+        public string HexCommand { get; set; }
+
         public MessageType MessageType { get; set; }
 
         public CommandType(MessageType messageType)

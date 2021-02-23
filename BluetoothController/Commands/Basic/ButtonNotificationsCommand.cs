@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class ButtonNotificationsCommand : DeviceInfoCommandType, ICommand
+    public class ButtonNotificationsCommand : DeviceInfoCommandType
     {
-        public string HexCommand { get; set; }
-
         public ButtonNotificationsCommand(bool enabled)
         {
             var infoType = "02"; // Button

@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class HubTypeCommand : DeviceInfoCommandType, ICommand
+    public class HubTypeCommand : DeviceInfoCommandType
     {
-        public string HexCommand { get; set; }
-
         public HubTypeCommand()
         {
             var infoType = "0B"; // Device Type

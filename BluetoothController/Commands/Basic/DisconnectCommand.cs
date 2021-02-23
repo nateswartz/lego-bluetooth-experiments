@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class DisconnectCommand : HubActionCommandType, ICommand
+    public class DisconnectCommand : HubActionCommandType
     {
-        public string HexCommand { get; set; }
-
         public DisconnectCommand()
         {
             var actionType = "02"; // Disconnect

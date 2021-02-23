@@ -5,10 +5,8 @@ using System.Linq;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class LEDCommand : PortOutputCommandType, ICommand
+    public class LEDCommand : PortOutputCommandType
     {
-        public string HexCommand { get; set; }
-
         public LEDCommand(HubController controller, LEDColor color)
         {
             var port = controller.Hub.GetPortsByDeviceType(IOTypes.LED).First().PortID;

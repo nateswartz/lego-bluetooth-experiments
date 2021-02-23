@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class HubFirmwareCommand : DeviceInfoCommandType, ICommand
+    public class HubFirmwareCommand : DeviceInfoCommandType
     {
-        public string HexCommand { get; set; }
-
         public HubFirmwareCommand()
         {
             var infoType = "03"; // Firmware

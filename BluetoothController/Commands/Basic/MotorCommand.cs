@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class MotorCommand : PortOutputCommandType, ICommand
+    public class MotorCommand : PortOutputCommandType
     {
-        public string HexCommand { get; set; }
-
         public MotorCommand(string port, int powerPercentage = 100, int timeInMS = 1000, bool clockwise = true)
         {
             // For time, LSB first

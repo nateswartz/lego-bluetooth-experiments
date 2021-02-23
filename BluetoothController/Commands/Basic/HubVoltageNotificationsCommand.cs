@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class HubVoltageNotificationsCommand : PortInputFormatSetupSingleCommandType, ICommand
+    public class HubVoltageNotificationsCommand : PortInputFormatSetupSingleCommandType
     {
-        public string HexCommand { get; set; }
-
         public HubVoltageNotificationsCommand(bool enabled)
         {
             var portID = "3C"; // Voltage

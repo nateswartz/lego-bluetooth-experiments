@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class ShutdownCommand : HubActionCommandType, ICommand
+    public class ShutdownCommand : HubActionCommandType
     {
-        public string HexCommand { get; set; }
-
         public ShutdownCommand()
         {
             var actionType = "01"; // Shutdown

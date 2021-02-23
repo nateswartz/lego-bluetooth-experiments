@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class TrainMotorCommand : PortOutputCommandType, ICommand
+    public class TrainMotorCommand : PortOutputCommandType
     {
-        public string HexCommand { get; set; }
-
         public TrainMotorCommand(string port, int powerPercentage, bool clockwise)
         {
             string startupCompletion = "11"; // Execute immediately / Command feedback

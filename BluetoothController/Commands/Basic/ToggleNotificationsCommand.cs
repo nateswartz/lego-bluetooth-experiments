@@ -2,10 +2,8 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommandType, ICommand
+    public class ToggleNotificationsCommand : PortInputFormatSetupSingleCommandType
     {
-        public string HexCommand { get; set; }
-
         // TODO: Make sensor mode more user friendly
         // For Tilt Sensor, 01-04 all work, vary granularity
         // For Internal Motor (single/combined), 01-02 work, 03-04 don't
