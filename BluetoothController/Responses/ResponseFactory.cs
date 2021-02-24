@@ -2,6 +2,7 @@
 using BluetoothController.Hubs;
 using BluetoothController.Models;
 using BluetoothController.Responses.Device.Data;
+using BluetoothController.Responses.Device.Info;
 using BluetoothController.Responses.Device.State;
 using BluetoothController.Responses.Hub;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace BluetoothController.Responses
                 return new Error(notification);
             if (messageType == MessageTypes.HubAttachedDetachedIO)
                 return HandleIOConnectionStateChange(controller, notification);
+            if (messageType == MessageTypes.PortInformation)
+                return new PortInfo(notification);
             if (messageType == MessageTypes.PortValueSingle)
                 return HandlePortValueUpdate(controller, notification);
             if (messageType == MessageTypes.PortInputFormatSingle)
