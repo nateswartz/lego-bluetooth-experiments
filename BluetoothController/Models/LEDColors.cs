@@ -34,7 +34,7 @@ namespace BluetoothController.Models
         public static LEDColor Red = new LEDColor("Red", "09");
         public static LEDColor White = new LEDColor("White", "0a");
 
-        public static List<LEDColor> All = new List<LEDColor>
+        public readonly static List<LEDColor> All = new List<LEDColor>
         {
             None, Pink, Purple, Blue, LightBlue, Cyan, Green, Yellow, Orange, Red, White
         };

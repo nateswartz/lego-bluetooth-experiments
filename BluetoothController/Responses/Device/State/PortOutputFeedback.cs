@@ -39,7 +39,7 @@ namespace BluetoothController.Responses.Device.State
 
         public override string ToString()
         {
-            return $"Port Feeback for Port {Port} - {string.Join(", ", Messages.ToArray())} [{Body}]";
+            return $"Port Feeback ({Port}) - {string.Join(", ", Messages.ToArray())} [{Body}]";
         }
     }
 }

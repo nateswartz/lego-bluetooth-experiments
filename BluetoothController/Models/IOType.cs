@@ -26,17 +26,16 @@ namespace BluetoothController.Models
         public static IOType TiltSensor = new IOType("28");
         public static IOType RemoteButton = new IOType("37");
 
-        private static List<IOType> All = new List<IOType>
+        private readonly static List<IOType> _all = new List<IOType>
         {
             TrainMotor, VoltageSensor, CurrentSensor, LED, ColorDistance, ExternalMotor, InternalMotor, TiltSensor, RemoteButton
         };
 
         public static IOType GetByCode(string code)
         {
-            var ioType = All.Where(c => c.Code.ToLower() == code.ToLower())
-                      .FirstOrDefault();
-
-            return ioType == null ? new IOType(code) : ioType;
+            return _all.Where(c => c.Code.ToLower() == code.ToLower())
+                       .FirstOrDefault()
+                       ?? new IOType(code);
         }
     }
 }

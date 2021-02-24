@@ -41,9 +41,9 @@ namespace BluetoothController.Models
 
         public static MessageType GetByCode(string code)
         {
-            var message = _all.Where(c => c.Code.ToLower() == code.ToLower())
-                      .FirstOrDefault();
-            return message == null ? new MessageType(code) : message;
+            return _all.Where(c => c.Code.ToLower() == code.ToLower())
+                       .FirstOrDefault()
+                       ?? new MessageType(code);
         }
     }
 }

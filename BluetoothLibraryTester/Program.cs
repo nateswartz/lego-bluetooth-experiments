@@ -57,9 +57,12 @@ namespace BluetoothLibraryTester
         static async Task PortInfoTesting(HubController controller)
         {
             var remoteButton = _remoteController.GetPortIdsByDeviceType(IOTypes.RemoteButton).First();
+            var remoteButton2 = _remoteController.GetPortIdsByDeviceType(IOTypes.RemoteButton).Last();
 
             await controller.ExecuteCommandAsync(new PortInfoCommand(remoteButton, InfoType.ModeInfo));
-            await Task.Delay(2000);
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoCommand(remoteButton2, InfoType.ModeInfo));
+            await Task.Delay(1000);
         }
 
         static async Task ColorDistanceSensorTesting(HubController controller)
