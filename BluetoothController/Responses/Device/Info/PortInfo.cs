@@ -30,14 +30,12 @@ namespace BluetoothController.Responses.Device.Info
             Port = body.Substring(6, 2);
             InfoType = (InformationType)Convert.ToInt32(body.Substring(8, 2), 16);
             var capabilityBitField = (Capability)Convert.ToInt32(body.Substring(10, 2));
-            if ((capabilityBitField & Capability.Output) == Capability.Output)
-                Capabilities.Add(Capability.Output);
-            if ((capabilityBitField & Capability.Input) == Capability.Input)
-                Capabilities.Add(Capability.Input);
-            if ((capabilityBitField & Capability.LogicalCombinable) == Capability.LogicalCombinable)
-                Capabilities.Add(Capability.LogicalCombinable);
-            if ((capabilityBitField & Capability.LogicalSynchronizable) == Capability.LogicalSynchronizable)
-                Capabilities.Add(Capability.LogicalSynchronizable);
+            foreach (var value in Enum.GetValues(typeof(Capability)))
+            {
+                var capability = (Capability)Enum.Parse(typeof(Capability), value.ToString());
+                if ((capabilityBitField & capability) == capability)
+                    Capabilities.Add(capability);
+            }
             NotificationType = GetType().Name;
         }
 
