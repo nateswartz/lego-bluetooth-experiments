@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BluetoothController.Responses.Device.Info
 {
@@ -42,7 +43,10 @@ namespace BluetoothController.Responses.Device.Info
 
         public override string ToString()
         {
-            return $"Port Info ({Port}) {Enum.GetName(typeof(InformationType), InfoType)}; Capability Count: {Capabilities.Count} [{Body}]";
+            return $"Port Info ({Port}) " +
+                    $"{Enum.GetName(typeof(InformationType), InfoType)}; " +
+                    $"Capabilities: {string.Join(", ", Capabilities.Select(c => Enum.GetName(typeof(Capability), c)))} " +
+                    $"[{Body}]";
         }
     }
 }
