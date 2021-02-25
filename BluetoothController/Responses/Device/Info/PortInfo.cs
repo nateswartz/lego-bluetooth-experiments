@@ -11,10 +11,10 @@ namespace BluetoothController.Responses.Device.Info
 
     public enum Capability
     {
-        Output = 0,
-        Input = 1,
-        LogicalCombinable = 2,
-        LogicalSynchronizable = 4
+        Output = 1,
+        Input = 2,
+        LogicalCombinable = 4,
+        LogicalSynchronizable = 8
     }
 
     public class PortInfo : Response
