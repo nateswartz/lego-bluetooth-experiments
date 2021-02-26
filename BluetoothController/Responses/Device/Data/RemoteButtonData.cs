@@ -17,7 +17,7 @@ namespace BluetoothController.Responses.Device.Data
 
         public RemoteButtonData(string body) : base(body)
         {
-            var buttonState = (RemoteButtonFlag)Convert.ToInt32(body.Substring(8, 2));
+            var buttonState = (RemoteButtonFlag)Convert.ToInt32(body.Substring(8, 2), 16);
             PlusPressed = (buttonState & RemoteButtonFlag.Plus) == RemoteButtonFlag.Plus;
             RedPressed = (buttonState & RemoteButtonFlag.Red) == RemoteButtonFlag.Red;
             MinusPressed = (buttonState & RemoteButtonFlag.Minus) == RemoteButtonFlag.Minus;
