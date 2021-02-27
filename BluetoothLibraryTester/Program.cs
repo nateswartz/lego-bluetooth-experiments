@@ -34,11 +34,11 @@ namespace BluetoothLibraryTester
             while (targetHub == null)
             {
                 await Task.Delay(100);
-                targetHub = _remoteController;
+                targetHub = _hubController;
             }
 
             await GetNames();
-            await PortInfoTesting(targetHub);
+            await PortInfoTesting2(targetHub);
 
             await Disconnect();
         }
@@ -56,12 +56,22 @@ namespace BluetoothLibraryTester
 
         static async Task PortInfoTesting(HubController controller)
         {
-            var remoteButton = _remoteController.GetPortIdsByDeviceType(IOTypes.RemoteButton).First();
-            var remoteButton2 = _remoteController.GetPortIdsByDeviceType(IOTypes.RemoteButton).Last();
+            var remoteButton = controller.GetPortIdsByDeviceType(IOTypes.RemoteButton).First();
+            var remoteButton2 = controller.GetPortIdsByDeviceType(IOTypes.RemoteButton).Last();
 
-            await controller.ExecuteCommandAsync(new PortInfoCommand(remoteButton, InfoType.ModeInfo));
+            await controller.ExecuteCommandAsync(new PortInfoCommand(remoteButton, InfoType.PossibleModeCombinations));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoCommand(remoteButton2, InfoType.ModeInfo));
+            await controller.ExecuteCommandAsync(new PortInfoCommand(remoteButton2, InfoType.PossibleModeCombinations));
+            await Task.Delay(1000);
+        }
+
+        static async Task PortInfoTesting2(HubController controller)
+        {
+            var trainMotor = controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).First();
+
+            await controller.ExecuteCommandAsync(new PortInfoCommand(trainMotor, InfoType.PossibleModeCombinations));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoCommand(trainMotor, InfoType.ModeInfo));
             await Task.Delay(1000);
         }
 

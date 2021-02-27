@@ -35,7 +35,6 @@ namespace BluetoothController.Responses.Device.Info
 
             Port = body.Substring(6, 2);
             InfoType = (InformationType)Convert.ToInt32(body.Substring(8, 2), 16);
-            // TODO: Handle InformationType.PossibleModeCombinations
             if (InfoType == InformationType.ModeInfo)
             {
                 var capabilityBitField = (Capability)Convert.ToInt32(body.Substring(10, 2), 16);
@@ -59,18 +58,27 @@ namespace BluetoothController.Responses.Device.Info
                         OutputModes.Add(Convert.ToInt32(Math.Log(Convert.ToDouble(bit), 2.0)));
                 }
             }
+            else if (InfoType == InformationType.PossibleModeCombinations)
+            {
+                // TODO: Handle Mode Combinations
+            }
 
             NotificationType = GetType().Name;
         }
 
         public override string ToString()
         {
-            return $"Port Info ({Port}) " +
+            if (InfoType == InformationType.ModeInfo)
+                return $"Port Info ({Port}) " +
+                        $"{Enum.GetName(typeof(InformationType), InfoType)}; " +
+                        $"{Environment.NewLine}\tCapabilities: {string.Join(", ", Capabilities.Select(c => Enum.GetName(typeof(Capability), c)))} " +
+                        $"{Environment.NewLine}\tTotal Mode Count: {TotalModeCount}" +
+                        $"{Environment.NewLine}\tInputModes: {string.Join(", ", InputModes)} " +
+                        $"{Environment.NewLine}\tOutputModes: {string.Join(", ", OutputModes)} " +
+                        $"{Environment.NewLine}\t[{Body}]";
+            else
+                return $"Port Info ({Port}) " +
                     $"{Enum.GetName(typeof(InformationType), InfoType)}; " +
-                    $"{Environment.NewLine}\tCapabilities: {string.Join(", ", Capabilities.Select(c => Enum.GetName(typeof(Capability), c)))} " +
-                    $"{Environment.NewLine}\tTotal Mode Count: {TotalModeCount}" +
-                    $"{Environment.NewLine}\tInputModes: {string.Join(", ", InputModes)} " +
-                    $"{Environment.NewLine}\tOutputModes: {string.Join(", ", OutputModes)} " +
                     $"{Environment.NewLine}\t[{Body}]";
         }
     }
