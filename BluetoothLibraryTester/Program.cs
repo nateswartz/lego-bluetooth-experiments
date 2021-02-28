@@ -19,28 +19,36 @@ namespace BluetoothLibraryTester
 
         static async Task Main(string[] args)
         {
-            Console.CancelKeyPress += delegate
+            try
             {
-                Disconnect().GetAwaiter().GetResult();
-                Environment.Exit(0);
-            };
+                Console.CancelKeyPress += delegate
+                {
+                    Disconnect().GetAwaiter().GetResult();
+                    Environment.Exit(0);
+                };
 
-            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
-            Console.WriteLine("Searching for devices...");
-            _adapter.StartBleDeviceWatcher();
+                _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
+                Console.WriteLine("Searching for devices...");
+                _adapter.StartBleDeviceWatcher();
 
-            HubController targetHub = null;
+                HubController targetHub = null;
 
-            while (targetHub == null)
-            {
-                await Task.Delay(100);
-                targetHub = _hubController;
+                while (targetHub == null)
+                {
+                    await Task.Delay(100);
+                    targetHub = _boostController;
+                }
+
+                await GetNames();
+                await PortInfoTesting2(targetHub);
+
+                await Disconnect();
             }
-
-            await GetNames();
-            await PortInfoTesting2(targetHub);
-
-            await Disconnect();
+            catch (Exception e)
+            {
+                Console.WriteLine($"Encountered exception: {e.Message}");
+                await Disconnect();
+            }
         }
 
         static async Task GetNames()
@@ -67,11 +75,11 @@ namespace BluetoothLibraryTester
 
         static async Task PortInfoTesting2(HubController controller)
         {
-            var trainMotor = controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).First();
+            var port = controller.GetPortIdsByDeviceType(IOTypes.TiltSensor).First();
 
-            await controller.ExecuteCommandAsync(new PortInfoCommand(trainMotor, InfoType.PossibleModeCombinations));
+            await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.PossibleModeCombinations));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoCommand(trainMotor, InfoType.ModeInfo));
+            await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.ModeInfo));
             await Task.Delay(1000);
         }
 

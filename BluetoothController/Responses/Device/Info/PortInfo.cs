@@ -59,14 +59,19 @@ namespace BluetoothController.Responses.Device.Info
             {
                 if (body.Length > 10)
                 {
-                    Console.WriteLine("Mode Combinations available");
                     var index = 10;
-                    var combination = body.Substring(index, 2);
-                    while (combination != "00")
+                    var combination = Convert.ToInt32(body.Substring(index, 2), 16);
+                    while (combination != 0)
                     {
-                        ModeCombinations.Add(combination);
+                        var readableCombo = "[";
+                        for (var bit = 1; bit <= Math.Pow(2.0, 15.0); bit *= 2)
+                        {
+                            if ((combination & bit) == bit)
+                                readableCombo += $"{Convert.ToInt32(Math.Log(Convert.ToDouble(bit), 2.0))} ";
+                        }
+                        ModeCombinations.Add($"{readableCombo.Trim()}]");
                         index += 2;
-                        combination = body.Substring(index, 2);
+                        combination = Convert.ToInt32(body.Substring(index, 2), 16);
                     }
                 }
             }
