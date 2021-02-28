@@ -22,17 +22,14 @@ namespace BluetoothController.Responses.Device.Info
     {
         public string Port { get; set; }
         public InformationType InfoType { get; set; }
-        public List<Capability> Capabilities { get; set; }
+        public List<Capability> Capabilities { get; set; } = new List<Capability>();
         public int TotalModeCount { get; set; }
-        public List<int> InputModes { get; set; }
-        public List<int> OutputModes { get; set; }
+        public List<int> InputModes { get; set; } = new List<int>();
+        public List<int> OutputModes { get; set; } = new List<int>();
+        public List<string> ModeCombinations { get; set; } = new List<string>();
 
         public PortInfo(string body) : base(body)
         {
-            Capabilities = new List<Capability>();
-            InputModes = new List<int>();
-            OutputModes = new List<int>();
-
             Port = body.Substring(6, 2);
             InfoType = (InformationType)Convert.ToInt32(body.Substring(8, 2), 16);
             if (InfoType == InformationType.ModeInfo)
@@ -60,7 +57,18 @@ namespace BluetoothController.Responses.Device.Info
             }
             else if (InfoType == InformationType.PossibleModeCombinations)
             {
-                // TODO: Handle Mode Combinations
+                if (body.Length > 10)
+                {
+                    Console.WriteLine("Mode Combinations available");
+                    var index = 10;
+                    var combination = body.Substring(index, 2);
+                    while (combination != "00")
+                    {
+                        ModeCombinations.Add(combination);
+                        index += 2;
+                        combination = body.Substring(index, 2);
+                    }
+                }
             }
 
             NotificationType = GetType().Name;
@@ -68,18 +76,18 @@ namespace BluetoothController.Responses.Device.Info
 
         public override string ToString()
         {
+            var header = $"Port Info ({Port}) " +
+                            $"{Enum.GetName(typeof(InformationType), InfoType)}; ";
+            var modeSpecific = "";
             if (InfoType == InformationType.ModeInfo)
-                return $"Port Info ({Port}) " +
-                        $"{Enum.GetName(typeof(InformationType), InfoType)}; " +
-                        $"{Environment.NewLine}\tCapabilities: {string.Join(", ", Capabilities.Select(c => Enum.GetName(typeof(Capability), c)))} " +
+                modeSpecific = $"{Environment.NewLine}\tCapabilities: {string.Join(", ", Capabilities.Select(c => Enum.GetName(typeof(Capability), c)))} " +
                         $"{Environment.NewLine}\tTotal Mode Count: {TotalModeCount}" +
                         $"{Environment.NewLine}\tInputModes: {string.Join(", ", InputModes)} " +
-                        $"{Environment.NewLine}\tOutputModes: {string.Join(", ", OutputModes)} " +
-                        $"{Environment.NewLine}\t[{Body}]";
-            else
-                return $"Port Info ({Port}) " +
-                    $"{Enum.GetName(typeof(InformationType), InfoType)}; " +
-                    $"{Environment.NewLine}\t[{Body}]";
+                        $"{Environment.NewLine}\tOutputModes: {string.Join(", ", OutputModes)} ";
+            else if (InfoType == InformationType.PossibleModeCombinations)
+                modeSpecific = $"{Environment.NewLine}\tModeCombinations: {string.Join(", ", ModeCombinations)} ";
+            var footer = $"{Environment.NewLine}\t[{Body}]";
+            return header + modeSpecific + footer;
         }
     }
 }
