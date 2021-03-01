@@ -7,7 +7,6 @@
         public SensorData(string body) : base(body)
         {
             Port = body.Substring(6, 2);
-            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"Sensor Data for unknown device on Port {Port} [{Body}]";

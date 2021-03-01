@@ -11,7 +11,6 @@ namespace BluetoothController.Responses.Device.Data
             Speed = Convert.ToInt32(body.Substring(8, 2), 16);
             if (Speed == 255)
                 Speed = 0;
-            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"Train Motor ({Port}) Speed Percentage: {Speed} [{Body}]";

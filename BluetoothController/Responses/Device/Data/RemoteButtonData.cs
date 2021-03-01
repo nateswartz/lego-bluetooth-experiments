@@ -21,7 +21,6 @@ namespace BluetoothController.Responses.Device.Data
             PlusPressed = (buttonState & RemoteButtonFlag.Plus) == RemoteButtonFlag.Plus;
             RedPressed = (buttonState & RemoteButtonFlag.Red) == RemoteButtonFlag.Red;
             MinusPressed = (buttonState & RemoteButtonFlag.Minus) == RemoteButtonFlag.Minus;
-            NotificationType = GetType().Name;
         }
 
         public override string ToString()

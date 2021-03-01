@@ -34,7 +34,6 @@ namespace BluetoothController.Responses.Device.State
             }
             if (StateChangeEvent != DeviceState.Detached)
                 DeviceType = IOTypes.GetByCode(body.Substring(10, 2));
-            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"Unknown Device {StateChangeEvent} on port {Port} [{Body}]";

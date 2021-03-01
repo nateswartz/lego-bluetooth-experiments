@@ -30,7 +30,6 @@ namespace BluetoothController.Responses.Device.Data
                 Color = LEDColors.GetByCode(Body.Substring(8, 2));
                 Inches = Convert.ToInt32(Body.Substring(10, 2), 16);
             }
-            NotificationType = GetType().Name;
         }
 
         public override string ToString()

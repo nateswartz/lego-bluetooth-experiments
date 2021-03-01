@@ -17,7 +17,6 @@ namespace BluetoothController.Responses.Hub
         public HubInfo(string body) : base(body)
         {
             DeviceType = (HubInfoType)Convert.ToInt32(body.Substring(6, 2), 16);
-            NotificationType = GetType().Name;
         }
     }
 }

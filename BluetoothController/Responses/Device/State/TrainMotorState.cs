@@ -4,7 +4,6 @@
     {
         public TrainMotorState(string body) : base(body)
         {
-            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"Train Motor {StateChangeEvent} on port {PortLetter}({Port}) [{Body}]";

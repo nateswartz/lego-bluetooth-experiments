@@ -15,7 +15,6 @@ namespace BluetoothController.Responses.Hub
         public ButtonStateMessage(string body) : base(body)
         {
             State = Body.Substring(10, 2) == "00" ? ButtonState.Released : ButtonState.Pressed;
-            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"Button State: {Enum.GetName(typeof(ButtonState), State)} [{Body}]";

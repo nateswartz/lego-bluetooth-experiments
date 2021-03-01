@@ -9,8 +9,6 @@
         {
             Port = body.Substring(6, 2);
             Mode = body.Substring(8, 2);
-
-            NotificationType = GetType().Name;
         }
 
         public override string ToString()

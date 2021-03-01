@@ -33,8 +33,6 @@ namespace BluetoothController.Responses.Device.State
                 Messages.Add("Idle");
             if ((messageBitField & FeedbackMessageFlag.BusyFull) == FeedbackMessageFlag.BusyFull)
                 Messages.Add("Busy/Full");
-
-            NotificationType = GetType().Name;
         }
 
         public override string ToString()

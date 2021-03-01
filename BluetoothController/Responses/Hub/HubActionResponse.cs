@@ -13,7 +13,6 @@
         public HubActionResponse(string body) : base(body)
         {
             ActionType = body.Substring(6, 2);
-            NotificationType = GetType().Name;
         }
 
         public override string ToString()

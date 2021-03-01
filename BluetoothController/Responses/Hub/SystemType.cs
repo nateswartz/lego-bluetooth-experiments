@@ -24,7 +24,6 @@ namespace BluetoothController.Responses.Hub
                     HubType = HubType.Unknown;
                     break;
             }
-            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"System Type {Enum.GetName(typeof(HubType), HubType)} [{Body}]";

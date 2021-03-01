@@ -11,7 +11,6 @@ namespace BluetoothController.Responses.Hub
         {
             var data = DataConverter.HexStringToByteArray(Body.Substring(10));
             Name = Encoding.ASCII.GetString(data);
-            NotificationType = GetType().Name;
         }
 
         public override string ToString() => $"Hub Name: {Name} [{Body}]";

@@ -15,6 +15,7 @@
             Body = body;
             Length = body.Substring(0, 2);
             MessageType = body.Substring(4, 2);
+            NotificationType = GetType().Name;
         }
 
         public override string ToString()
