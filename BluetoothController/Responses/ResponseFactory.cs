@@ -25,6 +25,8 @@ namespace BluetoothController.Responses
                 return HandleIOConnectionStateChange(controller, notification);
             if (messageType == MessageTypes.PortInformation)
                 return new PortInfo(notification);
+            if (messageType == MessageTypes.PortModeInformation)
+                return new PortModeInfo(notification);
             if (messageType == MessageTypes.PortValueSingle)
                 return HandlePortValueUpdate(controller, notification);
             if (messageType == MessageTypes.PortInputFormatSingle)

@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Commands.Abstract;
+using BluetoothController.Models;
 
 namespace BluetoothController.Commands.Basic
 {
@@ -9,9 +10,9 @@ namespace BluetoothController.Commands.Basic
         PossibleModeCombinations = 2
     }
 
-    public class PortInfoCommand : PortInfoCommandType
+    public class PortInfoCommand : CommandType
     {
-        public PortInfoCommand(string portId, InfoType infoType)
+        public PortInfoCommand(string portId, InfoType infoType) : base(MessageTypes.PortInformationRequest)
         {
             HexCommand = AddHeader($"{portId}{(int)infoType:X2}");
         }
