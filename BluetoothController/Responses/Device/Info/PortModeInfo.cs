@@ -12,13 +12,14 @@ namespace BluetoothController.Responses.Device.Info
         public string Mode { get; set; }
         public ModeInfoType ModeInfoType { get; set; }
         public string Value { get; set; }
+        public int MinValue { get; set; }
+        public int MaxValue { get; set; }
 
         public PortModeInfo(string body) : base(body)
         {
             Port = body.Substring(6, 2);
             Mode = body.Substring(8, 2);
             ModeInfoType = (ModeInfoType)Convert.ToInt32(body.Substring(10, 2), 16);
-            // TODO: Verify this behavior
             if (ModeInfoType == ModeInfoType.Name)
             {
                 var index = 12;
@@ -33,14 +34,24 @@ namespace BluetoothController.Responses.Device.Info
                 var data = DataConverter.HexStringToByteArray(Body.Substring(12, byteCount * 2));
                 Value = Encoding.ASCII.GetString(data);
             }
+            if (ModeInfoType == ModeInfoType.Raw || ModeInfoType == ModeInfoType.Percent)
+            {
+                MinValue = Convert.ToInt32(body.Substring(12, 8), 16);
+                MaxValue = Convert.ToInt32(body.Substring(20, 8), 16);
+            }
         }
 
         public override string ToString()
         {
-            return $"Port Mode Info ({Port})" +
-                    $"{Environment.NewLine}\tMode: {Mode}; Mode Info Type: {Enum.GetName(typeof(ModeInfoType), ModeInfoType)}" +
-                    $"{Environment.NewLine}\tValue: {Value}" +
-                    $"{Environment.NewLine}\t[{Body}]";
+            var header = $"Port Mode Info ({Port}) " +
+                    $"{Environment.NewLine}\tMode: {Mode}; Mode Info Type: {Enum.GetName(typeof(ModeInfoType), ModeInfoType)}";
+            var modeSpecific = "";
+            if (ModeInfoType == ModeInfoType.Name)
+                modeSpecific = $"{Environment.NewLine}\tValue: {Value}";
+            else if (ModeInfoType == ModeInfoType.Raw || ModeInfoType == ModeInfoType.Percent)
+                modeSpecific = $"{Environment.NewLine}\tMinValue: {MinValue}; MaxValue: {MaxValue}";
+            var footer = $"{Environment.NewLine}\t[{Body}]";
+            return header + modeSpecific + footer;
         }
     }
 }
