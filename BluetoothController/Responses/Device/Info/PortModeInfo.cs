@@ -31,13 +31,16 @@ namespace BluetoothController.Responses.Device.Info
                     byteCount++;
                     nextByte = body.Substring(index, 2);
                 }
-                var data = DataConverter.HexStringToByteArray(Body.Substring(12, byteCount * 2));
+                var data = DataConverter.HexStringToByteArray(body.Substring(12, byteCount * 2));
                 Value = Encoding.ASCII.GetString(data);
             }
             if (ModeInfoType == ModeInfoType.Raw || ModeInfoType == ModeInfoType.Percent)
             {
-                MinValue = Convert.ToInt32(body.Substring(12, 8), 16);
-                MaxValue = Convert.ToInt32(body.Substring(20, 8), 16);
+                byte[] minBytes = DataConverter.HexStringToByteArray(body.Substring(12, 8));
+                MinValue = (int)BitConverter.ToSingle(minBytes, 0);
+
+                byte[] maxBytes = DataConverter.HexStringToByteArray(body.Substring(20, 8));
+                MaxValue = (int)BitConverter.ToSingle(maxBytes, 0);
             }
         }
 
