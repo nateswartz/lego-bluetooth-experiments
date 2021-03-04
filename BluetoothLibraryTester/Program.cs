@@ -36,7 +36,7 @@ namespace BluetoothLibraryTester
                 while (targetHub == null)
                 {
                     await Task.Delay(100);
-                    targetHub = _remoteController;
+                    targetHub = _hubController;
                 }
 
                 await GetNames();
@@ -65,15 +65,15 @@ namespace BluetoothLibraryTester
 
         static async Task PortInfoTesting(HubController controller)
         {
-            var port = controller.GetPortIdsByDeviceType(IOTypes.RemoteButton).First();
+            var port = controller.GetPortIdsByDeviceType(IOTypes.VoltageSensor).First();
 
             await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.PossibleModeCombinations));
             await Task.Delay(1000);
             await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.ModeInfo));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Name));
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Symbol));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "02", ModeInfoType.Name));
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Symbol));
         }
 
         static async Task PortInfoTesting2(HubController controller)
@@ -84,9 +84,9 @@ namespace BluetoothLibraryTester
             await Task.Delay(1000);
             await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.ModeInfo));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Name));
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Raw));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "02", ModeInfoType.Name));
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "02", ModeInfoType.Raw));
         }
 
         static async Task ColorDistanceSensorTesting(HubController controller)
