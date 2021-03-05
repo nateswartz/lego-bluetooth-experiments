@@ -4,6 +4,7 @@ using BluetoothController.Controllers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,9 +14,7 @@ namespace BluetoothLibraryTester
     {
         static BluetoothLowEnergyAdapter _adapter;
 
-        static HubController _remoteController;
-        static HubController _hubController;
-        static HubController _boostController;
+        static List<HubController> _controllers = new List<HubController>();
 
         static async Task Main(string[] args)
         {
@@ -31,18 +30,14 @@ namespace BluetoothLibraryTester
                 Console.WriteLine("Searching for devices...");
                 _adapter.StartBleDeviceWatcher();
 
-                HubController targetHub = null;
-
-                while (targetHub == null)
+                while (!_controllers.Any())
                 {
                     await Task.Delay(100);
-                    targetHub = _hubController;
                 }
 
-                await GetNames();
+                await GetInfo();
                 Console.WriteLine("Running test method...");
-                await PortInfoTesting(targetHub);
-
+                await RunCommands(_controllers.First());
                 await Disconnect();
             }
             catch (Exception e)
@@ -52,18 +47,18 @@ namespace BluetoothLibraryTester
             }
         }
 
-        static async Task GetNames()
+        static async Task GetInfo()
         {
-            if (_boostController != null)
-                await _boostController.ExecuteCommandAsync(new HubNameCommand());
-            if (_remoteController != null)
-                await _remoteController.ExecuteCommandAsync(new HubNameCommand());
-            if (_hubController != null)
-                await _hubController.ExecuteCommandAsync(new HubNameCommand());
-            await Task.Delay(2000);
+            foreach (var controller in _controllers)
+            {
+                await controller.ExecuteCommandAsync(new HubNameCommand());
+                await controller.ExecuteCommandAsync(new HubFirmwareCommand());
+                await controller.ExecuteCommandAsync(new HubTypeCommand());
+            }
+            await Task.Delay(1000);
         }
 
-        static async Task PortInfoTesting(HubController controller)
+        static async Task RunCommands(HubController controller)
         {
             var port = controller.GetPortIdsByDeviceType(IOTypes.VoltageSensor).First();
 
@@ -76,107 +71,12 @@ namespace BluetoothLibraryTester
             await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Symbol));
         }
 
-        static async Task PortInfoTesting2(HubController controller)
-        {
-            var port = controller.GetPortIdsByDeviceType(IOTypes.ColorDistance).First();
-
-            await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.PossibleModeCombinations));
-            await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.ModeInfo));
-            await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Raw));
-            await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "02", ModeInfoType.Raw));
-        }
-
-        static async Task ColorDistanceSensorTesting(HubController controller)
-        {
-            var port = controller.GetPortIdsByDeviceType(IOTypes.ColorDistance).Single();
-            await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "08"));
-            await Task.Delay(4000);
-        }
-
-        static async Task RunMotorCommand(HubController controller)
-        {
-            await controller.ExecuteCommandAsync(new HubFirmwareCommand());
-            await Task.Delay(1000);
-            var motor = controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).Single();
-            await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(motor, true, "00"));
-            await Task.Delay(1000);
-
-            for (var i = 0; i <= 50; i += 10)
-            {
-                Console.WriteLine($"Running motor at {i}");
-                await Task.Delay(3500);
-                await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, i, true));
-            }
-            await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new TrainMotorCommand(motor, 0, true));
-        }
-
-        static async Task RunInternalMotorCommand()
-        {
-            await Task.Delay(1000);
-            var port = _boostController.GetPortIdsByDeviceType(IOTypes.ColorDistance).Last();
-            await _boostController.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "08"));
-            await Task.Delay(10000);
-            //await _boostController.ExecuteCommandAsync(new MotorCommand(motor, 50, 2000, true));
-            await Task.Delay(2000);
-
-        }
-
-        static async Task RunCommands()
-        {
-            await _remoteController.ExecuteCommandAsync(new HubFirmwareCommand());
-            //await _remoteController.ExecuteCommandAsync(new RawCommand("0203"));
-            //await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(controller, true, PortType.Motor, "01"));
-            Console.WriteLine($"Setting LED Pink...");
-            await _remoteController.ExecuteCommandAsync(new LEDCommand(_remoteController, LEDColors.Pink));
-            //await Task.Delay(500);
-            //Console.WriteLine($"Registering for Button notifications...");
-            //await controller.ExecuteCommandAsync(new ButtonNotificationsCommand(true));
-            //_remoteController.AddEventHandler(new RemoteButtonToLEDEventHandler(_hubController));
-            await Task.Delay(500);
-
-            Console.WriteLine("Registering for remote button notifications");
-            var remoteButtons = _remoteController.GetPortIdsByDeviceType(IOTypes.RemoteButton);
-            foreach (var button in remoteButtons)
-                await _remoteController.ExecuteCommandAsync(new ToggleNotificationsCommand(button, true, "03"));
-            await Task.Delay(500);
-
-            //Console.WriteLine("Running motor...");
-            //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 50, true));
-            //await Task.Delay(2000);
-            //Console.WriteLine("Running motor...");
-            //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 20, true));
-            //await Task.Delay(2000);
-            //Console.WriteLine("Running motor...");
-            //await _controller.ExecuteCommandAsync(new TrainMotorBoostCommand(_controller, 0, true));
-            //await Task.Delay(2000);
-            //Console.WriteLine("Running motor...");
-            //await controller.ExecuteCommandAsync(new MotorBoostCommand(Motors.A, 70, 2000, true, ""));
-            //await Task.Delay(500);
-            //Console.WriteLine("Running motor...");
-            //await controller.ExecuteCommandAsync(new MotorBoostCommand(Motors.A, 90, 2000, false, ""));
-            //await Task.Delay(500);
-
-            //Console.WriteLine("Registering Event handler to change LED on Button press...");
-            //_controller.AddEventHandler(new ButtonToLEDEventHandler(_controller));
-            await Task.Delay(10000);
-
-            await Task.CompletedTask;
-        }
-
         static async Task Disconnect()
         {
             Console.WriteLine("Disconnecting soon...");
             await Task.Delay(1000);
-            if (_boostController != null)
-                await _boostController.ExecuteCommandAsync(new ShutdownCommand());
-            if (_remoteController != null)
-                await _remoteController.ExecuteCommandAsync(new ShutdownCommand());
-            if (_hubController != null)
-                await _hubController.ExecuteCommandAsync(new ShutdownCommand());
+            foreach (var controller in _controllers)
+                await controller.ExecuteCommandAsync(new ShutdownCommand());
             Console.WriteLine("Disconnected");
         }
 
@@ -196,22 +96,7 @@ namespace BluetoothLibraryTester
         {
             if (controller != null)
             {
-                //_adapter.StopBleDeviceWatcher();
-
-                if (controller.HubType == HubType.TwoPortHandset)
-                {
-                    _remoteController = controller;
-                }
-
-                if (controller.HubType == HubType.TwoPortHub)
-                {
-                    _hubController = controller;
-                }
-
-                if (controller.HubType == HubType.BoostMoveHub)
-                {
-                    _boostController = controller;
-                }
+                _controllers.Add(controller);
 
                 Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
 

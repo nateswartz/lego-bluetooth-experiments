@@ -87,7 +87,6 @@ namespace BluetoothController
                 {
                     if (_controllers.Any(c => c.SelectedBleDeviceId == controller.SelectedBleDeviceId))
                         return;
-                    Console.WriteLine("Adding device to List...");
                     _controllers.Add(controller);
                 }
 
@@ -96,7 +95,6 @@ namespace BluetoothController
                     Name = device.Name,
                     BluetoothDeviceId = device.DeviceId
                 });
-                Console.WriteLine("Connecting to device...");
                 await Connect(controller, _connectionHandler);
             }
         }
