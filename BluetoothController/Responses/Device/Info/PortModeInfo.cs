@@ -1,10 +1,20 @@
 ﻿using BluetoothController.Models;
 using BluetoothController.Util;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BluetoothController.Responses.Device.Info
 {
+    public enum InputSideMappingFlag
+    {
+        Discrete = 4,
+        Relative = 8,
+        Absolute = 16,
+        SupportsFunctionalMapping2Plus = 64,
+        SupportsNULLValue = 128
+    }
 
     public class PortModeInfo : Response
     {
@@ -14,6 +24,7 @@ namespace BluetoothController.Responses.Device.Info
         public string Value { get; set; }
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
+        public List<InputSideMappingFlag> InputSideMappings { get; set; } = new List<InputSideMappingFlag>();
 
         public PortModeInfo(string body) : base(body)
         {
@@ -45,6 +56,15 @@ namespace BluetoothController.Responses.Device.Info
                     byte[] maxBytes = DataConverter.HexStringToByteArray(body.Substring(20, 8));
                     MaxValue = (int)BitConverter.ToSingle(maxBytes, 0);
                     break;
+                case (ModeInfoType.Mapping):
+                    var inputSideMappingBitfield = (InputSideMappingFlag)Convert.ToInt32(body.Substring(12, 2), 16);
+                    foreach (var value in Enum.GetValues(typeof(InputSideMappingFlag)))
+                    {
+                        var mapping = (InputSideMappingFlag)Enum.Parse(typeof(InputSideMappingFlag), value.ToString());
+                        if ((inputSideMappingBitfield & mapping) == mapping)
+                            InputSideMappings.Add(mapping);
+                    }
+                    break;
             }
         }
 
@@ -57,6 +77,8 @@ namespace BluetoothController.Responses.Device.Info
                 modeSpecific = $"{Environment.NewLine}\tValue: {Value}";
             else if (ModeInfoType == ModeInfoType.Raw || ModeInfoType == ModeInfoType.Percent || ModeInfoType == ModeInfoType.Si)
                 modeSpecific = $"{Environment.NewLine}\tMinValue: {MinValue}; MaxValue: {MaxValue}";
+            else if (ModeInfoType == ModeInfoType.Mapping)
+                modeSpecific = $"{Environment.NewLine}\tInputSideMappings: {string.Join(", ", InputSideMappings.Select(c => Enum.GetName(typeof(InputSideMappingFlag), c)))}";
             var footer = $"{Environment.NewLine}\t[{Body}]";
             return header + modeSpecific + footer;
         }

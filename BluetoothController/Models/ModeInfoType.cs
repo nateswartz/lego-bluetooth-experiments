@@ -11,7 +11,7 @@
         Internal = 6,
         MotorBias = 7,
         CapabilityBits = 8,
-        ValueFormat = 128
+        ValueFormat = 296
     }
 }
 

@@ -66,9 +66,9 @@ namespace BluetoothLibraryTester
             await Task.Delay(1000);
             await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.ModeInfo));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Symbol));
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Mapping));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Symbol));
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Mapping));
         }
 
         static async Task Disconnect()
