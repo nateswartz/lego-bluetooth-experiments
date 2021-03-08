@@ -7,7 +7,7 @@ using System.Text;
 
 namespace BluetoothController.Responses.Device.Info
 {
-    public enum InputSideMappingFlag
+    public enum PortModeInfoMappingFlag
     {
         Discrete = 4,
         Relative = 8,
@@ -24,7 +24,9 @@ namespace BluetoothController.Responses.Device.Info
         public string Value { get; set; }
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
-        public List<InputSideMappingFlag> InputSideMappings { get; set; } = new List<InputSideMappingFlag>();
+        public List<PortModeInfoMappingFlag> InputSideMappings { get; set; } = new List<PortModeInfoMappingFlag>();
+        public List<PortModeInfoMappingFlag> OutputSideMappings { get; set; } = new List<PortModeInfoMappingFlag>();
+
 
         public PortModeInfo(string body) : base(body)
         {
@@ -57,12 +59,19 @@ namespace BluetoothController.Responses.Device.Info
                     MaxValue = (int)BitConverter.ToSingle(maxBytes, 0);
                     break;
                 case (ModeInfoType.Mapping):
-                    var inputSideMappingBitfield = (InputSideMappingFlag)Convert.ToInt32(body.Substring(12, 2), 16);
-                    foreach (var value in Enum.GetValues(typeof(InputSideMappingFlag)))
+                    var inputSideMappingBitfield = (PortModeInfoMappingFlag)Convert.ToInt32(body.Substring(12, 2), 16);
+                    foreach (var value in Enum.GetValues(typeof(PortModeInfoMappingFlag)))
                     {
-                        var mapping = (InputSideMappingFlag)Enum.Parse(typeof(InputSideMappingFlag), value.ToString());
+                        var mapping = (PortModeInfoMappingFlag)Enum.Parse(typeof(PortModeInfoMappingFlag), value.ToString());
                         if ((inputSideMappingBitfield & mapping) == mapping)
                             InputSideMappings.Add(mapping);
+                    }
+                    var outputSideMappingBitfield = (PortModeInfoMappingFlag)Convert.ToInt32(body.Substring(14, 2), 16);
+                    foreach (var value in Enum.GetValues(typeof(PortModeInfoMappingFlag)))
+                    {
+                        var mapping = (PortModeInfoMappingFlag)Enum.Parse(typeof(PortModeInfoMappingFlag), value.ToString());
+                        if ((outputSideMappingBitfield & mapping) == mapping)
+                            OutputSideMappings.Add(mapping);
                     }
                     break;
             }
@@ -78,7 +87,8 @@ namespace BluetoothController.Responses.Device.Info
             else if (ModeInfoType == ModeInfoType.Raw || ModeInfoType == ModeInfoType.Percent || ModeInfoType == ModeInfoType.Si)
                 modeSpecific = $"{Environment.NewLine}\tMinValue: {MinValue}; MaxValue: {MaxValue}";
             else if (ModeInfoType == ModeInfoType.Mapping)
-                modeSpecific = $"{Environment.NewLine}\tInputSideMappings: {string.Join(", ", InputSideMappings.Select(c => Enum.GetName(typeof(InputSideMappingFlag), c)))}";
+                modeSpecific = $"{Environment.NewLine}\tInputSideMappings: {string.Join(", ", InputSideMappings.Select(c => Enum.GetName(typeof(PortModeInfoMappingFlag), c)))}" +
+                    $"{Environment.NewLine}\tOutputSideMappings: {string.Join(", ", OutputSideMappings.Select(c => Enum.GetName(typeof(PortModeInfoMappingFlag), c)))}";
             var footer = $"{Environment.NewLine}\t[{Body}]";
             return header + modeSpecific + footer;
         }
