@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace BluetoothController.Responses
 {
-    public static class ResponseFactory
+    internal static class ResponseFactory
     {
         public static Response CreateResponse(string notification, HubController controller)
         {

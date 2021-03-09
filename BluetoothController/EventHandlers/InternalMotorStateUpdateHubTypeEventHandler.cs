@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class InternalMotorStateUpdateHubTypeEventHandler : IEventHandler
+    internal class InternalMotorStateUpdateHubTypeEventHandler : IEventHandler
     {
         private readonly HubController _controller;
 

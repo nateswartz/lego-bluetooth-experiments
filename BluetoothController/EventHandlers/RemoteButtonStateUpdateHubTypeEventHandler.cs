@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class RemoteButtonStateUpdateHubTypeEventHandler : IEventHandler
+    internal class RemoteButtonStateUpdateHubTypeEventHandler : IEventHandler
     {
         private readonly HubController _controller;
 
