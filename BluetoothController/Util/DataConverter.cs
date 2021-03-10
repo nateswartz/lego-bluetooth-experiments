@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BluetoothController.Util
 {
-    public static class DataConverter
+    internal static class DataConverter
     {
         public static string ByteArrayToString(byte[] ba)
         {

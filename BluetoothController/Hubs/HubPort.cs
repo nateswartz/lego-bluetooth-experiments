@@ -2,7 +2,7 @@
 
 namespace BluetoothController.Hubs
 {
-    public class HubPort
+    internal class HubPort
     {
         public string PortID { get; set; }
         public IOType DeviceType { get; set; }
