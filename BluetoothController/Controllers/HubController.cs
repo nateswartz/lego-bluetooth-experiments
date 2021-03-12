@@ -85,7 +85,7 @@ namespace BluetoothController.Controllers
 
         public override string ToString()
         {
-            return $"{Enum.GetName(typeof(HubType), Hub.HubType)} ({SelectedBleDeviceId})";
+            return $"{Hub.HubType} ({SelectedBleDeviceId})";
         }
 
         private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)

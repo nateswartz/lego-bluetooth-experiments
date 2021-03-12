@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BluetoothController.Responses.Hub
+﻿namespace BluetoothController.Responses.Hub
 {
     public enum ButtonState
     {
@@ -17,6 +15,6 @@ namespace BluetoothController.Responses.Hub
             State = Body.Substring(10, 2) == "00" ? ButtonState.Released : ButtonState.Pressed;
         }
 
-        public override string ToString() => $"Button State: {Enum.GetName(typeof(ButtonState), State)} [{Body}]";
+        public override string ToString() => $"Button State: {State} [{Body}]";
     }
 }

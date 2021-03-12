@@ -83,15 +83,15 @@ namespace BluetoothController.Responses.Device.Info
         public override string ToString()
         {
             var header = $"Port Mode Info ({Port}) " +
-                    $"{Environment.NewLine}\tMode: {Mode}; Mode Info Type: {Enum.GetName(typeof(ModeInfoType), ModeInfoType)}";
+                    $"{Environment.NewLine}\tMode: {Mode}; Mode Info Type: {ModeInfoType}";
             var modeSpecific = "";
             if (ModeInfoType == ModeInfoType.Name || ModeInfoType == ModeInfoType.Symbol || ModeInfoType == ModeInfoType.MotorBias)
                 modeSpecific = $"{Environment.NewLine}\tValue: {Value}";
             else if (ModeInfoType == ModeInfoType.Raw || ModeInfoType == ModeInfoType.Percent || ModeInfoType == ModeInfoType.Si)
                 modeSpecific = $"{Environment.NewLine}\tMinValue: {MinValue}; MaxValue: {MaxValue}";
             else if (ModeInfoType == ModeInfoType.Mapping)
-                modeSpecific = $"{Environment.NewLine}\tInputSideMappings: {string.Join(", ", InputSideMappings.Select(c => Enum.GetName(typeof(PortModeInfoMappingFlag), c)))}" +
-                    $"{Environment.NewLine}\tOutputSideMappings: {string.Join(", ", OutputSideMappings.Select(c => Enum.GetName(typeof(PortModeInfoMappingFlag), c)))}";
+                modeSpecific = $"{Environment.NewLine}\tInputSideMappings: {string.Join(", ", InputSideMappings.Select(c => c.ToString()))}" +
+                    $"{Environment.NewLine}\tOutputSideMappings: {string.Join(", ", OutputSideMappings.Select(c => c.ToString()))}";
             var footer = $"{Environment.NewLine}\t[{Body}]";
             return header + modeSpecific + footer;
         }

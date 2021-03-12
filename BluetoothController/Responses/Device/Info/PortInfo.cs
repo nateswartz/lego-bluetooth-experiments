@@ -80,10 +80,10 @@ namespace BluetoothController.Responses.Device.Info
         public override string ToString()
         {
             var header = $"Port Info ({Port}) " +
-                            $"{Enum.GetName(typeof(InformationType), InfoType)}; ";
+                            $"{InfoType}; ";
             var modeSpecific = "";
             if (InfoType == InformationType.ModeInfo)
-                modeSpecific = $"{Environment.NewLine}\tCapabilities: {string.Join(", ", Capabilities.Select(c => Enum.GetName(typeof(Capability), c)))} " +
+                modeSpecific = $"{Environment.NewLine}\tCapabilities: {string.Join(", ", Capabilities.Select(c => c.ToString()))} " +
                         $"{Environment.NewLine}\tTotal Mode Count: {TotalModeCount}" +
                         $"{Environment.NewLine}\tInputModes: {string.Join(", ", InputModes)} " +
                         $"{Environment.NewLine}\tOutputModes: {string.Join(", ", OutputModes)} ";
