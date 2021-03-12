@@ -9,11 +9,11 @@ namespace BluetoothController.EventHandlers
 {
     internal class InternalMotorStateUpdateHubTypeEventHandler : IEventHandler
     {
-        private readonly HubController _controller;
+        private readonly IHubController _controller;
 
         public Type HandledEvent { get; } = typeof(InternalMotorState);
 
-        public InternalMotorStateUpdateHubTypeEventHandler(HubController controller)
+        public InternalMotorStateUpdateHubTypeEventHandler(IHubController controller)
         {
             _controller = controller;
         }

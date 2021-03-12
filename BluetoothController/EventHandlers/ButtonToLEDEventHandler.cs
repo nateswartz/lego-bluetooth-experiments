@@ -10,11 +10,11 @@ namespace BluetoothController.EventHandlers
 {
     public class ButtonToLEDEventHandler : IEventHandler
     {
-        private readonly HubController _controller;
+        private readonly IHubController _controller;
 
         public Type HandledEvent { get; } = typeof(ButtonStateMessage);
 
-        public ButtonToLEDEventHandler(HubController controller)
+        public ButtonToLEDEventHandler(IHubController controller)
         {
             _controller = controller;
         }

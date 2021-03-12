@@ -13,13 +13,13 @@ using Windows.Storage.Streams;
 
 namespace BluetoothController.Controllers
 {
-    public class HubController
+    public class HubController : IHubController
     {
         public bool IsConnected { get; private set; }
 
         public HubType HubType { get { return Hub?.HubType ?? HubType.Unknown; } }
 
-        internal LegoHub Hub { get; set; }
+        public LegoHub Hub { get; set; }
 
         internal string SelectedBleDeviceId { get; set; }
 
