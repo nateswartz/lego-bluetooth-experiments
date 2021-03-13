@@ -54,7 +54,7 @@ namespace LegoBoostController
             var color = (LEDColor)((ComboBox)sender).SelectedItem;
             _rootPage.NotifyUser($"The selected item is {color}", NotifyType.StatusMessage);
 
-            var selectedHub = HubSelectCombo.SelectedItem as HubController;
+            var selectedHub = HubSelectCombo.SelectedItem as IHubController;
 
             await selectedHub.ExecuteCommandAsync(new LEDCommand(selectedHub, color));
         }
@@ -216,7 +216,7 @@ namespace LegoBoostController
 
         private async void WriteHexButton_Click()
         {
-            var selectedHub = HubSelectCombo.SelectedItem as HubController;
+            var selectedHub = HubSelectCombo.SelectedItem as IHubController;
             var text = CharacteristicWriteValue.Text;
             if (!string.IsNullOrEmpty(text))
             {

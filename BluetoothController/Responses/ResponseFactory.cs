@@ -11,7 +11,7 @@ namespace BluetoothController.Responses
 {
     internal static class ResponseFactory
     {
-        public static Response CreateResponse(string notification, HubController controller)
+        public static Response CreateResponse(string notification, IHubController controller)
         {
             var messageType = MessageTypes.GetByCode(notification.Substring(4, 2));
 
@@ -37,14 +37,14 @@ namespace BluetoothController.Responses
             return new Response(notification);
         }
 
-        private static Response HandleNotificationStateUpdate(HubController controller, string notification)
+        private static Response HandleNotificationStateUpdate(IHubController controller, string notification)
         {
             var portState = new PortNotificationState(notification);
             controller.Hub.GetPortByID(portState.Port).NotificationMode = portState.Mode;
             return portState;
         }
 
-        private static Response HandleHubProperty(HubController controller, string notification)
+        private static Response HandleHubProperty(IHubController controller, string notification)
         {
             var deviceInfo = new HubInfo(notification);
             switch (deviceInfo.DeviceType)
@@ -61,7 +61,7 @@ namespace BluetoothController.Responses
             return deviceInfo;
         }
 
-        private static Response HandleIOConnectionStateChange(HubController controller, string notification)
+        private static Response HandleIOConnectionStateChange(IHubController controller, string notification)
         {
             var portInfo = new PortState(notification);
 
@@ -72,7 +72,7 @@ namespace BluetoothController.Responses
             return HandleIOAttached(controller, portInfo);
         }
 
-        private static Response HandleIODetached(HubController controller, PortState portInfo)
+        private static Response HandleIODetached(IHubController controller, PortState portInfo)
         {
             var hub = controller.Hub;
             if (hub.GetPortsByDeviceType(IOTypes.TrainMotor).Any(p => p.PortID == portInfo.Port))
@@ -93,7 +93,7 @@ namespace BluetoothController.Responses
             return portInfo;
         }
 
-        private static Response HandleIOAttached(HubController controller, PortState portInfo)
+        private static Response HandleIOAttached(IHubController controller, PortState portInfo)
         {
             if (controller.Hub == null)
                 controller.Hub = new LegoHub();
@@ -134,7 +134,7 @@ namespace BluetoothController.Responses
             return portInfo;
         }
 
-        private static Response HandlePortValueUpdate(HubController controller, string notification)
+        private static Response HandlePortValueUpdate(IHubController controller, string notification)
         {
             var sensorData = new SensorData(notification);
             var hub = controller.Hub;
