@@ -16,7 +16,7 @@ namespace BluetoothController
     {
         private BluetoothLEAdvertisementWatcher _watcher;
 
-        private List<HubController> _controllers;
+        private List<IHubController> _controllers;
 
         public bool Scanning { get; private set; } = false;
 
@@ -29,17 +29,17 @@ namespace BluetoothController
         private object _lock = new object();
 
         private Func<DiscoveredDevice, Task> _discoveryHandler;
-        private Func<HubController, string, Task> _connectionHandler;
-        private Func<HubController, string, Task> _notificationHandler;
+        private Func<IHubController, string, Task> _connectionHandler;
+        private Func<IHubController, string, Task> _notificationHandler;
 
         public BluetoothLowEnergyAdapter(Func<DiscoveredDevice, Task> discoveryHandler,
-                                         Func<HubController, string, Task> connectionHandler,
-                                         Func<HubController, string, Task> notificationHandler)
+                                         Func<IHubController, string, Task> connectionHandler,
+                                         Func<IHubController, string, Task> notificationHandler)
         {
             _discoveryHandler = discoveryHandler;
             _connectionHandler = connectionHandler;
             _notificationHandler = notificationHandler;
-            _controllers = new List<HubController>();
+            _controllers = new List<IHubController>();
         }
 
         public void StartBleDeviceWatcher()
@@ -70,7 +70,7 @@ namespace BluetoothController
         {
             using (var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result)
             {
-                HubController controller;
+                IHubController controller;
 
                 if (device == null)
                     return;
@@ -99,7 +99,7 @@ namespace BluetoothController
             }
         }
 
-        private async Task<bool> Connect(HubController controller, Func<HubController, string, Task> connectionHandler)
+        private async Task<bool> Connect(IHubController controller, Func<IHubController, string, Task> connectionHandler)
         {
             BluetoothLEDevice bluetoothLEDevice;
 

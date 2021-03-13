@@ -8,7 +8,7 @@ namespace LegoBoostController.Robot
     {
         IEnumerable<string> Keywords { get; }
         string Description { get; }
-        Task RunAsync(HubController controller, string commandText);
+        Task RunAsync(IHubController controller, string commandText);
     }
 }
 

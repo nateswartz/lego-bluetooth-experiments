@@ -14,7 +14,7 @@ namespace BluetoothLibraryTester
     {
         static BluetoothLowEnergyAdapter _adapter;
 
-        static List<HubController> _controllers = new List<HubController>();
+        static List<IHubController> _controllers = new List<IHubController>();
 
         static async Task Main(string[] args)
         {
@@ -58,7 +58,7 @@ namespace BluetoothLibraryTester
             await Task.Delay(1000);
         }
 
-        static async Task RunCommands(HubController controller)
+        static async Task RunCommands(IHubController controller)
         {
             var port = controller.GetPortIdsByDeviceType(IOTypes.VoltageSensor).First();
 
@@ -80,7 +80,7 @@ namespace BluetoothLibraryTester
             Console.WriteLine("Disconnected");
         }
 
-        static async Task HandleNotification(HubController controller, string message)
+        static async Task HandleNotification(IHubController controller, string message)
         {
             Console.WriteLine($"{controller.HubType}: {message}");
             await Task.CompletedTask;
@@ -92,7 +92,7 @@ namespace BluetoothLibraryTester
             await Task.CompletedTask;
         }
 
-        static async Task HandleConnect(HubController controller, string errorMessage)
+        static async Task HandleConnect(IHubController controller, string errorMessage)
         {
             if (controller != null)
             {

@@ -8,16 +8,11 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class MotorToLEDEventHandler : IEventHandler
+    public class MotorToLEDEventHandler : EventHandlerBase, IEventHandler
     {
-        private readonly HubController _controller;
-
         public Type HandledEvent { get; } = typeof(ExternalMotorData);
 
-        public MotorToLEDEventHandler(HubController controller)
-        {
-            _controller = controller;
-        }
+        public MotorToLEDEventHandler(IHubController controller) : base(controller) { }
 
         public async Task HandleEventAsync(Response response)
         {

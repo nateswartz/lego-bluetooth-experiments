@@ -14,7 +14,7 @@ namespace LegoBoostController.Controllers
 
     public class TextCommandsController
     {
-        private readonly HubController _controller;
+        private readonly IHubController _controller;
         private ICommandFactory _commandFactory;
         private Robot selectedRobot;
         public Robot SelectedRobot
@@ -31,7 +31,7 @@ namespace LegoBoostController.Controllers
         }
         public string SampleCommandsText { get; set; }
 
-        public TextCommandsController(HubController controller)
+        public TextCommandsController(IHubController controller)
         {
             _controller = controller;
         }

@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    internal class SystemTypeUpdateHubTypeEventHandler : IEventHandler
+    internal class SystemTypeUpdateHubTypeEventHandler : EventHandlerBase, IEventHandler
     {
-        private readonly HubController _controller;
-
         public Type HandledEvent { get; } = typeof(SystemType);
 
-        public SystemTypeUpdateHubTypeEventHandler(HubController controller)
-        {
-            _controller = controller;
-        }
+        public SystemTypeUpdateHubTypeEventHandler(IHubController controller) : base(controller) { }
 
         public async Task HandleEventAsync(Response response)
         {

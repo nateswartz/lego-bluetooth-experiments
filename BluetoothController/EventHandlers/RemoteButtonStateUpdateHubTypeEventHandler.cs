@@ -7,16 +7,11 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    internal class RemoteButtonStateUpdateHubTypeEventHandler : IEventHandler
+    internal class RemoteButtonStateUpdateHubTypeEventHandler : EventHandlerBase, IEventHandler
     {
-        private readonly HubController _controller;
-
         public Type HandledEvent { get; } = typeof(RemoteButtonState);
 
-        public RemoteButtonStateUpdateHubTypeEventHandler(HubController controller)
-        {
-            _controller = controller;
-        }
+        public RemoteButtonStateUpdateHubTypeEventHandler(IHubController controller) : base(controller) { }
 
         public async Task HandleEventAsync(Response response)
         {

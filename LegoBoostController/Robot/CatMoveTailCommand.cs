@@ -13,7 +13,7 @@ namespace LegoBoostController.Robot
 
         public string Description { get => "ShakeTail(Speed, Time, Direction[Left/Right])"; }
 
-        public async Task RunAsync(HubController controller, string commandText)
+        public async Task RunAsync(IHubController controller, string commandText)
         {
             Match m = Regex.Match(commandText, @"\((\d+),(\d+),(\w+)\)");
             if (m.Groups.Count == 4)

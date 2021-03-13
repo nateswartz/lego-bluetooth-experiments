@@ -28,15 +28,15 @@ namespace LegoBoostController
 
         private List<string> _notifications = new List<string>();
 
-        private HubController _controller;
-        private HubController _controller2;
+        private IHubController _controller;
+        private IHubController _controller2;
 
         private TextCommandsController _textCommandsController;
 
         List<LEDColor> _colors = LEDColors.All;
         List<Motor> _motors = Motors.All;
         List<Controllers.Robot> _robots = Enum.GetValues(typeof(Controllers.Robot)).Cast<Controllers.Robot>().ToList();
-        ObservableCollection<HubController> _hubs = new ObservableCollection<HubController>();
+        ObservableCollection<IHubController> _hubs = new ObservableCollection<IHubController>();
 
         #region UI Code
         public LegoMoveHub_Client()
@@ -123,7 +123,7 @@ namespace LegoBoostController
             });
         }
 
-        private async Task OnNotificationAsync(HubController controller, string message)
+        private async Task OnNotificationAsync(IHubController controller, string message)
         {
             var taggedMessage = $"{controller.HubType}: {message}";
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
@@ -160,7 +160,7 @@ namespace LegoBoostController
             await Task.CompletedTask;
         }
 
-        private async Task OnDeviceConnectedAsync(HubController controller, string errorMessage)
+        private async Task OnDeviceConnectedAsync(IHubController controller, string errorMessage)
         {
             // We must update the collection on the UI thread because the collection is databound to a UI element.
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>

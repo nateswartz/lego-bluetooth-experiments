@@ -21,17 +21,17 @@ namespace BluetoothController.Controllers
 
         public LegoHub Hub { get; set; }
 
-        internal string SelectedBleDeviceId { get; set; }
+        public string SelectedBleDeviceId { get; set; }
 
-        internal bool SubscribedForNotifications { get; set; }
+        public bool SubscribedForNotifications { get; set; }
 
-        internal GattCharacteristic HubCharacteristic { get; set; }
+        public GattCharacteristic HubCharacteristic { get; set; }
 
         private Dictionary<string, List<IEventHandler>> _eventHandlers { get; set; }
 
         private List<string> _notifications = new List<string>();
 
-        private Func<HubController, string, Task> _notificationHandler;
+        private Func<IHubController, string, Task> _notificationHandler;
 
         public HubController()
         {
@@ -64,7 +64,7 @@ namespace BluetoothController.Controllers
             return writeSuccessful;
         }
 
-        public async Task ConnectAsync(Func<HubController, string, Task> notificationHandler)
+        public async Task ConnectAsync(Func<IHubController, string, Task> notificationHandler)
         {
             IsConnected = true;
             await ToggleSubscribedForNotificationsAsync(notificationHandler);
@@ -161,7 +161,7 @@ namespace BluetoothController.Controllers
             }
         }
 
-        private async Task<bool> ToggleSubscribedForNotificationsAsync(Func<HubController, string, Task> notificationHandler)
+        private async Task<bool> ToggleSubscribedForNotificationsAsync(Func<IHubController, string, Task> notificationHandler)
         {
             _notificationHandler = notificationHandler;
             if (!SubscribedForNotifications)
