@@ -16,21 +16,21 @@ namespace BluetoothController
     {
         private BluetoothLEAdvertisementWatcher _watcher;
 
-        private List<IHubController> _controllers;
+        private readonly List<IHubController> _controllers;
 
         public bool Scanning { get; private set; } = false;
 
 
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
 
-        private const string LegoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
-        private const string LegoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
+        private const string _legoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
+        private const string _legoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
-        private Func<DiscoveredDevice, Task> _discoveryHandler;
-        private Func<IHubController, string, Task> _connectionHandler;
-        private Func<IHubController, string, Task> _notificationHandler;
+        private readonly Func<DiscoveredDevice, Task> _discoveryHandler;
+        private readonly Func<IHubController, string, Task> _connectionHandler;
+        private readonly Func<IHubController, string, Task> _notificationHandler;
 
         public BluetoothLowEnergyAdapter(Func<DiscoveredDevice, Task> discoveryHandler,
                                          Func<IHubController, string, Task> connectionHandler,
@@ -75,7 +75,7 @@ namespace BluetoothController
                 if (device == null)
                     return;
 
-                if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(LegoHubService)))
+                if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(_legoHubService)))
                     return;
 
                 controller = new HubController
@@ -99,7 +99,7 @@ namespace BluetoothController
             }
         }
 
-        private async Task<bool> Connect(IHubController controller, Func<IHubController, string, Task> connectionHandler)
+        private async Task Connect(IHubController controller, Func<IHubController, string, Task> connectionHandler)
         {
             BluetoothLEDevice bluetoothLEDevice;
 
@@ -109,13 +109,13 @@ namespace BluetoothController
                 if (bluetoothLEDevice == null)
                 {
                     await connectionHandler(null, "Failed to connect to device.");
-                    return false;
+                    return;
                 }
             }
             catch (Exception ex) when (ex.HResult == E_DEVICE_NOT_AVAILABLE)
             {
                 await connectionHandler(null, "Bluetooth radio is not on.");
-                return false;
+                return;
             }
 
             if (bluetoothLEDevice != null)
@@ -124,11 +124,11 @@ namespace BluetoothController
 
                 if (result.Status == GattCommunicationStatus.Success)
                 {
-                    var service = result.Services.FirstOrDefault(s => s.Uuid == new Guid(LegoHubService));
+                    var service = result.Services.FirstOrDefault(s => s.Uuid == new Guid(_legoHubService));
 
                     if (service != default)
                     {
-                        var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(LegoHubCharacteristic));
+                        var characteristics = await service.GetCharacteristicsForUuidAsync(new Guid(_legoHubCharacteristic));
                         foreach (var characteristic in characteristics.Characteristics)
                         {
                             controller.HubCharacteristic = characteristic;
@@ -152,18 +152,18 @@ namespace BluetoothController
                             await connectionHandler(controller, "");
                         }
                     }
-                    return true;
+                    return;
                 }
                 else
                 {
                     await connectionHandler(null, "Device unreachable");
-                    return false;
+                    return;
                 }
             }
             else
             {
                 await connectionHandler(null, "Failed to connect.");
-                return false;
+                return;
             }
         }
 
