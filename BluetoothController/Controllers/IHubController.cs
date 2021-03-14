@@ -11,7 +11,7 @@ namespace BluetoothController.Controllers
 {
     public interface IHubController
     {
-        LegoHub Hub { get; set; }
+        ILegoHub Hub { get; set; }
         GattCharacteristic HubCharacteristic { get; set; }
         HubType HubType { get; }
         bool IsConnected { get; }

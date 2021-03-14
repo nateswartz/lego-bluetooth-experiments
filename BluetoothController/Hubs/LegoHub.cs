@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace BluetoothController.Hubs
 {
-    public class LegoHub
+    public class LegoHub : ILegoHub
     {
-        public HubType HubType;
+        public HubType HubType { get; set; }
 
-        public List<HubPort> Ports = new List<HubPort>();
+        public List<HubPort> Ports { get; set; } = new List<HubPort>();
 
         public HubPort GetPortByID(string portID)
         {
