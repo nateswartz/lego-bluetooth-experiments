@@ -12,14 +12,13 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace BluetoothController
 {
-    public class BluetoothLowEnergyAdapter
+    public class BluetoothLowEnergyAdapter : IBluetoothLowEnergyAdapter
     {
         private BluetoothLEAdvertisementWatcher _watcher;
 
         private readonly List<IHubController> _controllers;
 
-        public bool Scanning { get; private set; } = false;
-
+        public bool IsScanning { get; private set; } = false;
 
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
 
@@ -52,7 +51,7 @@ namespace BluetoothController
             _watcher.Received += ReceivedHandler;
 
             _watcher.Start();
-            Scanning = true;
+            IsScanning = true;
         }
 
         public void StopBleDeviceWatcher()
@@ -61,7 +60,7 @@ namespace BluetoothController
             {
                 _watcher.Received -= ReceivedHandler;
                 _watcher.Stop();
-                Scanning = false;
+                IsScanning = false;
                 _watcher = null;
             }
         }

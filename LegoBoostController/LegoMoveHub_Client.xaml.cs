@@ -24,7 +24,7 @@ namespace LegoBoostController
     {
         private MainPage _rootPage = MainPage.Current;
 
-        private BluetoothLowEnergyAdapter _bluetoothAdapter;
+        private IBluetoothLowEnergyAdapter _bluetoothAdapter;
 
         private List<string> _notifications = new List<string>();
 
@@ -71,7 +71,7 @@ namespace LegoBoostController
 
         private void ScanButton_Click()
         {
-            if (!_bluetoothAdapter.Scanning)
+            if (!_bluetoothAdapter.IsScanning)
             {
                 _bluetoothAdapter.StartBleDeviceWatcher();
                 ScanButton.Content = "Stop scanning";
