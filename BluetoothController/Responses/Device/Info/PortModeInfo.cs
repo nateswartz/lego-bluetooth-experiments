@@ -69,6 +69,12 @@ namespace BluetoothController.Responses.Device.Info
                 case (ModeInfoType.MotorBias):
                     Value = Convert.ToInt32(body.Substring(12, 2), 16).ToString();
                     break;
+                case (ModeInfoType.CapabilityBits):
+                    Value = body.Substring(12, 6);
+                    break;
+                case (ModeInfoType.ValueFormat):
+                    Value = body.Substring(12, 4);
+                    break;
             }
         }
 
@@ -77,7 +83,8 @@ namespace BluetoothController.Responses.Device.Info
             var header = $"Port Mode Info ({Port}) " +
                     $"{Environment.NewLine}\tMode: {Mode}; Mode Info Type: {ModeInfoType}";
             var modeSpecific = "";
-            if (ModeInfoType == ModeInfoType.Name || ModeInfoType == ModeInfoType.Symbol || ModeInfoType == ModeInfoType.MotorBias)
+            if (ModeInfoType == ModeInfoType.Name || ModeInfoType == ModeInfoType.Symbol || ModeInfoType == ModeInfoType.MotorBias
+                || ModeInfoType == ModeInfoType.CapabilityBits || ModeInfoType == ModeInfoType.ValueFormat)
                 modeSpecific = $"{Environment.NewLine}\tValue: {Value}";
             else if (ModeInfoType == ModeInfoType.Raw || ModeInfoType == ModeInfoType.Percent || ModeInfoType == ModeInfoType.Si)
                 modeSpecific = $"{Environment.NewLine}\tMinValue: {MinValue}; MaxValue: {MaxValue}";

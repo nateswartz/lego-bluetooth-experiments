@@ -1,7 +1,6 @@
 ﻿using BluetoothController;
 using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
-using BluetoothController.Hubs;
 using BluetoothController.Models;
 using System;
 using System.Collections.Generic;
@@ -37,7 +36,7 @@ namespace BluetoothLibraryTester
 
                 await GetInfo();
                 Console.WriteLine("Running test method...");
-                await RunCommands(_controllers.First());
+                await GetPortInfoForIOType(_controllers.First(), IOTypes.TrainMotor);
                 await Disconnect();
             }
             catch (Exception e)
@@ -58,17 +57,39 @@ namespace BluetoothLibraryTester
             await Task.Delay(1000);
         }
 
-        static async Task RunCommands(IHubController controller)
+        static async Task GetPortInfoForIOType(IHubController controller, IOType ioType)
         {
-            var port = controller.GetPortIdsByDeviceType(IOTypes.VoltageSensor).First();
+            var ports = controller.GetPortIdsByDeviceType(ioType);
+
+            if (!ports.Any())
+            {
+                Console.WriteLine($"No IO Device Found");
+                return;
+            }
+
+            var port = ports.First();
 
             await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.PossibleModeCombinations));
             await Task.Delay(1000);
             await controller.ExecuteCommandAsync(new PortInfoCommand(port, InfoType.ModeInfo));
             await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Name));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Raw));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Percent));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Si));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Symbol));
+            await Task.Delay(1000);
             await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.Mapping));
             await Task.Delay(1000);
-            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "01", ModeInfoType.Mapping));
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.MotorBias));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.CapabilityBits));
+            await Task.Delay(1000);
+            await controller.ExecuteCommandAsync(new PortInfoModeCommand(port, "00", ModeInfoType.ValueFormat));
         }
 
         static async Task Disconnect()
