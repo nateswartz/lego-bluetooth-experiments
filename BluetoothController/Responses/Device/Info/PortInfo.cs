@@ -1,22 +1,10 @@
-﻿using System;
+﻿using BluetoothController.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BluetoothController.Responses.Device.Info
 {
-    public enum InformationType
-    {
-        ModeInfo = 1,
-        PossibleModeCombinations = 2
-    }
-
-    public enum Capability
-    {
-        Output = 1,
-        Input = 2,
-        LogicalCombinable = 4,
-        LogicalSynchronizable = 8
-    }
 
     public class PortInfo : Response
     {

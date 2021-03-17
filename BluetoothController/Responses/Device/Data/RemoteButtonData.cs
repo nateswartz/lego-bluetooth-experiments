@@ -1,13 +1,8 @@
-﻿using System;
+﻿using BluetoothController.Models;
+using System;
 
 namespace BluetoothController.Responses.Device.Data
 {
-    internal enum RemoteButtonFlag
-    {
-        Plus = 1,
-        Red = 2,
-        Minus = 4
-    }
 
     public class RemoteButtonData : SensorData
     {

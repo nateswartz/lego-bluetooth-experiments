@@ -1,4 +1,4 @@
-﻿namespace BluetoothController.Hubs
+﻿namespace BluetoothController.Models
 {
     public enum HubType
     {

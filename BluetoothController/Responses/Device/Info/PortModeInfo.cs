@@ -7,14 +7,6 @@ using System.Text;
 
 namespace BluetoothController.Responses.Device.Info
 {
-    public enum PortModeInfoMappingFlag
-    {
-        Discrete = 4,
-        Relative = 8,
-        Absolute = 16,
-        SupportsFunctionalMapping2Plus = 64,
-        SupportsNULLValue = 128
-    }
 
     public class PortModeInfo : Response
     {

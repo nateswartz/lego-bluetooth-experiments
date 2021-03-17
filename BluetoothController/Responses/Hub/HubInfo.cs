@@ -1,14 +1,8 @@
-﻿using System;
+﻿using BluetoothController.Models;
+using System;
 
 namespace BluetoothController.Responses.Hub
 {
-    public enum HubInfoType
-    {
-        HubName = 1,
-        ButtonState = 2,
-        FirmwareVersion = 3,
-        SystemType = 11
-    }
 
     public class HubInfo : Response
     {

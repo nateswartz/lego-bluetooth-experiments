@@ -1,11 +1,7 @@
-﻿namespace BluetoothController.Responses.Hub
+﻿using BluetoothController.Models;
+
+namespace BluetoothController.Responses.Hub
 {
-    public enum ButtonState
-    {
-        Released,
-        Pressed,
-        Unknown,
-    }
 
     public class ButtonStateMessage : HubInfo
     {

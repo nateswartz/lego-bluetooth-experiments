@@ -1,16 +1,9 @@
-﻿using System;
+﻿using BluetoothController.Models;
+using System;
 using System.Collections.Generic;
 
 namespace BluetoothController.Responses.Device.State
 {
-    internal enum FeedbackMessageFlag
-    {
-        BufferEmptyInProgress = 1,
-        BufferEmptyCompleted = 2,
-        CurrentCommandDiscarded = 4,
-        Idle = 8,
-        BusyFull = 16
-    }
 
     public class PortOutputFeedback : Response
     {

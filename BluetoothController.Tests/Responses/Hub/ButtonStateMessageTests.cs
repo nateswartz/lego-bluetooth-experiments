@@ -1,4 +1,5 @@
-﻿using BluetoothController.Responses.Hub;
+﻿using BluetoothController.Models;
+using BluetoothController.Responses.Hub;
 using Xunit;
 
 namespace BluetoothController.Tests.EventHandlers

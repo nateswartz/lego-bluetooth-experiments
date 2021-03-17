@@ -3,12 +3,6 @@ using BluetoothController.Models;
 
 namespace BluetoothController.Commands.Basic
 {
-    public enum InfoType
-    {
-        PortValue = 0,
-        ModeInfo = 1,
-        PossibleModeCombinations = 2
-    }
 
     public class PortInfoCommand : CommandType
     {

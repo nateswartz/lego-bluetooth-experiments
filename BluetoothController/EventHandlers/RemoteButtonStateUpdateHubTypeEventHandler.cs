@@ -1,5 +1,5 @@
 ﻿using BluetoothController.Controllers;
-using BluetoothController.Hubs;
+using BluetoothController.Models;
 using BluetoothController.Responses;
 using BluetoothController.Responses.Device.State;
 using System;
