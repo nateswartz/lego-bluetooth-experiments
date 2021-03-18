@@ -16,9 +16,8 @@ namespace BluetoothController.Responses.Device.Info
         public string Value { get; set; }
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
-        public List<PortModeInfoMappingFlag> InputSideMappings { get; set; } = new List<PortModeInfoMappingFlag>();
-        public List<PortModeInfoMappingFlag> OutputSideMappings { get; set; } = new List<PortModeInfoMappingFlag>();
-
+        public IEnumerable<PortModeInfoMappingFlag> InputSideMappings { get; set; }
+        public IEnumerable<PortModeInfoMappingFlag> OutputSideMappings { get; set; }
 
         public PortModeInfo(string body) : base(body)
         {
@@ -29,42 +28,17 @@ namespace BluetoothController.Responses.Device.Info
             {
                 case (ModeInfoType.Name):
                 case (ModeInfoType.Symbol):
-                    var index = 12;
-                    var byteCount = 0;
-                    var nextByte = body.Substring(index, 2);
-                    while (nextByte != "00")
-                    {
-                        index += 2;
-                        byteCount++;
-                        nextByte = body.Substring(index, 2);
-                    }
-                    var data = DataConverter.HexStringToByteArray(body.Substring(12, byteCount * 2));
-                    Value = Encoding.ASCII.GetString(data);
+                    Value = ExtractTextValue(body, 12, "00");
                     break;
                 case (ModeInfoType.Raw):
                 case (ModeInfoType.Percent):
                 case (ModeInfoType.Si):
-                    byte[] minBytes = DataConverter.HexStringToByteArray(body.Substring(12, 8));
-                    MinValue = (int)BitConverter.ToSingle(minBytes, 0);
-
-                    byte[] maxBytes = DataConverter.HexStringToByteArray(body.Substring(20, 8));
-                    MaxValue = (int)BitConverter.ToSingle(maxBytes, 0);
+                    MinValue = ExtractFloatAsInt(body, 12, 8);
+                    MaxValue = ExtractFloatAsInt(body, 20, 8);
                     break;
                 case (ModeInfoType.Mapping):
-                    var inputSideMappingBitfield = (PortModeInfoMappingFlag)Convert.ToInt32(body.Substring(12, 2), 16);
-                    foreach (var value in Enum.GetValues(typeof(PortModeInfoMappingFlag)))
-                    {
-                        var mapping = (PortModeInfoMappingFlag)Enum.Parse(typeof(PortModeInfoMappingFlag), value.ToString());
-                        if ((inputSideMappingBitfield & mapping) == mapping)
-                            InputSideMappings.Add(mapping);
-                    }
-                    var outputSideMappingBitfield = (PortModeInfoMappingFlag)Convert.ToInt32(body.Substring(14, 2), 16);
-                    foreach (var value in Enum.GetValues(typeof(PortModeInfoMappingFlag)))
-                    {
-                        var mapping = (PortModeInfoMappingFlag)Enum.Parse(typeof(PortModeInfoMappingFlag), value.ToString());
-                        if ((outputSideMappingBitfield & mapping) == mapping)
-                            OutputSideMappings.Add(mapping);
-                    }
+                    InputSideMappings = ExtractMappingFlags(body, 12, 2);
+                    OutputSideMappings = ExtractMappingFlags(body, 14, 2);
                     break;
                 case (ModeInfoType.MotorBias):
                     Value = Convert.ToInt32(body.Substring(12, 2), 16).ToString();
@@ -93,6 +67,40 @@ namespace BluetoothController.Responses.Device.Info
                     $"{Environment.NewLine}\tOutputSideMappings: {string.Join(", ", OutputSideMappings.Select(c => c.ToString()))}";
             var footer = $"{Environment.NewLine}\t[{Body}]";
             return header + modeSpecific + footer;
+        }
+
+        private string ExtractTextValue(string body, int startLocation, string terminator)
+        {
+            var index = startLocation;
+            var byteCount = 0;
+            var nextByte = body.Substring(index, 2);
+            while (nextByte != terminator)
+            {
+                index += 2;
+                byteCount++;
+                nextByte = body.Substring(index, 2);
+            }
+            var data = DataConverter.HexStringToByteArray(body.Substring(12, byteCount * 2));
+            return Encoding.ASCII.GetString(data);
+        }
+
+        private int ExtractFloatAsInt(string body, int startLocation, int length)
+        {
+            byte[] minBytes = DataConverter.HexStringToByteArray(body.Substring(startLocation, length));
+            return (int)BitConverter.ToSingle(minBytes, 0);
+        }
+
+        private IEnumerable<PortModeInfoMappingFlag> ExtractMappingFlags(string body, int startLocation, int length)
+        {
+            var mappings = new List<PortModeInfoMappingFlag>();
+            var inputSideMappingBitfield = (PortModeInfoMappingFlag)Convert.ToInt32(body.Substring(startLocation, length), 16);
+            foreach (var value in Enum.GetValues(typeof(PortModeInfoMappingFlag)))
+            {
+                var mapping = (PortModeInfoMappingFlag)Enum.Parse(typeof(PortModeInfoMappingFlag), value.ToString());
+                if ((inputSideMappingBitfield & mapping) == mapping)
+                    mappings.Add(mapping);
+            }
+            return mappings;
         }
     }
 }
