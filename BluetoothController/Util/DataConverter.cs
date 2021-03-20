@@ -22,5 +22,23 @@ namespace BluetoothController.Util
               .ToArray();
         }
 
+        public static string MillisecondsToHex(int milliseconds)
+        {
+            var time = $"{milliseconds:X4}";
+            // For time, LSB first
+            return $"{time[2]}{time[3]}{time[0]}{time[1]}";
+        }
+
+        public static string PowerPercentageToHex(int powerPercentage, bool runMotorClockwise)
+        {
+            if (runMotorClockwise)
+            {
+                return $"{powerPercentage:X2}";
+            }
+            else
+            {
+                return $"{(255 - powerPercentage):X2}";
+            }
+        }
     }
 }

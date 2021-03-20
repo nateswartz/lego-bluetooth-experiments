@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Commands.Abstract;
+using BluetoothController.Util;
 
 namespace BluetoothController.Commands.Basic
 {
@@ -8,16 +9,7 @@ namespace BluetoothController.Commands.Basic
         {
             string startupCompletion = "11"; // Execute immediately / Command feedback
             string subCommand = "51"; // WriteDirectModeData
-            string power;
-            if (clockwise && powerPercentage != 0)
-            {
-                power = $"{powerPercentage:X2}";
-            }
-            else
-            {
-                power = $"{(255 - powerPercentage):X2}";
-            }
-
+            var power = DataConverter.PowerPercentageToHex(powerPercentage, clockwise);
             HexCommand = AddHeader($"{port}{startupCompletion}{subCommand}00{power}");
         }
     }
