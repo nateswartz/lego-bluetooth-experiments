@@ -42,5 +42,33 @@ namespace BluetoothController.Tests.Util
             var hexString = "test";
             Assert.Throws<FormatException>(() => DataConverter.HexStringToByteArray(hexString));
         }
+
+        [Fact]
+        public void MillisecondsToHex_ProducesExpectedValue()
+        {
+            var result = DataConverter.MillisecondsToHex(100);
+            Assert.Equal("6400", result);
+        }
+
+        [Fact]
+        public void PowerPercentageToHex_Clockwise_ProducesExpectedValue()
+        {
+            var result = DataConverter.PowerPercentageToHex(20, true);
+            Assert.Equal("14", result);
+        }
+
+        [Fact]
+        public void PowerPercentageToHex_NotClockwise_ProducesExpectedValue()
+        {
+            var result = DataConverter.PowerPercentageToHex(20, false);
+            Assert.Equal("EB", result);
+        }
+
+        [Fact]
+        public void PowerPercentageToHex_0_ProducesExpectedValue()
+        {
+            var result = DataConverter.PowerPercentageToHex(0, false);
+            Assert.Equal("FF", result);
+        }
     }
 }
