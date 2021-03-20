@@ -16,10 +16,18 @@ namespace BluetoothController.Util
 
         public static byte[] HexStringToByteArray(string hex)
         {
-            return Enumerable.Range(0, hex.Length)
-              .Where(x => x % 2 == 0)
-              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-              .ToArray();
+            hex = hex.Replace(" ", string.Empty);
+            try
+            {
+                return Enumerable.Range(0, hex.Length)
+                  .Where(x => x % 2 == 0)
+                  .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                  .ToArray();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException($"Invalid hex command provided: {hex}");
+            }
         }
 
         public static string MillisecondsToHex(int milliseconds)
@@ -31,7 +39,7 @@ namespace BluetoothController.Util
 
         public static string PowerPercentageToHex(int powerPercentage, bool runMotorClockwise)
         {
-            if (runMotorClockwise)
+            if (runMotorClockwise && powerPercentage != 0)
             {
                 return $"{powerPercentage:X2}";
             }

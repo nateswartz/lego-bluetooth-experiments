@@ -40,7 +40,7 @@ namespace BluetoothController.Tests.Util
         public void HexStringToByteArray_InvalidString_ThrowsException()
         {
             var hexString = "test";
-            Assert.Throws<FormatException>(() => DataConverter.HexStringToByteArray(hexString));
+            Assert.Throws<ArgumentException>(() => DataConverter.HexStringToByteArray(hexString));
         }
 
         [Fact]
