@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BluetoothLibraryTester", "B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BluetoothController", "BluetoothController\BluetoothController.csproj", "{86828470-B622-4ED7-8376-C4417DD6709F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoBoostController", "LegoBoostController\LegoBoostController.csproj", "{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BluetoothController.Tests", "BluetoothController.Tests\BluetoothController.Tests.csproj", "{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluetoothController.Tests", "BluetoothController.Tests\BluetoothController.Tests.csproj", "{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoBluetoothController.UI", "LegoBluetoothController.UI\LegoBluetoothController.UI.csproj", "{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,27 +55,6 @@ Global
 		{86828470-B622-4ED7-8376-C4417DD6709F}.Release|x64.Build.0 = Release|Any CPU
 		{86828470-B622-4ED7-8376-C4417DD6709F}.Release|x86.ActiveCfg = Release|Any CPU
 		{86828470-B622-4ED7-8376-C4417DD6709F}.Release|x86.Build.0 = Release|Any CPU
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|Any CPU.Build.0 = Debug|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|ARM.ActiveCfg = Debug|ARM
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|ARM.Build.0 = Debug|ARM
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|ARM.Deploy.0 = Debug|ARM
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|x64.ActiveCfg = Debug|x64
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|x64.Build.0 = Debug|x64
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|x64.Deploy.0 = Debug|x64
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|x86.ActiveCfg = Debug|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|x86.Build.0 = Debug|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Debug|x86.Deploy.0 = Debug|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|Any CPU.ActiveCfg = Release|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|ARM.ActiveCfg = Release|ARM
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|ARM.Build.0 = Release|ARM
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|ARM.Deploy.0 = Release|ARM
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|x64.ActiveCfg = Release|x64
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|x64.Build.0 = Release|x64
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|x64.Deploy.0 = Release|x64
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|x86.ActiveCfg = Release|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|x86.Build.0 = Release|x86
-		{BF5C0E49-5FD2-5AD0-BE7F-0840814DAEB6}.Release|x86.Deploy.0 = Release|x86
 		{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -92,6 +71,22 @@ Global
 		{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}.Release|x64.Build.0 = Release|Any CPU
 		{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}.Release|x86.ActiveCfg = Release|Any CPU
 		{70CC0461-4A75-4B1E-961B-E1DDF148FF3C}.Release|x86.Build.0 = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|ARM.Build.0 = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|x64.Build.0 = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Debug|x86.Build.0 = Debug|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|ARM.ActiveCfg = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|ARM.Build.0 = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|x64.ActiveCfg = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|x64.Build.0 = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|x86.ActiveCfg = Release|Any CPU
+		{F92DBFAE-D99A-4466-974B-CA5A86BC75B7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

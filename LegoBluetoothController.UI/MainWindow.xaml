@@ -1,0 +1,14 @@
+﻿<Window x:Class="LegoBluetoothController.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LegoBluetoothController.UI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="54,50,0,0" VerticalAlignment="Top" Height="36" Width="130"/>
+        <TextBox x:Name="LogMessages" HorizontalAlignment="Left" Margin="64,235,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="550" Height="162"/>
+
+    </Grid>
+</Window>
