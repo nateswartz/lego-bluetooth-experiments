@@ -32,30 +32,38 @@ namespace LegoBluetoothController.UI
 
         private async Task HandleNotification(IHubController controller, string message)
         {
-            LogMessage($"{controller.HubType}: {message}");
+            Dispatcher.Invoke(() =>
+            {
+                LogMessage($"{controller.HubType}: {message}");
+            });
             await Task.CompletedTask;
         }
 
         private async Task HandleDiscover(DiscoveredDevice device)
         {
-            LogMessage($"Discovered device: {device.Name}");
+            Dispatcher.Invoke(() =>
+            {
+                LogMessage($"Discovered device: {device.Name}");
+            });
             await Task.CompletedTask;
         }
 
         private async Task HandleConnect(IHubController controller, string errorMessage)
         {
-            if (controller != null)
+            Dispatcher.Invoke(() =>
             {
-                _controllers.Add(controller);
+                if (controller != null)
+                {
+                    _controllers.Add(controller);
 
-                LogMessage($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
-
-                await Task.CompletedTask;
-            }
-            else
-            {
-                LogMessage($"Failed to connect: {errorMessage}");
-            }
+                    LogMessage($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
+                }
+                else
+                {
+                    LogMessage($"Failed to connect: {errorMessage}");
+                }
+            });
+            await Task.CompletedTask;
         }
 
         private void LogMessage(string message)
