@@ -9,18 +9,12 @@ namespace BluetoothController.Responses.Hub
 
         public ButtonStateMessage(string body) : base(body)
         {
-            switch (Body.Substring(10, 2))
+            State = Body.Substring(10, 2) switch
             {
-                case "00":
-                    State = ButtonState.Released;
-                    break;
-                case "01":
-                    State = ButtonState.Pressed;
-                    break;
-                default:
-                    State = ButtonState.Unknown;
-                    break;
-            }
+                "00" => ButtonState.Released,
+                "01" => ButtonState.Pressed,
+                _ => ButtonState.Unknown,
+            };
         }
 
         public override string ToString() => $"Button State: {State} [{Body}]";

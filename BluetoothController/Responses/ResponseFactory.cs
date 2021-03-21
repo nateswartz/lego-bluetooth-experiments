@@ -47,18 +47,14 @@ namespace BluetoothController.Responses
         private static Response HandleHubProperty(IHubController controller, string notification)
         {
             var deviceInfo = new HubInfo(notification);
-            switch (deviceInfo.DeviceType)
+            return deviceInfo.DeviceType switch
             {
-                case HubInfoType.HubName:
-                    return new HubName(notification);
-                case HubInfoType.ButtonState:
-                    return new ButtonStateMessage(notification);
-                case HubInfoType.FirmwareVersion:
-                    return new FirmwareVersion(notification);
-                case HubInfoType.SystemType:
-                    return new SystemType(notification);
-            }
-            return deviceInfo;
+                HubInfoType.HubName => new HubName(notification),
+                HubInfoType.ButtonState => new ButtonStateMessage(notification),
+                HubInfoType.FirmwareVersion => new FirmwareVersion(notification),
+                HubInfoType.SystemType => new SystemType(notification),
+                _ => deviceInfo,
+            };
         }
 
         private static Response HandleIOConnectionStateChange(IHubController controller, string notification)

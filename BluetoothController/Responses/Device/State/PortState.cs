@@ -14,24 +14,14 @@ namespace BluetoothController.Responses.Device.State
         {
             Port = body.Substring(6, 2);
             StateChangeEvent = (DeviceState)Convert.ToInt32(body.Substring(8, 2), 16);
-            switch (Port)
+            PortLetter = Port switch
             {
-                case "00":
-                    PortLetter = "A";
-                    break;
-                case "01":
-                    PortLetter = "B";
-                    break;
-                case "02":
-                    PortLetter = "C";
-                    break;
-                case "03":
-                    PortLetter = "D";
-                    break;
-                default:
-                    PortLetter = "?";
-                    break;
-            }
+                "00" => "A",
+                "01" => "B",
+                "02" => "C",
+                "03" => "D",
+                _ => "?",
+            };
             if (StateChangeEvent != DeviceState.Detached)
                 DeviceType = IOTypes.GetByCode(body.Substring(10, 2));
         }

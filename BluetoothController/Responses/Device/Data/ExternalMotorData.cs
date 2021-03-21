@@ -18,15 +18,12 @@ namespace BluetoothController.Responses.Device.Data
 
         public override string ToString()
         {
-            switch (Mode)
+            return Mode switch
             {
-                case "02":
-                    return $"External Motor ({Port}) Angle Data [{Body}]";
-                case "01":
-                    return $"External Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)} [{Body}]";
-                default:
-                    return $"External Motor ({Port}) Data [{Body}]";
-            }
+                "02" => $"External Motor ({Port}) Angle Data [{Body}]",
+                "01" => $"External Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)} [{Body}]",
+                _ => $"External Motor ({Port}) Data [{Body}]",
+            };
         }
     }
 }

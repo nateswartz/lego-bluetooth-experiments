@@ -8,21 +8,13 @@ namespace BluetoothController.Responses.Hub
 
         public SystemType(string body) : base(body)
         {
-            switch (Body.Substring(10, 2))
+            HubType = Body.Substring(10, 2) switch
             {
-                case "40":
-                    HubType = HubType.BoostMoveHub;
-                    break;
-                case "41":
-                    HubType = HubType.TwoPortHub;
-                    break;
-                case "42":
-                    HubType = HubType.TwoPortHandset;
-                    break;
-                default:
-                    HubType = HubType.Unknown;
-                    break;
-            }
+                "40" => HubType.BoostMoveHub,
+                "41" => HubType.TwoPortHub,
+                "42" => HubType.TwoPortHandset,
+                _ => HubType.Unknown,
+            };
         }
 
         public override string ToString() => $"System Type {HubType} [{Body}]";

@@ -17,17 +17,12 @@
 
         public override string ToString()
         {
-            var action = $"performing unknown action {ActionType}";
-
-            switch (ActionType)
+            var action = ActionType switch
             {
-                case "31":
-                    action = "disconnecting";
-                    break;
-                case "30":
-                    action = "shutting down";
-                    break;
-            }
+                "31" => "disconnecting",
+                "30" => "shutting down",
+                _ => $"performing unknown action {ActionType}"
+            };
 
             return $"Hub {action} [{Body}]";
         }

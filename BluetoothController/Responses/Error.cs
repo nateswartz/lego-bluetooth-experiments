@@ -17,18 +17,12 @@ namespace BluetoothController.Responses
                 FailedCommandType = "Hub Action";
 
             var errorType = Body.Substring(8, 2);
-            switch (errorType)
+            ErrorType = errorType switch
             {
-                case "05":
-                    ErrorType = "Command Not Recognized";
-                    break;
-                case "06":
-                    ErrorType = "Invalid Use";
-                    break;
-                default:
-                    ErrorType = "Unknown";
-                    break;
-            }
+                "05" => "Command Not Recognized",
+                "06" => "Invalid Use",
+                _ => "Unknown",
+            };
             NotificationType = GetType().Name;
         }
 
