@@ -70,6 +70,7 @@ namespace LegoBluetoothController.UI
         private void LogMessage(string message)
         {
             LogMessages.Text += message + Environment.NewLine;
+            LogMessages.ScrollToEnd();
         }
 
         private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
