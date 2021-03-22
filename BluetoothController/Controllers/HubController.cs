@@ -29,7 +29,7 @@ namespace BluetoothController.Controllers
 
         private Dictionary<string, List<IEventHandler>> _eventHandlers { get; set; }
 
-        private List<string> _notifications = new List<string>();
+        private readonly List<string> _notifications = new();
 
         private Func<IHubController, string, Task> _notificationHandler;
 
@@ -47,8 +47,10 @@ namespace BluetoothController.Controllers
         {
             var bytes = DataConverter.HexStringToByteArray(hex);
 
-            var writer = new DataWriter();
-            writer.ByteOrder = ByteOrder.LittleEndian;
+            var writer = new DataWriter
+            {
+                ByteOrder = ByteOrder.LittleEndian
+            };
             writer.WriteBytes(bytes);
 
             var writeSuccessful = await WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
@@ -148,26 +150,23 @@ namespace BluetoothController.Controllers
         private async Task<bool> ToggleSubscribedForNotificationsAsync(Func<IHubController, string, Task> notificationHandler)
         {
             _notificationHandler = notificationHandler;
-            if (!SubscribedForNotifications)
-            {
-                return await SubscribeForNotificationsAsync();
-            }
-            else
-            {
-                return await UnsubscribeForNotificationsAsync();
-            }
+            return await ToggleNotificationSubscriptionAsync(!SubscribedForNotifications);
         }
 
-        private async Task<bool> UnsubscribeForNotificationsAsync()
+        private async Task<bool> ToggleNotificationSubscriptionAsync(bool enable)
         {
             try
             {
-                SubscribedForNotifications = false;
-                HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                SubscribedForNotifications = enable;
+                if (enable)
+                    HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
+                else
+                    HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
 
                 var status = await
                     HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                        GattClientCharacteristicConfigurationDescriptorValue.None);
+                        enable ? GattClientCharacteristicConfigurationDescriptorValue.Notify
+                               : GattClientCharacteristicConfigurationDescriptorValue.None);
 
                 if (status == GattCommunicationStatus.Success)
                 {
@@ -177,8 +176,11 @@ namespace BluetoothController.Controllers
                 }
                 else
                 {
-                    HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                    SubscribedForNotifications = true;
+                    if (enable)
+                        HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                    else
+                        HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
+                    SubscribedForNotifications = !enable;
                     //_rootPage.NotifyUser($"Error un-registering for notifications: {result}", NotifyType.ErrorMessage);
                     return false;
                 }
@@ -186,38 +188,6 @@ namespace BluetoothController.Controllers
             catch (UnauthorizedAccessException)
             {
                 // This usually happens when a device reports that it supports notify, but it actually doesn't.
-                //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
-                return false;
-            }
-        }
-
-        private async Task<bool> SubscribeForNotificationsAsync()
-        {
-            try
-            {
-                SubscribedForNotifications = true;
-                HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-
-                var status = await
-                    HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                        GattClientCharacteristicConfigurationDescriptorValue.Notify);
-
-                if (status == GattCommunicationStatus.Success)
-                {
-                    //_rootPage.NotifyUser("Successfully subscribed for value changes", NotifyType.StatusMessage);
-                    return true;
-                }
-                else
-                {
-                    HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    SubscribedForNotifications = false;
-                    //_rootPage.NotifyUser($"Error registering for value changes: {status}", NotifyType.ErrorMessage);
-                    return false;
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // This usually happens when a device reports that it support indicate, but it actually doesn't.
                 //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
                 return false;
             }

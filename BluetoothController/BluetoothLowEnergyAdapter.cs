@@ -25,7 +25,7 @@ namespace BluetoothController
         private const string _legoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
         private const string _legoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
-        private readonly object _lock = new object();
+        private readonly object _lock = new();
 
         private readonly Func<DiscoveredDevice, Task> _discoveryHandler;
         private readonly Func<IHubController, string, Task> _connectionHandler;
@@ -67,35 +67,33 @@ namespace BluetoothController
 
         private async void ReceivedHandler(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
         {
-            using (var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result)
+            using var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result;
+            IHubController controller;
+
+            if (device == null)
+                return;
+
+            if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(_legoHubService)))
+                return;
+
+            controller = new HubController
             {
-                IHubController controller;
+                SelectedBleDeviceId = device.DeviceId
+            };
 
-                if (device == null)
+            lock (_lock)
+            {
+                if (_controllers.Any(c => c.SelectedBleDeviceId == controller.SelectedBleDeviceId))
                     return;
-
-                if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(_legoHubService)))
-                    return;
-
-                controller = new HubController
-                {
-                    SelectedBleDeviceId = device.DeviceId
-                };
-
-                lock (_lock)
-                {
-                    if (_controllers.Any(c => c.SelectedBleDeviceId == controller.SelectedBleDeviceId))
-                        return;
-                    _controllers.Add(controller);
-                }
-
-                await _discoveryHandler(new DiscoveredDevice
-                {
-                    Name = device.Name,
-                    BluetoothDeviceId = device.DeviceId
-                });
-                await Connect(controller, _connectionHandler);
+                _controllers.Add(controller);
             }
+
+            await _discoveryHandler(new DiscoveredDevice
+            {
+                Name = device.Name,
+                BluetoothDeviceId = device.DeviceId
+            });
+            await Connect(controller, _connectionHandler);
         }
 
         private async Task Connect(IHubController controller, Func<IHubController, string, Task> connectionHandler)
