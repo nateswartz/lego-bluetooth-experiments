@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LegoBluetoothController.UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="LEGO Powered Up Controller" Height="450" Width="800">
     <Grid>
         <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="54,50,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
         <TextBox x:Name="LogMessages" HorizontalAlignment="Left" Margin="54,235,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="560" Height="162"/>
         <Button x:Name="ChangeLedColorButton" Content="Change LED Color" Click="ChangeLedColorButton_Click" HorizontalAlignment="Left" Margin="54,109,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
-        <Button x:Name="DisconnectAllButton" Content="Disconnect All" HorizontalAlignment="Left" Margin="54,165,0,0" VerticalAlignment="Top" Width="130" Height="30"/>
+        <Button x:Name="ShutdownAllButton" Content="Shutdown All" Click="ShutdownAllButton_Click" HorizontalAlignment="Left" Margin="54,165,0,0" VerticalAlignment="Top" Width="130" Height="30"/>
 
     </Grid>
 </Window>

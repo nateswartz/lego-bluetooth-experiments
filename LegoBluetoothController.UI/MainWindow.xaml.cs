@@ -72,7 +72,7 @@ namespace LegoBluetoothController.UI
             LogMessages.Text += message + Environment.NewLine;
         }
 
-        private async Task ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
+        private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
         {
             await Dispatcher.InvokeAsync(async () =>
             {
@@ -85,7 +85,7 @@ namespace LegoBluetoothController.UI
             });
         }
 
-        private async Task ShutdownAllButton_Click(object sender, RoutedEventArgs e)
+        private async void ShutdownAllButton_Click(object sender, RoutedEventArgs e)
         {
             await Dispatcher.InvokeAsync(async () =>
             {
