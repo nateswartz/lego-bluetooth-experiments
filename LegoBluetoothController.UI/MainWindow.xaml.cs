@@ -1,4 +1,5 @@
 ﻿using BluetoothController;
+using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
@@ -69,6 +70,30 @@ namespace LegoBluetoothController.UI
         private void LogMessage(string message)
         {
             LogMessages.Text += message + Environment.NewLine;
+        }
+
+        private async Task ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Dispatcher.InvokeAsync(async () =>
+            {
+                foreach (var controller in _controllers)
+                {
+                    var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
+                    await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
+                    LogMessage($"{controller.HubType}: Changing LED Color to {color.Name}");
+                }
+            });
+        }
+
+        private async Task ShutdownAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Dispatcher.InvokeAsync(async () =>
+            {
+                foreach (var controller in _controllers)
+                {
+                    await controller.ExecuteCommandAsync(new ShutdownCommand());
+                }
+            });
         }
     }
 }
