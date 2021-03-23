@@ -68,15 +68,11 @@ namespace BluetoothController
         private async void ReceivedHandler(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
         {
             using var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result;
-            IHubController controller;
 
-            if (device == null)
+            if (!await (IsValidDeviceAsync(device)))
                 return;
 
-            if (!(await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(_legoHubService)))
-                return;
-
-            controller = new HubController
+            var controller = new HubController
             {
                 SelectedBleDeviceId = device.DeviceId
             };
@@ -93,10 +89,16 @@ namespace BluetoothController
                 Name = device.Name,
                 BluetoothDeviceId = device.DeviceId
             });
-            await Connect(controller, _connectionHandler);
+            await ConnectAsync(controller, _connectionHandler);
         }
 
-        private async Task Connect(IHubController controller, Func<IHubController, string, Task> connectionHandler)
+        private async Task<bool> IsValidDeviceAsync(BluetoothLEDevice device)
+        {
+            return (device != null &&
+                    (await device.GetGattServicesForUuidAsync(new Guid(_legoHubService))).Status == GattCommunicationStatus.Success);
+        }
+
+        private async Task ConnectAsync(IHubController controller, Func<IHubController, string, Task> connectionHandler)
         {
             BluetoothLEDevice bluetoothLEDevice;
 
