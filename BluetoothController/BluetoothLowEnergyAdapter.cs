@@ -94,8 +94,8 @@ namespace BluetoothController
 
         private async Task<bool> IsValidDeviceAsync(BluetoothLEDevice device)
         {
-            return (device != null &&
-                    (await device.GetGattServicesForUuidAsync(new Guid(_legoHubService))).Status == GattCommunicationStatus.Success);
+            return device != null &&
+                    (await device.GetGattServicesAsync()).Services.Any(s => s.Uuid == new Guid(_legoHubService));
         }
 
         private async Task ConnectAsync(IHubController controller, Func<IHubController, string, Task> connectionHandler)
