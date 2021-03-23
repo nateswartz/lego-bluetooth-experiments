@@ -17,7 +17,7 @@ namespace LegoBluetoothController.UI
 
         static IBluetoothLowEnergyAdapter _adapter;
 
-        static List<IHubController> _controllers = new List<IHubController>();
+        static readonly List<IHubController> _controllers = new();
 
         public MainWindow()
         {
@@ -56,6 +56,7 @@ namespace LegoBluetoothController.UI
                 if (controller != null)
                 {
                     _controllers.Add(controller);
+                    ConnectedHubs.Text += controller.HubType;
 
                     LogMessage($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
                 }
@@ -94,6 +95,7 @@ namespace LegoBluetoothController.UI
                 {
                     await controller.ExecuteCommandAsync(new ShutdownCommand());
                 }
+                ConnectedHubs.Text = "";
             });
         }
     }
