@@ -150,55 +150,43 @@ namespace BluetoothController.Controllers
         private async Task<bool> ToggleSubscribedForNotificationsAsync(Func<IHubController, string, Task> notificationHandler)
         {
             _notificationHandler = notificationHandler;
-            return await ToggleNotificationSubscriptionAsync(!SubscribedForNotifications);
-        }
-
-        private async Task<bool> ToggleNotificationSubscriptionAsync(bool enable)
-        {
+            var enableNotifications = !SubscribedForNotifications;
             try
             {
-                SubscribedForNotifications = enable;
-                if (enable)
+                SubscribedForNotifications = enableNotifications;
+                if (enableNotifications)
                     HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
                 else
                     HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
 
                 var status = await
                     HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                        enable ? GattClientCharacteristicConfigurationDescriptorValue.Notify
+                        enableNotifications ? GattClientCharacteristicConfigurationDescriptorValue.Notify
                                : GattClientCharacteristicConfigurationDescriptorValue.None);
 
                 if (status == GattCommunicationStatus.Success)
                 {
-
-                    //_rootPage.NotifyUser("Successfully un-registered for notifications", NotifyType.StatusMessage);
                     return true;
                 }
                 else
                 {
-                    if (enable)
+                    if (enableNotifications)
                         HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
                     else
                         HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                    SubscribedForNotifications = !enable;
-                    //_rootPage.NotifyUser($"Error un-registering for notifications: {result}", NotifyType.ErrorMessage);
+                    SubscribedForNotifications = !enableNotifications;
                     return false;
                 }
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception)
             {
-                // This usually happens when a device reports that it supports notify, but it actually doesn't.
-                //_rootPage.NotifyUser(ex.Message, NotifyType.ErrorMessage);
                 return false;
             }
         }
 
         private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            var output = new byte[args.CharacteristicValue.Length];
-            var dataReader = DataReader.FromBuffer(args.CharacteristicValue);
-            dataReader.ReadBytes(output);
-            var notification = DataConverter.ByteArrayToString(output);
+            var notification = ReadNotificationFromBuffer(args.CharacteristicValue);
             var message = await ProcessNotification(notification);
             _notifications.Add(message);
             if (_notifications.Count > 10)
@@ -206,6 +194,14 @@ namespace BluetoothController.Controllers
                 _notifications.RemoveAt(0);
             }
             await _notificationHandler(this, message);
+        }
+
+        private string ReadNotificationFromBuffer(IBuffer buffer)
+        {
+            var output = new byte[buffer.Length];
+            var dataReader = DataReader.FromBuffer(buffer);
+            dataReader.ReadBytes(output);
+            return DataConverter.ByteArrayToString(output);
         }
     }
 }
