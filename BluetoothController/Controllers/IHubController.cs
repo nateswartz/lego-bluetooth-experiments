@@ -13,7 +13,6 @@ namespace BluetoothController.Controllers
     {
         ILegoHub Hub { get; set; }
         GattCharacteristic HubCharacteristic { get; set; }
-        HubType HubType { get; }
         bool IsConnected { get; }
         string SelectedBleDeviceId { get; set; }
         bool SubscribedForNotifications { get; set; }

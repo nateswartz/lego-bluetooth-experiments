@@ -17,8 +17,6 @@ namespace BluetoothController.Controllers
     {
         public bool IsConnected { get; private set; }
 
-        public HubType HubType { get { return Hub?.HubType ?? HubType.Unknown; } }
-
         public ILegoHub Hub { get; set; }
 
         public string SelectedBleDeviceId { get; set; }

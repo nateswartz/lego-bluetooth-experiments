@@ -103,7 +103,7 @@ namespace BluetoothLibraryTester
 
         static async Task HandleNotification(IHubController controller, string message)
         {
-            Console.WriteLine($"{controller.HubType}: {message}");
+            Console.WriteLine($"{controller.Hub.HubType}: {message}");
             await Task.CompletedTask;
         }
 
@@ -119,7 +119,7 @@ namespace BluetoothLibraryTester
             {
                 _controllers.Add(controller);
 
-                Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
+                Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.Hub.HubType)}");
 
                 await Task.CompletedTask;
             }

@@ -35,7 +35,7 @@ namespace LegoBluetoothController.UI
         {
             Dispatcher.Invoke(() =>
             {
-                LogMessage($"{controller.HubType}: {message}");
+                LogMessage($"{controller.Hub.HubType}: {message}");
             });
             await Task.CompletedTask;
         }
@@ -56,9 +56,9 @@ namespace LegoBluetoothController.UI
                 if (controller != null)
                 {
                     _controllers.Add(controller);
-                    ConnectedHubs.Text += controller.HubType;
+                    ConnectedHubs.Text += controller.Hub.HubType;
 
-                    LogMessage($"Connected device: {Enum.GetName(typeof(HubType), controller.HubType)}");
+                    LogMessage($"Connected device: {Enum.GetName(typeof(HubType), controller.Hub.HubType)}");
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace LegoBluetoothController.UI
                 {
                     var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
                     await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
-                    LogMessage($"{controller.HubType}: Changing LED Color to {color.Name}");
+                    LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
                 }
             });
         }
