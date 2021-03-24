@@ -91,22 +91,7 @@ namespace BluetoothController.Responses
 
         private static Response HandleIOAttached(IHubController controller, PortState portInfo)
         {
-            if (controller.Hub == null)
-                controller.Hub = new LegoHub();
-            var hub = controller.Hub;
-
-            if (hub.GetPortByID(portInfo.Port) == null)
-            {
-                hub.Ports.Add(new HubPort
-                {
-                    PortID = portInfo.Port,
-                    DeviceType = portInfo.DeviceType
-                });
-            }
-            else
-            {
-                hub.GetPortByID(portInfo.Port).DeviceType = portInfo.DeviceType;
-            }
+            AddIODeviceToHubPortList(controller, portInfo);
 
             if (portInfo.DeviceType == IOTypes.LED)
                 return new LEDState(portInfo.Body);
@@ -128,6 +113,24 @@ namespace BluetoothController.Responses
                 return new CurrentState(portInfo.Body);
 
             return portInfo;
+        }
+
+        private static void AddIODeviceToHubPortList(IHubController controller, PortState portInfo)
+        {
+            var hub = controller.Hub;
+
+            if (hub.GetPortByID(portInfo.Port) == null)
+            {
+                hub.Ports.Add(new HubPort
+                {
+                    PortID = portInfo.Port,
+                    DeviceType = portInfo.DeviceType
+                });
+            }
+            else
+            {
+                hub.GetPortByID(portInfo.Port).DeviceType = portInfo.DeviceType;
+            }
         }
 
         private static Response HandlePortValueUpdate(IHubController controller, string notification)

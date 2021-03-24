@@ -34,6 +34,7 @@ namespace BluetoothController.Controllers
         public HubController()
         {
             _eventHandlers = new Dictionary<string, List<IEventHandler>>();
+            Hub = new LegoHub();
         }
 
         public async Task<bool> ExecuteCommandAsync(ICommand command)
