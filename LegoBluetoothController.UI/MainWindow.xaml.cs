@@ -95,8 +95,9 @@ namespace LegoBluetoothController.UI
                 {
                     await controller.ExecuteCommandAsync(new ShutdownCommand());
                 }
+                LogMessages.Text = "";
                 _controllers.Clear();
-                ConnectedHubs.Text = "";
+                _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
             });
         }
     }
