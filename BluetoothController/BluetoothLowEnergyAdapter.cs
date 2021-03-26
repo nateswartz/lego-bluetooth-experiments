@@ -63,7 +63,7 @@ namespace BluetoothController
             }
         }
 
-        private async void ReceivedHandler(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
+        private async void ReceivedHandler(BluetoothLEAdvertisementWatcher _, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
         {
             using var device = BluetoothLEDevice.FromBluetoothAddressAsync(eventArgs.BluetoothAddress).AsTask().Result;
 
@@ -99,51 +99,46 @@ namespace BluetoothController
         private async Task ConnectAsync(IHubController controller, Func<IHubController, string, Task> connectionHandler)
         {
             var bluetoothLEDevice = await GetDeviceAsync(controller.SelectedBleDeviceId);
-
-            if (bluetoothLEDevice != null)
+            if (bluetoothLEDevice == null)
             {
-                GattDeviceServicesResult result = await bluetoothLEDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
-
-                if (result.Status == GattCommunicationStatus.Success)
-                {
-                    var service = result.Services.FirstOrDefault(s => s.Uuid == new Guid(_legoHubService));
-
-                    if (service != default)
-                    {
-                        var characteristic = (await service.GetCharacteristicsForUuidAsync(new Guid(_legoHubCharacteristic))).Characteristics.Single();
-                        controller.HubCharacteristic = characteristic;
-
-                        // Ensure Hub type is detected
-                        controller.AddEventHandler(new SystemTypeUpdateHubTypeEventHandler(controller));
-                        controller.AddEventHandler(new RemoteButtonStateUpdateHubTypeEventHandler(controller));
-                        controller.AddEventHandler(new InternalMotorStateUpdateHubTypeEventHandler(controller));
-
-                        await controller.ConnectAsync(_notificationHandler);
-                        await controller.ExecuteCommandAsync(new HubFirmwareCommand());
-
-                        // Avoid race condition where System Type has not yet returned
-                        var counter = 0;
-                        while (controller.Hub == null && counter < 20)
-                        {
-                            await Task.Delay(50);
-                            counter++;
-                        }
-
-                        await connectionHandler(controller, "");
-                    }
-                    return;
-                }
-                else
-                {
-                    await connectionHandler(null, "Device unreachable");
-                    return;
-                }
-            }
-            else
-            {
-                await connectionHandler(null, "Failed to connect.");
+                await connectionHandler(null, "Failed to connect");
                 return;
             }
+
+            var result = await bluetoothLEDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
+            if (result.Status != GattCommunicationStatus.Success)
+            {
+                await connectionHandler(null, "Device unreachable");
+                return;
+            }
+
+            var service = result.Services.FirstOrDefault(s => s.Uuid == new Guid(_legoHubService));
+            if (service == default)
+            {
+                await connectionHandler(null, "Wrong device type");
+                return;
+            }
+
+            var characteristic = (await service.GetCharacteristicsForUuidAsync(new Guid(_legoHubCharacteristic))).Characteristics.Single();
+            controller.HubCharacteristic = characteristic;
+
+            // Ensure Hub type is detected
+            controller.AddEventHandler(new SystemTypeUpdateHubTypeEventHandler(controller));
+            controller.AddEventHandler(new RemoteButtonStateUpdateHubTypeEventHandler(controller));
+            controller.AddEventHandler(new InternalMotorStateUpdateHubTypeEventHandler(controller));
+
+            await controller.ConnectAsync(_notificationHandler);
+            await controller.ExecuteCommandAsync(new HubFirmwareCommand());
+
+            // Avoid race condition where System Type has not yet returned
+            var counter = 0;
+            while (controller.Hub == null && counter < 20)
+            {
+                await Task.Delay(50);
+                counter++;
+            }
+
+            await connectionHandler(controller, "");
         }
 
         private static async Task<BluetoothLEDevice> GetDeviceAsync(string bluetoothLEDeviceId)
