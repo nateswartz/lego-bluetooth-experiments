@@ -13,7 +13,7 @@ namespace BluetoothLibraryTester
     {
         static IBluetoothLowEnergyAdapter _adapter;
 
-        static List<IHubController> _controllers = new List<IHubController>();
+        static readonly List<IHubController> _controllers = new();
 
         static async Task Main(string[] args)
         {
