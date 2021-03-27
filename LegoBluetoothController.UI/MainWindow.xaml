@@ -7,13 +7,15 @@
         mc:Ignorable="d"
         Title="LEGO Powered Up Controller" Height="450" Width="800">
     <Grid>
-        <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="54,50,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
-        <TextBox x:Name="LogMessages" HorizontalAlignment="Left" Margin="54,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="560" Height="162"/>
-        <Button x:Name="ChangeLedColorButton" Content="Change LED Color" Click="ChangeLedColorButton_Click" HorizontalAlignment="Left" Margin="54,109,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
-        <Button x:Name="ShutdownAllButton" Content="Shutdown All" Click="ShutdownAllButton_Click" HorizontalAlignment="Left" Margin="54,165,0,0" VerticalAlignment="Top" Width="130" Height="30"/>
-        <TextBox x:Name="ConnectedHubs" HorizontalAlignment="Left" Margin="520,62,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="115" Height="62"/>
+        <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="45,168,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
+        <TextBox x:Name="LogMessages" IsReadOnly="True" HorizontalAlignment="Left" Margin="54,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="560" Height="162"/>
+        <Button x:Name="ChangeLedColorButton" Content="Change LED Color" Click="ChangeLedColorButton_Click" HorizontalAlignment="Left" Margin="221,42,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
+        <Button x:Name="ShutdownAllButton" Content="Shutdown All" Click="ShutdownAllButton_Click" HorizontalAlignment="Left" Margin="193,168,0,0" VerticalAlignment="Top" Width="130" Height="30"/>
+        <TextBox x:Name="ConnectedHubs" IsReadOnly="True" HorizontalAlignment="Left" Margin="520,62,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="115" Height="62"/>
         <Label Content="Connected Hubs" HorizontalAlignment="Left" Margin="520,32,0,0" VerticalAlignment="Top"/>
         <Label Content="Log Messages" HorizontalAlignment="Left" Margin="54,221,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="RawCommandText" HorizontalAlignment="Left" Margin="64,106,0,0" Text="Enter command here" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="HubSelect" HorizontalAlignment="Left" Margin="64,42,0,0" VerticalAlignment="Top" Width="120"/>
 
     </Grid>
 </Window>
