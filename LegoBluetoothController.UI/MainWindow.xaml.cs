@@ -21,8 +21,9 @@ namespace LegoBluetoothController.UI
 
         public MainWindow()
         {
-            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
             InitializeComponent();
+            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
+            HubSelect.ItemsSource = _controllers;
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -76,29 +77,27 @@ namespace LegoBluetoothController.UI
 
         private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
         {
-            await Dispatcher.InvokeAsync(async () =>
-            {
-                foreach (var controller in _controllers)
-                {
-                    var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
-                    await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
-                    LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
-                }
-            });
+            var controller = HubSelect.SelectedItem as IHubController;
+            var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
+            await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
+            LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
         }
 
         private async void ShutdownAllButton_Click(object sender, RoutedEventArgs e)
         {
-            await Dispatcher.InvokeAsync(async () =>
+            foreach (var controller in _controllers)
             {
-                foreach (var controller in _controllers)
-                {
-                    await controller.ExecuteCommandAsync(new ShutdownCommand());
-                }
-                LogMessages.Text = "";
-                _controllers.Clear();
-                _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
-            });
+                await controller.ExecuteCommandAsync(new ShutdownCommand());
+            }
+            LogMessages.Text = "";
+            _controllers.Clear();
+            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
+        }
+
+        private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
+        {
+            var controller = HubSelect.SelectedItem as IHubController;
+            controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
     }
 }

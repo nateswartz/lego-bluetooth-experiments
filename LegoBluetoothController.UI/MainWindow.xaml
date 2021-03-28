@@ -16,6 +16,6 @@
         <Label Content="Log Messages" HorizontalAlignment="Left" Margin="54,221,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="RawCommandText" HorizontalAlignment="Left" Margin="64,106,0,0" Text="Enter command here" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <ComboBox x:Name="HubSelect" HorizontalAlignment="Left" Margin="64,42,0,0" VerticalAlignment="Top" Width="120"/>
-
+        <Button x:Name="ExecuteCommandButton" Content="Execute" Click="ExecuteCommandButton_Click" HorizontalAlignment="Left" Margin="221,106,0,0" VerticalAlignment="Top" Width="65"/>
     </Grid>
 </Window>
