@@ -25,7 +25,7 @@ namespace BluetoothLibraryTester
                     Environment.Exit(0);
                 };
 
-                _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
+                _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification, HandleDisconnect);
                 Console.WriteLine("Searching for devices...");
                 _adapter.StartBleDeviceWatcher();
 
@@ -119,7 +119,7 @@ namespace BluetoothLibraryTester
             {
                 _controllers.Add(controller);
 
-                Console.WriteLine($"Connected device: {Enum.GetName(typeof(HubType), controller.Hub.HubType)}");
+                Console.WriteLine($"Connected device: {controller.Hub.HubType}");
 
                 await Task.CompletedTask;
             }
@@ -127,6 +127,12 @@ namespace BluetoothLibraryTester
             {
                 Console.WriteLine($"Failed to connect: {errorMessage}");
             }
+        }
+
+        static async Task HandleDisconnect(IHubController controller)
+        {
+            _controllers.Remove(controller);
+            Console.WriteLine($"Disconnected device: {controller.Hub.HubType}");
         }
     }
 }

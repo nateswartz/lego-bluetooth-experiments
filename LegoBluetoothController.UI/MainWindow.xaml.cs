@@ -22,7 +22,7 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
+            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification, HandleDisconnect);
             HubSelect.ItemsSource = _controllers;
         }
 
@@ -59,12 +59,28 @@ namespace LegoBluetoothController.UI
                     _controllers.Add(controller);
                     ConnectedHubs.Text += controller.Hub.HubType;
 
-                    LogMessage($"Connected device: {Enum.GetName(typeof(HubType), controller.Hub.HubType)}");
+                    LogMessage($"Connected device: {controller.Hub.HubType}");
                 }
                 else
                 {
                     LogMessage($"Failed to connect: {errorMessage}");
                 }
+            });
+            await Task.CompletedTask;
+        }
+
+        private async Task HandleDisconnect(IHubController controller)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                _controllers.Remove(controller);
+                ConnectedHubs.Text = "";
+                foreach (var existingController in _controllers)
+                {
+                    ConnectedHubs.Text += existingController.Hub.HubType;
+                }
+
+                LogMessage($"Disconnected device: {controller.Hub.HubType}");
             });
             await Task.CompletedTask;
         }
@@ -89,9 +105,8 @@ namespace LegoBluetoothController.UI
             {
                 await controller.ExecuteCommandAsync(new ShutdownCommand());
             }
-            LogMessages.Text = "";
+            ConnectedHubs.Text = "";
             _controllers.Clear();
-            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification);
         }
 
         private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
