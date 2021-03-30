@@ -106,7 +106,6 @@ namespace LegoBluetoothController.UI
                 await controller.ExecuteCommandAsync(new ShutdownCommand());
             }
             ConnectedHubs.Text = "";
-            _controllers.Clear();
         }
 
         private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
