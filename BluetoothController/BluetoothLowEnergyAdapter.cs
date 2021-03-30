@@ -1,6 +1,6 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
-using BluetoothController.EventHandlers;
+using BluetoothController.EventHandlers.Internal;
 using BluetoothController.Models;
 using System;
 using System.Collections.Generic;

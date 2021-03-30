@@ -5,7 +5,7 @@ using BluetoothController.Responses.Device.State;
 using System;
 using System.Threading.Tasks;
 
-namespace BluetoothController.EventHandlers
+namespace BluetoothController.EventHandlers.Internal
 {
     internal class InternalMotorStateUpdateHubTypeEventHandler : EventHandlerBase, IEventHandler
     {

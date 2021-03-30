@@ -4,7 +4,7 @@ using BluetoothController.Responses.Hub;
 using System;
 using System.Threading.Tasks;
 
-namespace BluetoothController.EventHandlers
+namespace BluetoothController.EventHandlers.Internal
 {
     internal class SystemTypeUpdateHubTypeEventHandler : EventHandlerBase, IEventHandler
     {
