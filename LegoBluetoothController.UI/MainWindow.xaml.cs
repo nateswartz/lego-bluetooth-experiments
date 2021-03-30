@@ -28,8 +28,49 @@ namespace LegoBluetoothController.UI
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
         {
-            LogMessage("Searching for devices...");
-            _adapter.StartBleDeviceWatcher();
+            if (DiscoverButton.Content.ToString() == "Discover")
+            {
+                LogMessage("Searching for devices...");
+                _adapter.StartBleDeviceWatcher();
+                DiscoverButton.Content = "Stop Discovery";
+            }
+            else if (DiscoverButton.Content.ToString() == "Stop Discovery")
+            {
+                LogMessage("Ending search for devices...");
+                _adapter.StopBleDeviceWatcher();
+                DiscoverButton.Content = "Discover";
+            }
+        }
+
+        private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
+        {
+            var controller = HubSelect.SelectedItem as IHubController;
+            var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
+            await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
+            LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
+        }
+
+        private async void ShutdownButton_Click(object sender, RoutedEventArgs e)
+        {
+            var controller = HubSelect.SelectedItem as IHubController;
+            await controller.ExecuteCommandAsync(new ShutdownCommand());
+
+            UpdateConnectedHubsText();
+        }
+
+        private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
+        {
+            var controller = HubSelect.SelectedItem as IHubController;
+            controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
+        }
+
+        private void UpdateConnectedHubsText()
+        {
+            ConnectedHubs.Text = "";
+            foreach (var controller in _controllers)
+            {
+                ConnectedHubs.Text += controller.Hub.HubType;
+            }
         }
 
         private async Task HandleNotification(IHubController controller, string message)
@@ -74,12 +115,7 @@ namespace LegoBluetoothController.UI
             Dispatcher.Invoke(() =>
             {
                 _controllers.Remove(controller);
-                ConnectedHubs.Text = "";
-                foreach (var existingController in _controllers)
-                {
-                    ConnectedHubs.Text += existingController.Hub.HubType;
-                }
-
+                UpdateConnectedHubsText();
                 LogMessage($"Disconnected device: {controller.Hub.HubType}");
             });
             await Task.CompletedTask;
@@ -89,29 +125,6 @@ namespace LegoBluetoothController.UI
         {
             LogMessages.Text += message + Environment.NewLine;
             LogMessages.ScrollToEnd();
-        }
-
-        private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
-        {
-            var controller = HubSelect.SelectedItem as IHubController;
-            var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
-            await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
-            LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
-        }
-
-        private async void ShutdownAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var controller in _controllers)
-            {
-                await controller.ExecuteCommandAsync(new ShutdownCommand());
-            }
-            ConnectedHubs.Text = "";
-        }
-
-        private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
-        {
-            var controller = HubSelect.SelectedItem as IHubController;
-            controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
     }
 }
