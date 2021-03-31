@@ -77,7 +77,7 @@ namespace BluetoothController.Controllers
 
         public override string ToString()
         {
-            return $"{Hub.HubType} ({SelectedBleDeviceId})";
+            return $"{Hub.HubType} ({SelectedBleDeviceId.Replace("BluetoothLE#BluetoothLE", "")})";
         }
 
         private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)
