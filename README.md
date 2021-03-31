@@ -57,6 +57,24 @@ class Program
 }
 ```
 
+There are two mechanisms for reading sensor data, the HandleNotification callback that is registered when creating the BluetoothLowEnergyAdapter, and any EventHandlers that are added for the IHubController.  The following is a sample for enabling tilt sensor data:
+```
+static async Task Main(string[] args)
+{
+    var adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification, HandleDisconnect);
+    ...
+    var port = controller.GetPortIdsByDeviceType(IOTypes.TiltSensor).First();
+    await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "01"));
+    controller.AddEventHandler(new TiltEventHandler());
+}
+
+static async Task HandleNotification(IHubController controller, string message)
+{
+    Console.WriteLine($"{controller.Hub.HubType}: {message}");
+    await Task.CompletedTask;
+}
+```
+
 ## Credits
 I used the sharpbrick/powered-up github project as an example of how to use the Windows bluetooth libraries. 
 I leveraged the work of the JorgePe/BOOSTreveng github project to figure out the messaging protocol before Lego released official documentation.
