@@ -25,7 +25,7 @@ namespace BluetoothController.Controllers
 
         public GattCharacteristic HubCharacteristic { get; set; }
 
-        private Dictionary<string, List<IEventHandler>> _eventHandlers { get; set; }
+        private Dictionary<string, List<object>> _eventHandlers { get; set; }
 
         private readonly List<string> _notifications = new();
 
@@ -33,7 +33,7 @@ namespace BluetoothController.Controllers
 
         public HubController()
         {
-            _eventHandlers = new Dictionary<string, List<IEventHandler>>();
+            _eventHandlers = new Dictionary<string, List<object>>();
             Hub = new LegoHub();
         }
 
@@ -105,18 +105,18 @@ namespace BluetoothController.Controllers
             return message;
         }
 
-        public void AddEventHandler(IEventHandler eventHandler)
+        public void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response
         {
-            if (!_eventHandlers.ContainsKey(eventHandler.HandledEvent.Name))
+            if (!_eventHandlers.ContainsKey(typeof(T).Name))
             {
-                _eventHandlers[eventHandler.HandledEvent.Name] = new List<IEventHandler>();
+                _eventHandlers[typeof(T).Name] = new List<object>();
             }
-            _eventHandlers[eventHandler.HandledEvent.Name].Add(eventHandler);
+            _eventHandlers[typeof(T).Name].Add(eventHandler);
         }
 
-        public List<IEventHandler> GetEventHandlers(Type eventType)
+        public IEnumerable<IEventHandler<T>> GetEventHandlers<T>() where T : Response
         {
-            return _eventHandlers[eventType.Name] ?? new List<IEventHandler>();
+            return _eventHandlers[typeof(T).Name].Cast<IEventHandler<T>>() ?? new List<IEventHandler<T>>();
         }
 
         public bool IsHandlerRegistered(Type eventType, Type eventHandlerType)
@@ -127,22 +127,22 @@ namespace BluetoothController.Controllers
             return _eventHandlers[eventType.Name].Exists(x => x.GetType() == eventHandlerType);
         }
 
-        public void RemoveEventHandler(IEventHandler eventHandler)
+        public void RemoveEventHandler<T>(IEventHandler<T> eventHandler) where T : Response
         {
-            if (_eventHandlers.ContainsKey(eventHandler.HandledEvent.Name))
+            if (_eventHandlers.ContainsKey(typeof(T).Name))
             {
-                _eventHandlers[eventHandler.HandledEvent.Name].RemoveAll(x => x.GetType() == eventHandler.GetType());
+                _eventHandlers[typeof(T).Name].RemoveAll(x => x.GetType() == eventHandler.GetType());
             }
         }
 
-        private async Task TriggerActionsFromNotification(Response response)
+        private async Task TriggerActionsFromNotification<T>(T response) where T : Response
         {
             if (!_eventHandlers.ContainsKey(response.NotificationType))
                 return;
             var handlers = _eventHandlers[response.NotificationType];
             foreach (var handler in handlers)
             {
-                await handler.HandleEventAsync(response);
+                await ((IEventHandler<T>)handler).HandleEventAsync(response);
             }
         }
 

@@ -1,14 +1,12 @@
 ﻿using BluetoothController.Controllers;
-using BluetoothController.Responses;
 using BluetoothController.Responses.Hub;
 using System;
 using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers.Internal
 {
-    internal class DisconnectEventHandler : EventHandlerBase, IEventHandler
+    internal class DisconnectEventHandler : EventHandlerBase, IEventHandler<HubActionResponse>
     {
-        public Type HandledEvent { get; } = typeof(HubActionResponse);
         private readonly Func<IHubController, Task> _onDisconnectCallback;
 
         public DisconnectEventHandler(IHubController controller, Func<IHubController, Task> onDisconnectCallback)
@@ -17,10 +15,9 @@ namespace BluetoothController.EventHandlers.Internal
             _onDisconnectCallback = onDisconnectCallback;
         }
 
-        public async Task HandleEventAsync(Response response)
+        public async Task HandleEventAsync(HubActionResponse response)
         {
-            var data = (HubActionResponse)response;
-            if (data.ActionType == HubActionTypes.Disconnect || data.ActionType == HubActionTypes.Shutdown)
+            if (response.ActionType == HubActionTypes.Disconnect || response.ActionType == HubActionTypes.Shutdown)
             {
                 await _onDisconnectCallback(_controller);
             }
