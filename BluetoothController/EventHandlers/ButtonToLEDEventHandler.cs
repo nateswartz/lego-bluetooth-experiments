@@ -3,15 +3,12 @@ using BluetoothController.Controllers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
 using BluetoothController.Responses.Hub;
-using System;
 using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class ButtonToLEDEventHandler : EventHandlerBase, IEventHandler
+    public class ButtonToLEDEventHandler : EventHandlerBase, IEventHandler<ButtonStateMessage>
     {
-        public Type HandledEvent { get; } = typeof(ButtonStateMessage);
-
         public ButtonToLEDEventHandler(IHubController controller) : base(controller) { }
 
         public async Task HandleEventAsync(Response response)

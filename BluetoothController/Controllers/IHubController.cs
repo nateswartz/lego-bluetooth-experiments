@@ -2,6 +2,7 @@
 using BluetoothController.EventHandlers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
+using BluetoothController.Responses;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,15 +17,14 @@ namespace BluetoothController.Controllers
         bool IsConnected { get; }
         string SelectedBleDeviceId { get; set; }
         bool SubscribedForNotifications { get; set; }
-
-        void AddEventHandler(IEventHandler eventHandler);
+        void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response;
         Task ConnectAsync(Func<IHubController, string, Task> notificationHandler);
         Task DisconnectAsync();
         Task<bool> ExecuteCommandAsync(ICommand command);
-        List<IEventHandler> GetEventHandlers(Type eventType);
+        IEnumerable<IEventHandler<T>> GetEventHandlers<T>() where T : Response;
         IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType);
         bool IsHandlerRegistered(Type eventType, Type eventHandlerType);
-        void RemoveEventHandler(IEventHandler eventHandler);
+        void RemoveEventHandler<T>(IEventHandler<T> eventHandler) where T : Response;
         string ToString();
     }
 }

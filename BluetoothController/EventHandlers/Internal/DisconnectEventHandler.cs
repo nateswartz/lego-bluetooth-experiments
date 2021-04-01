@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers.Internal
 {
-    internal class DisconnectEventHandler : EventHandlerBase, IEventHandler
+    internal class DisconnectEventHandler : EventHandlerBase, IEventHandler<HubActionResponse>
     {
-        public Type HandledEvent { get; } = typeof(HubActionResponse);
         private readonly Func<IHubController, Task> _onDisconnectCallback;
 
         public DisconnectEventHandler(IHubController controller, Func<IHubController, Task> onDisconnectCallback)

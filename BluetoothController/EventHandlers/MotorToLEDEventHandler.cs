@@ -3,15 +3,12 @@ using BluetoothController.Controllers;
 using BluetoothController.Models;
 using BluetoothController.Responses;
 using BluetoothController.Responses.Device.Data;
-using System;
 using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class MotorToLEDEventHandler : EventHandlerBase, IEventHandler
+    public class MotorToLEDEventHandler : EventHandlerBase, IEventHandler<ExternalMotorData>
     {
-        public Type HandledEvent { get; } = typeof(ExternalMotorData);
-
         public MotorToLEDEventHandler(IHubController controller) : base(controller) { }
 
         public async Task HandleEventAsync(Response response)

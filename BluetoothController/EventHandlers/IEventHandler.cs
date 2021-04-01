@@ -1,12 +1,10 @@
 ﻿using BluetoothController.Responses;
-using System;
 using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public interface IEventHandler
+    public interface IEventHandler<T> where T : Response
     {
         Task HandleEventAsync(Response response);
-        Type HandledEvent { get; }
     }
 }
