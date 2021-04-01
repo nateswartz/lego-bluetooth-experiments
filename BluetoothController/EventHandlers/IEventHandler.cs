@@ -5,6 +5,6 @@ namespace BluetoothController.EventHandlers
 {
     public interface IEventHandler<T> where T : Response
     {
-        Task HandleEventAsync(T response);
+        Task HandleEventAsync(Response response);
     }
 }

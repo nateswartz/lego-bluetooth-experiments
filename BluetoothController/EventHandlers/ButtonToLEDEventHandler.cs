@@ -1,6 +1,7 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Responses;
 using BluetoothController.Responses.Hub;
 using System.Threading.Tasks;
 
@@ -10,14 +11,15 @@ namespace BluetoothController.EventHandlers
     {
         public ButtonToLEDEventHandler(IHubController controller) : base(controller) { }
 
-        public async Task HandleEventAsync(ButtonStateMessage response)
+        public async Task HandleEventAsync(Response response)
         {
+            var data = (ButtonStateMessage)response;
             LEDColor color = LEDColors.Red;
-            if (response.State == ButtonState.Pressed)
+            if (data.State == ButtonState.Pressed)
             {
                 color = LEDColors.Yellow;
             }
-            else if (response.State == ButtonState.Released)
+            else if (data.State == ButtonState.Released)
             {
                 color = LEDColors.Purple;
             }

@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Controllers;
+using BluetoothController.Responses;
 using BluetoothController.Responses.Hub;
 using System;
 using System.Threading.Tasks;
@@ -15,9 +16,10 @@ namespace BluetoothController.EventHandlers.Internal
             _onDisconnectCallback = onDisconnectCallback;
         }
 
-        public async Task HandleEventAsync(HubActionResponse response)
+        public async Task HandleEventAsync(Response response)
         {
-            if (response.ActionType == HubActionTypes.Disconnect || response.ActionType == HubActionTypes.Shutdown)
+            var data = (HubActionResponse)response;
+            if (data.ActionType == HubActionTypes.Disconnect || data.ActionType == HubActionTypes.Shutdown)
             {
                 await _onDisconnectCallback(_controller);
             }

@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Controllers;
+using BluetoothController.Responses;
 using BluetoothController.Responses.Hub;
 using System.Threading.Tasks;
 
@@ -8,9 +9,10 @@ namespace BluetoothController.EventHandlers.Internal
     {
         public SystemTypeUpdateHubTypeEventHandler(IHubController controller) : base(controller) { }
 
-        public async Task HandleEventAsync(SystemType response)
+        public async Task HandleEventAsync(Response response)
         {
-            _controller.Hub.HubType = response.HubType;
+            var data = (SystemType)response;
+            _controller.Hub.HubType = data.HubType;
             await Task.CompletedTask;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Responses;
 using BluetoothController.Responses.Device.Data;
 using System.Threading.Tasks;
 
@@ -10,14 +11,15 @@ namespace BluetoothController.EventHandlers
     {
         public MotorToLEDEventHandler(IHubController controller) : base(controller) { }
 
-        public async Task HandleEventAsync(ExternalMotorData response)
+        public async Task HandleEventAsync(Response response)
         {
+            var data = (ExternalMotorData)response;
             var color = LEDColors.Red;
-            if (response.Speed > 30)
+            if (data.Speed > 30)
             {
                 color = LEDColors.Green;
             }
-            else if (response.Speed > 1)
+            else if (data.Speed > 1)
             {
                 color = LEDColors.Purple;
             }

@@ -135,14 +135,15 @@ namespace BluetoothController.Controllers
             }
         }
 
-        private async Task TriggerActionsFromNotification<T>(T response) where T : Response
+        private async Task TriggerActionsFromNotification(Response response)
         {
             if (!_eventHandlers.ContainsKey(response.NotificationType))
                 return;
             var handlers = _eventHandlers[response.NotificationType];
             foreach (var handler in handlers)
             {
-                await ((IEventHandler<T>)handler).HandleEventAsync(response);
+                dynamic dynamicHandler = handler;
+                await dynamicHandler.HandleEventAsync(response);
             }
         }
 

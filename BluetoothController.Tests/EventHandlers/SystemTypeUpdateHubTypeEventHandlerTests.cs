@@ -1,5 +1,5 @@
 ﻿using BluetoothController.Controllers;
-using BluetoothController.EventHandlers;
+using BluetoothController.EventHandlers.Internal;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
 using BluetoothController.Responses.Hub;
