@@ -45,6 +45,8 @@ namespace LegoBluetoothController.UI
         private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
         {
             var controller = HubSelect.SelectedItem as IHubController;
+            if (controller == null)
+                return;
             var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
             await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
             LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
@@ -53,6 +55,8 @@ namespace LegoBluetoothController.UI
         private async void ShutdownButton_Click(object sender, RoutedEventArgs e)
         {
             var controller = HubSelect.SelectedItem as IHubController;
+            if (controller == null)
+                return;
             await controller.ExecuteCommandAsync(new ShutdownCommand());
 
             UpdateConnectedHubsText();
@@ -61,6 +65,8 @@ namespace LegoBluetoothController.UI
         private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
         {
             var controller = HubSelect.SelectedItem as IHubController;
+            if (controller == null)
+                return;
             controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
 
