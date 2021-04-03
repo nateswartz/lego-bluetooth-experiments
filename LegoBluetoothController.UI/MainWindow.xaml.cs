@@ -24,6 +24,7 @@ namespace LegoBluetoothController.UI
             InitializeComponent();
             _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification, HandleDisconnect);
             HubSelect.ItemsSource = _controllers;
+            ColorSelect.ItemsSource = LEDColors.All;
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -44,18 +45,17 @@ namespace LegoBluetoothController.UI
 
         private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
         {
-            var controller = HubSelect.SelectedItem as IHubController;
-            if (controller == null)
+            if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            var color = LEDColors.All[new Random().Next(0, LEDColors.All.Count)];
+            if (ColorSelect.SelectedItem is not LEDColor color)
+                return;
             await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
             LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
         }
 
         private async void ShutdownButton_Click(object sender, RoutedEventArgs e)
         {
-            var controller = HubSelect.SelectedItem as IHubController;
-            if (controller == null)
+            if (HubSelect.SelectedItem is not IHubController controller)
                 return;
             await controller.ExecuteCommandAsync(new ShutdownCommand());
 
@@ -64,8 +64,7 @@ namespace LegoBluetoothController.UI
 
         private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
         {
-            var controller = HubSelect.SelectedItem as IHubController;
-            if (controller == null)
+            if (HubSelect.SelectedItem is not IHubController controller)
                 return;
             controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }

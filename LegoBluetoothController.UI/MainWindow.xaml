@@ -5,17 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LegoBluetoothController.UI"
         mc:Ignorable="d"
-        Title="LEGO Powered Up Controller" Height="500" Width="933">
+        Title="LEGO Powered Up Controller" Height="584" Width="989">
     <Grid Margin="0,0,0,0">
-        <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="64,41,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
-        <TextBox x:Name="LogMessages" IsReadOnly="True" HorizontalAlignment="Left" Margin="64,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="604" Height="162"/>
-        <Button x:Name="ChangeLedColorButton" Content="Change LED Color" Click="ChangeLedColorButton_Click" HorizontalAlignment="Left" Margin="425,42,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
-        <Button x:Name="ShutdownButton" Content="Shutdown" Click="ShutdownButton_Click" HorizontalAlignment="Left" Margin="579,42,0,0" VerticalAlignment="Top" Width="130" Height="30"/>
-        <TextBox x:Name="ConnectedHubs" IsReadOnly="True" HorizontalAlignment="Left" Margin="699,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="115" Height="62"/>
-        <Label Content="Connected Hubs" HorizontalAlignment="Left" Margin="699,221,0,0" VerticalAlignment="Top"/>
-        <Label Content="Log Messages" HorizontalAlignment="Left" Margin="64,221,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="RawCommandText" HorizontalAlignment="Left" Margin="241,97,0,0" Text="Enter command here" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" Height="25"/>
-        <ComboBox x:Name="HubSelect" HorizontalAlignment="Left" Margin="241,41,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
-        <Button x:Name="ExecuteCommandButton" Content="Execute" Click="ExecuteCommandButton_Click" HorizontalAlignment="Left" Margin="425,97,0,0" VerticalAlignment="Top" Width="73" Height="32"/>
+        <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="748,490,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
+        <TextBox x:Name="LogMessages" IsReadOnly="True" HorizontalAlignment="Left" Margin="34,382,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="604" Height="162"/>
+        <Button x:Name="ChangeLedColorButton" Content="Change LED Color" Click="ChangeLedColorButton_Click" HorizontalAlignment="Center" Margin="0,27,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
+        <Button x:Name="ShutdownButton" Content="Shutdown" Click="ShutdownButton_Click" HorizontalAlignment="Left" Margin="364,87,0,0" VerticalAlignment="Top" Width="130" Height="30"/>
+        <Label Content="Connected Hubs" Margin="748,356,126,186"/>
+        <TextBox x:Name="ConnectedHubs" IsReadOnly="True" Text="" TextWrapping="Wrap" Margin="748,382,111,105"/>
+        <Label Content="Log Messages" HorizontalAlignment="Left" Margin="34,351,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="RawCommandText" HorizontalAlignment="Left" Margin="34,88,0,0" Text="Enter command here" TextWrapping="Wrap" VerticalAlignment="Top" Width="179" Height="29"/>
+        <ComboBox x:Name="HubSelect" HorizontalAlignment="Left" Margin="34,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
+        <Button x:Name="ExecuteCommandButton" Content="Execute" Click="ExecuteCommandButton_Click" HorizontalAlignment="Left" Margin="241,88,0,0" VerticalAlignment="Top" Width="73" Height="29"/>
+        <ComboBox x:Name="ColorSelect" HorizontalAlignment="Left" Margin="241,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
     </Grid>
 </Window>
