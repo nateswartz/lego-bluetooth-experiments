@@ -15,7 +15,7 @@ namespace BluetoothLibraryTester
 
         static readonly List<IHubController> _controllers = new();
 
-        static async Task Main(string[] args)
+        static async Task Main(string[] _)
         {
             try
             {
@@ -133,6 +133,7 @@ namespace BluetoothLibraryTester
         {
             _controllers.Remove(controller);
             Console.WriteLine($"Disconnected device: {controller.Hub.HubType}");
+            await Task.CompletedTask;
         }
     }
 }

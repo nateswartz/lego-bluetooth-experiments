@@ -1,6 +1,5 @@
 using BluetoothController.Util;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace BluetoothController.Tests.Util
@@ -19,7 +18,7 @@ namespace BluetoothController.Tests.Util
         [Fact]
         public void ByteArrayToString_HandlesEmptyArray()
         {
-            var byteArray = new byte[0];
+            var byteArray = Array.Empty<byte>();
             var result = DataConverter.ByteArrayToString(byteArray);
 
             Assert.Equal("", result);
@@ -31,7 +30,7 @@ namespace BluetoothController.Tests.Util
             var hexString = "030b";
             var result = DataConverter.HexStringToByteArray(hexString);
 
-            Assert.Equal(2, result.Count());
+            Assert.Equal(2, result.Length);
             Assert.Equal(0x03, result[0]);
             Assert.Equal(0x0b, result[1]);
         }

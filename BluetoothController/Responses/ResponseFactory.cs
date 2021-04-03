@@ -44,7 +44,7 @@ namespace BluetoothController.Responses
             return portState;
         }
 
-        private static Response HandleHubProperty(IHubController controller, string notification)
+        private static Response HandleHubProperty(IHubController _, string notification)
         {
             var deviceInfo = new HubInfo(notification);
             return deviceInfo.DeviceType switch

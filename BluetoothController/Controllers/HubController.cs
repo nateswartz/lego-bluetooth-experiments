@@ -196,7 +196,7 @@ namespace BluetoothController.Controllers
             await _notificationHandler(this, message);
         }
 
-        private string ReadNotificationFromBuffer(IBuffer buffer)
+        private static string ReadNotificationFromBuffer(IBuffer buffer)
         {
             var output = new byte[buffer.Length];
             var dataReader = DataReader.FromBuffer(buffer);

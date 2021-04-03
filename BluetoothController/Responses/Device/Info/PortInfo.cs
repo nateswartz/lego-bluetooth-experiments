@@ -38,7 +38,7 @@ namespace BluetoothController.Responses.Device.Info
             OutputModes = ExtractModes(body.Substring(18, 4));
         }
 
-        private IEnumerable<Capability> ExtractCapabilities(string capabilitySection)
+        private static IEnumerable<Capability> ExtractCapabilities(string capabilitySection)
         {
             var capabilities = new List<Capability>();
             var capabilityBitField = (Capability)Convert.ToInt32(capabilitySection, 16);
@@ -51,7 +51,7 @@ namespace BluetoothController.Responses.Device.Info
             return capabilities;
         }
 
-        private IEnumerable<int> ExtractModes(string modesSection)
+        private static IEnumerable<int> ExtractModes(string modesSection)
         {
             var modes = new List<int>();
             var inputModesBitField = Convert.ToInt32(modesSection, 16);
@@ -63,7 +63,7 @@ namespace BluetoothController.Responses.Device.Info
             return modes;
         }
 
-        private IEnumerable<string> ExtractPossibleModeCombinations(string body)
+        private static IEnumerable<string> ExtractPossibleModeCombinations(string body)
         {
             var modeCombinations = new List<string>();
             if (body.Length > 10)
