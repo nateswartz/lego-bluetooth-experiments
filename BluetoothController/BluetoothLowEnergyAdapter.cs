@@ -1,6 +1,7 @@
 ﻿using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.EventHandlers.Internal;
+using BluetoothController.Hubs;
 using BluetoothController.Models;
 using System;
 using System.Collections.Generic;
@@ -73,15 +74,12 @@ namespace BluetoothController
             if (!await (IsValidDeviceAsync(device)))
                 return;
 
-            var controller = new HubController
-            {
-                SelectedBleDeviceId = device.DeviceId
-            };
-
+            IHubController controller;
             lock (_lock)
             {
-                if (_controllers.Any(c => c.SelectedBleDeviceId == controller.SelectedBleDeviceId))
+                if (_controllers.Any(c => c.SelectedBleDeviceId == device.DeviceId))
                     return;
+                controller = new HubController(new LegoHub(), device.DeviceId);
                 _controllers.Add(controller);
             }
 

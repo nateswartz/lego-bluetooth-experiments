@@ -31,10 +31,11 @@ namespace BluetoothController.Controllers
 
         private Func<IHubController, string, Task> _notificationHandler;
 
-        public HubController()
+        public HubController(ILegoHub legoHub, string selectedBleDeviceId)
         {
             _eventHandlers = new Dictionary<string, List<object>>();
-            Hub = new LegoHub();
+            Hub = legoHub;
+            SelectedBleDeviceId = selectedBleDeviceId;
         }
 
         public async Task<bool> ExecuteCommandAsync(ICommand command)
