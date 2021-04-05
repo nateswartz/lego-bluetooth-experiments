@@ -15,8 +15,6 @@ namespace BluetoothController.Controllers
 {
     public class HubController : IHubController
     {
-        public bool IsConnected { get; private set; }
-
         public ILegoHub Hub { get; set; }
 
         public string SelectedBleDeviceId { get; set; }
@@ -57,18 +55,11 @@ namespace BluetoothController.Controllers
             return writeSuccessful;
         }
 
-        public async Task ConnectAsync(Func<IHubController, string, Task> notificationHandler)
+        public async Task InitializeAsync(Func<IHubController, string, Task> notificationHandler)
         {
-            IsConnected = true;
             await ToggleSubscribedForNotificationsAsync(notificationHandler);
             await ExecuteCommandAsync(new HubTypeCommand());
-        }
-
-        public async Task DisconnectAsync()
-        {
-            IsConnected = false;
-            await ExecuteCommandAsync(new DisconnectCommand());
-            await ToggleSubscribedForNotificationsAsync(null);
+            await ExecuteCommandAsync(new HubFirmwareCommand());
         }
 
         public IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType)

@@ -14,12 +14,10 @@ namespace BluetoothController.Controllers
     {
         ILegoHub Hub { get; set; }
         GattCharacteristic HubCharacteristic { get; set; }
-        bool IsConnected { get; }
         string SelectedBleDeviceId { get; set; }
         bool SubscribedForNotifications { get; set; }
         void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response;
-        Task ConnectAsync(Func<IHubController, string, Task> notificationHandler);
-        Task DisconnectAsync();
+        Task InitializeAsync(Func<IHubController, string, Task> notificationHandler);
         Task<bool> ExecuteCommandAsync(ICommand command);
         IEnumerable<IEventHandler<T>> GetEventHandlers<T>() where T : Response;
         IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType);

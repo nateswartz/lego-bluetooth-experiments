@@ -1,5 +1,4 @@
-﻿using BluetoothController.Commands.Basic;
-using BluetoothController.Controllers;
+﻿using BluetoothController.Controllers;
 using BluetoothController.EventHandlers.Internal;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
@@ -111,8 +110,7 @@ namespace BluetoothController
 
             RegisterEventHandlers(controller);
 
-            await controller.ConnectAsync(_notificationHandler);
-            await controller.ExecuteCommandAsync(new HubFirmwareCommand());
+            await controller.InitializeAsync(_notificationHandler);
 
             // Avoid race condition where System Type has not yet returned
             var counter = 0;
