@@ -18,8 +18,6 @@ namespace BluetoothController
 
         private readonly List<IHubController> _controllers;
 
-        public bool IsScanning { get; private set; } = false;
-
         private const string _legoHubService = "00001623-1212-EFDE-1623-785FEABCD123";
         private const string _legoHubCharacteristic = "00001624-1212-EFDE-1623-785FEABCD123";
 
@@ -52,7 +50,6 @@ namespace BluetoothController
             _watcher.Received += ReceivedHandler;
 
             _watcher.Start();
-            IsScanning = true;
         }
 
         public void StopBleDeviceWatcher()
@@ -61,7 +58,6 @@ namespace BluetoothController
             {
                 _watcher.Received -= ReceivedHandler;
                 _watcher.Stop();
-                IsScanning = false;
                 _watcher = null;
             }
         }
@@ -112,14 +108,19 @@ namespace BluetoothController
             await controller.InitializeAsync(_notificationHandler, characteristic);
 
             // Avoid race condition where System Type has not yet returned
+            await WaitForHubTypeDiscovery(controller);
+
+            await connectionHandler(controller, "");
+        }
+
+        private static async Task WaitForHubTypeDiscovery(IHubController controller)
+        {
             var counter = 0;
             while (controller.Hub == null && counter < 20)
             {
                 await Task.Delay(50);
                 counter++;
             }
-
-            await connectionHandler(controller, "");
         }
 
         private void RegisterEventHandlers(IHubController controller)
