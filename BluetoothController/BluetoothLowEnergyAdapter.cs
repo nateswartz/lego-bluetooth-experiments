@@ -107,7 +107,6 @@ namespace BluetoothController
 
             await controller.InitializeAsync(_notificationHandler, characteristic);
 
-            // Avoid race condition where System Type has not yet returned
             await WaitForHubTypeDiscovery(controller);
 
             await connectionHandler(controller, "");
