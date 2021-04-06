@@ -17,11 +17,9 @@ namespace BluetoothController.Controllers
     {
         public ILegoHub Hub { get; set; }
 
-        public string SelectedBleDeviceId { get; set; }
+        public string SelectedBleDeviceId { get; }
 
-        public bool SubscribedForNotifications { get; set; }
-
-        public GattCharacteristic HubCharacteristic { get; set; }
+        private GattCharacteristic _hubCharacteristic;
 
         private Dictionary<string, List<object>> _eventHandlers { get; set; }
 
@@ -55,8 +53,9 @@ namespace BluetoothController.Controllers
             return writeSuccessful;
         }
 
-        public async Task InitializeAsync(Func<IHubController, string, Task> notificationHandler)
+        public async Task InitializeAsync(Func<IHubController, string, Task> notificationHandler, GattCharacteristic gattCharacteristic)
         {
+            _hubCharacteristic = gattCharacteristic;
             await ToggleSubscribedForNotificationsAsync(notificationHandler);
             await ExecuteCommandAsync(new HubTypeCommand());
             await ExecuteCommandAsync(new HubFirmwareCommand());
@@ -76,7 +75,7 @@ namespace BluetoothController.Controllers
         {
             try
             {
-                var result = await HubCharacteristic.WriteValueWithResultAsync(buffer);
+                var result = await _hubCharacteristic.WriteValueWithResultAsync(buffer);
 
                 return result.Status == GattCommunicationStatus.Success;
             }
@@ -142,19 +141,13 @@ namespace BluetoothController.Controllers
         private async Task<bool> ToggleSubscribedForNotificationsAsync(Func<IHubController, string, Task> notificationHandler)
         {
             _notificationHandler = notificationHandler;
-            var enableNotifications = !SubscribedForNotifications;
             try
             {
-                SubscribedForNotifications = enableNotifications;
-                if (enableNotifications)
-                    HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                else
-                    HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                _hubCharacteristic.ValueChanged += Characteristic_ValueChanged;
 
                 var status = await
-                    HubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                        enableNotifications ? GattClientCharacteristicConfigurationDescriptorValue.Notify
-                               : GattClientCharacteristicConfigurationDescriptorValue.None);
+                    _hubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+                        GattClientCharacteristicConfigurationDescriptorValue.Notify);
 
                 if (status == GattCommunicationStatus.Success)
                 {
@@ -162,11 +155,7 @@ namespace BluetoothController.Controllers
                 }
                 else
                 {
-                    if (enableNotifications)
-                        HubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-                    else
-                        HubCharacteristic.ValueChanged += Characteristic_ValueChanged;
-                    SubscribedForNotifications = !enableNotifications;
+                    _hubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
                     return false;
                 }
             }

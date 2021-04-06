@@ -106,11 +106,10 @@ namespace BluetoothController
             }
 
             var characteristic = (await service.GetCharacteristicsForUuidAsync(new Guid(_legoHubCharacteristic))).Characteristics.Single();
-            controller.HubCharacteristic = characteristic;
 
             RegisterEventHandlers(controller);
 
-            await controller.InitializeAsync(_notificationHandler);
+            await controller.InitializeAsync(_notificationHandler, characteristic);
 
             // Avoid race condition where System Type has not yet returned
             var counter = 0;
@@ -173,6 +172,5 @@ namespace BluetoothController
                 return null;
             }
         }
-
     }
 }
