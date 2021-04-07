@@ -69,6 +69,17 @@ namespace LegoBluetoothController.UI
             controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
 
+        private void HubSelect_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (HubSelect.SelectedItem is not IHubController controller)
+                return;
+            ConnectedDevices.Text = "";
+            foreach (var port in controller.Hub.Ports)
+            {
+                ConnectedDevices.Text += $"{port.DeviceType} ({port.PortID}){Environment.NewLine}";
+            }
+        }
+
         private void UpdateConnectedHubsText()
         {
             ConnectedHubs.Text = "";
