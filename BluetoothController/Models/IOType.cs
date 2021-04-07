@@ -6,25 +6,31 @@ namespace BluetoothController.Models
     public class IOType
     {
         public string Code { get; set; }
+        public string Name { get; set; }
 
-        public IOType(string code)
+        public IOType(string code, string name)
         {
             Code = code;
+            Name = name;
+        }
+        public override string ToString()
+        {
+            return Name;
         }
     }
 
     public static class IOTypes
     {
-        public static IOType None = new IOType("");
-        public static IOType TrainMotor = new IOType("02");
-        public static IOType VoltageSensor = new IOType("14");
-        public static IOType CurrentSensor = new IOType("15");
-        public static IOType LED = new IOType("17");
-        public static IOType ColorDistance = new IOType("25");
-        public static IOType ExternalMotor = new IOType("26");
-        public static IOType InternalMotor = new IOType("27");
-        public static IOType TiltSensor = new IOType("28");
-        public static IOType RemoteButton = new IOType("37");
+        public static readonly IOType None = new("", "");
+        public static readonly IOType TrainMotor = new("02", "Train Motor");
+        public static readonly IOType VoltageSensor = new("14", "Voltage Sensor");
+        public static readonly IOType CurrentSensor = new("15", "Current Sensor");
+        public static readonly IOType LED = new("17", "LED");
+        public static readonly IOType ColorDistance = new("25", "Color/Distance Sensor");
+        public static readonly IOType ExternalMotor = new("26", "External Motor");
+        public static readonly IOType InternalMotor = new("27", "Internal Motor");
+        public static readonly IOType TiltSensor = new("28", "Tilt Sensor");
+        public static readonly IOType RemoteButton = new("37", "Remote Button");
 
         private readonly static List<IOType> _all = new List<IOType>
         {
@@ -35,7 +41,7 @@ namespace BluetoothController.Models
         {
             return _all.Where(c => c.Code.ToLower() == code.ToLower())
                        .FirstOrDefault()
-                       ?? new IOType(code);
+                       ?? new IOType(code, "");
         }
     }
 }
