@@ -1,4 +1,4 @@
-﻿using BluetoothController.Models;
+﻿using BluetoothController.Models.Enums;
 using BluetoothController.Util;
 using System;
 using System.Collections.Generic;
@@ -69,7 +69,7 @@ namespace BluetoothController.Responses.Device.Info
             return header + modeSpecific + footer;
         }
 
-        private string ExtractTextValue(string body, int startLocation, string terminator)
+        private static string ExtractTextValue(string body, int startLocation, string terminator)
         {
             var index = startLocation;
             var byteCount = 0;
@@ -84,13 +84,13 @@ namespace BluetoothController.Responses.Device.Info
             return Encoding.ASCII.GetString(data);
         }
 
-        private int ExtractFloatAsInt(string body, int startLocation, int length)
+        private static int ExtractFloatAsInt(string body, int startLocation, int length)
         {
             byte[] minBytes = DataConverter.HexStringToByteArray(body.Substring(startLocation, length));
             return (int)BitConverter.ToSingle(minBytes, 0);
         }
 
-        private IEnumerable<PortModeInfoMappingFlag> ExtractMappingFlags(string body, int startLocation, int length)
+        private static IEnumerable<PortModeInfoMappingFlag> ExtractMappingFlags(string body, int startLocation, int length)
         {
             var mappings = new List<PortModeInfoMappingFlag>();
             var inputSideMappingBitfield = (PortModeInfoMappingFlag)Convert.ToInt32(body.Substring(startLocation, length), 16);

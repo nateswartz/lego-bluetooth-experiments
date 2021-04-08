@@ -2,6 +2,7 @@
 using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

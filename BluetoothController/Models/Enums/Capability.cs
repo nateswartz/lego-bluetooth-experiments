@@ -1,4 +1,4 @@
-﻿namespace BluetoothController.Models
+﻿namespace BluetoothController.Models.Enums
 {
     public enum Capability
     {

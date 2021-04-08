@@ -1,5 +1,6 @@
 ﻿using BluetoothController.Commands.Abstract;
 using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 
 namespace BluetoothController.Commands.Basic
 {

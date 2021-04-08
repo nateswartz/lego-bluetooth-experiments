@@ -1,7 +1,7 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.EventHandlers.Internal;
 using BluetoothController.Hubs;
-using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 using BluetoothController.Responses.Hub;
 using Moq;
 using System.Threading.Tasks;

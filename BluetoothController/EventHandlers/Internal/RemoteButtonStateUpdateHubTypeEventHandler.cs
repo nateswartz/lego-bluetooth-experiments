@@ -1,5 +1,5 @@
 ﻿using BluetoothController.Controllers;
-using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 using BluetoothController.Responses;
 using BluetoothController.Responses.Device.State;
 using System.Threading.Tasks;

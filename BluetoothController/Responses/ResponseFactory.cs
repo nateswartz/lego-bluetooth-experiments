@@ -1,6 +1,7 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 using BluetoothController.Responses.Device.Data;
 using BluetoothController.Responses.Device.Info;
 using BluetoothController.Responses.Device.State;

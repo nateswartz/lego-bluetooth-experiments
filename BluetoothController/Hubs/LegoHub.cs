@@ -1,4 +1,5 @@
 ﻿using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 using System.Collections.Generic;
 using System.Linq;
 

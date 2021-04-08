@@ -1,4 +1,4 @@
-﻿using BluetoothController.Models;
+﻿using BluetoothController.Models.Enums;
 using BluetoothController.Responses.Hub;
 using Xunit;
 
