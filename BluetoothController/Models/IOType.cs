@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace BluetoothController.Models
 {
-    public class IOType
+    public record IOType
     {
         public string Code { get; set; }
         public string Name { get; set; }
@@ -32,9 +32,17 @@ namespace BluetoothController.Models
         public static readonly IOType TiltSensor = new("28", "Tilt Sensor");
         public static readonly IOType RemoteButton = new("37", "Remote Button");
 
-        private readonly static List<IOType> _all = new List<IOType>
+        private readonly static List<IOType> _all = new()
         {
-            TrainMotor, VoltageSensor, CurrentSensor, LED, ColorDistance, ExternalMotor, InternalMotor, TiltSensor, RemoteButton
+            TrainMotor,
+            VoltageSensor,
+            CurrentSensor,
+            LED,
+            ColorDistance,
+            ExternalMotor,
+            InternalMotor,
+            TiltSensor,
+            RemoteButton
         };
 
         public static IOType GetByCode(string code)

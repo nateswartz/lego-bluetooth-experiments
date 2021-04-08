@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace BluetoothController.Models
 {
-    public class MessageType
+    public record MessageType
     {
         public string Code { get; set; }
 
@@ -20,26 +20,37 @@ namespace BluetoothController.Models
 
     public static class MessageTypes
     {
-        public static MessageType HubProperty = new MessageType("01");
-        public static MessageType HubAction = new MessageType("02");
-        public static MessageType HubAttachedDetachedIO = new MessageType("04");
-        public static MessageType Error = new MessageType("05");
-        public static MessageType PortInformationRequest = new MessageType("21");
-        public static MessageType PortModeInformationRequest = new MessageType("22");
-        public static MessageType PortInputFormatSetupSingle = new MessageType("41");
-        public static MessageType PortInputFormatSetupCombined = new MessageType("42");
-        public static MessageType PortInformation = new MessageType("43");
-        public static MessageType PortModeInformation = new MessageType("44");
-        public static MessageType PortValueSingle = new MessageType("45");
-        public static MessageType PortInputFormatSingle = new MessageType("47");
-        public static MessageType PortOutput = new MessageType("81");
-        public static MessageType PortOutputFeedback = new MessageType("82");
+        public static readonly MessageType HubProperty = new("01");
+        public static readonly MessageType HubAction = new("02");
+        public static readonly MessageType HubAttachedDetachedIO = new("04");
+        public static readonly MessageType Error = new("05");
+        public static readonly MessageType PortInformationRequest = new("21");
+        public static readonly MessageType PortModeInformationRequest = new("22");
+        public static readonly MessageType PortInputFormatSetupSingle = new("41");
+        public static readonly MessageType PortInputFormatSetupCombined = new("42");
+        public static readonly MessageType PortInformation = new("43");
+        public static readonly MessageType PortModeInformation = new("44");
+        public static readonly MessageType PortValueSingle = new("45");
+        public static readonly MessageType PortInputFormatSingle = new("47");
+        public static readonly MessageType PortOutput = new("81");
+        public static readonly MessageType PortOutputFeedback = new("82");
 
-        private static readonly List<MessageType> _all = new List<MessageType>
+        private static readonly List<MessageType> _all = new()
         {
-            HubProperty, HubAction, HubAttachedDetachedIO, Error, PortInformationRequest, PortModeInformationRequest,
-            PortInputFormatSetupSingle, PortInputFormatSetupCombined, PortInformation, PortModeInformation, PortValueSingle,
-            PortInputFormatSingle, PortOutput, PortOutputFeedback
+            HubProperty,
+            HubAction,
+            HubAttachedDetachedIO,
+            Error,
+            PortInformationRequest,
+            PortModeInformationRequest,
+            PortInputFormatSetupSingle,
+            PortInputFormatSetupCombined,
+            PortInformation,
+            PortModeInformation,
+            PortValueSingle,
+            PortInputFormatSingle,
+            PortOutput,
+            PortOutputFeedback
         };
 
         public static MessageType GetByCode(string code)

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace BluetoothController.Models
 {
-    public class LEDColor
+    public record LEDColor
     {
         public string Name { get; set; }
         public string Code { get; set; }
@@ -22,21 +22,31 @@ namespace BluetoothController.Models
 
     public static class LEDColors
     {
-        public static LEDColor None = new LEDColor("None", "00");
-        public static LEDColor Pink = new LEDColor("Pink", "01");
-        public static LEDColor Purple = new LEDColor("Purple", "02");
-        public static LEDColor Blue = new LEDColor("Blue", "03");
-        public static LEDColor LightBlue = new LEDColor("Light Blue", "04");
-        public static LEDColor Cyan = new LEDColor("Cyan", "05");
-        public static LEDColor Green = new LEDColor("Green", "06");
-        public static LEDColor Yellow = new LEDColor("Yellow", "07");
-        public static LEDColor Orange = new LEDColor("Orange", "08");
-        public static LEDColor Red = new LEDColor("Red", "09");
-        public static LEDColor White = new LEDColor("White", "0a");
+        public static readonly LEDColor None = new("None", "00");
+        public static readonly LEDColor Pink = new("Pink", "01");
+        public static readonly LEDColor Purple = new("Purple", "02");
+        public static readonly LEDColor Blue = new("Blue", "03");
+        public static readonly LEDColor LightBlue = new("Light Blue", "04");
+        public static readonly LEDColor Cyan = new("Cyan", "05");
+        public static readonly LEDColor Green = new("Green", "06");
+        public static readonly LEDColor Yellow = new("Yellow", "07");
+        public static readonly LEDColor Orange = new("Orange", "08");
+        public static readonly LEDColor Red = new("Red", "09");
+        public static readonly LEDColor White = new("White", "0a");
 
-        public readonly static List<LEDColor> All = new List<LEDColor>
+        public readonly static List<LEDColor> All = new()
         {
-            None, Pink, Purple, Blue, LightBlue, Cyan, Green, Yellow, Orange, Red, White
+            None,
+            Pink,
+            Purple,
+            Blue,
+            LightBlue,
+            Cyan,
+            Green,
+            Yellow,
+            Orange,
+            Red,
+            White
         };
 
         public static LEDColor GetByCode(string code)
