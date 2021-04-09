@@ -26,7 +26,8 @@ namespace BluetoothLibraryTester
                     Environment.Exit(0);
                 };
 
-                _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification, HandleDisconnect);
+                var eventHandler = new EventHandler(_controllers);
+                _adapter = new BluetoothLowEnergyAdapter(eventHandler);
                 Console.WriteLine("Searching for devices...");
                 _adapter.StartBleDeviceWatcher();
 
@@ -101,20 +102,30 @@ namespace BluetoothLibraryTester
                 await controller.ExecuteCommandAsync(new ShutdownCommand());
             Console.WriteLine("Disconnected");
         }
+    }
 
-        static async Task HandleNotification(IHubController controller, string message)
+    class EventHandler : IBluetoothLowEnergyAdapterEventHandler
+    {
+        private readonly List<IHubController> _controllers;
+
+        public EventHandler(List<IHubController> controllers)
+        {
+            _controllers = controllers;
+        }
+
+        public async Task HandleNotificationAsync(IHubController controller, string message)
         {
             Console.WriteLine($"{controller.Hub.HubType}: {message}");
             await Task.CompletedTask;
         }
 
-        static async Task HandleDiscover(DiscoveredDevice device)
+        public async Task HandleDiscoveryAsync(DiscoveredDevice device)
         {
             Console.WriteLine($"Discovered device: {device.Name}");
             await Task.CompletedTask;
         }
 
-        static async Task HandleConnect(IHubController controller, string errorMessage)
+        public async Task HandleConnectAsync(IHubController controller, string errorMessage)
         {
             if (controller != null)
             {
@@ -130,7 +141,7 @@ namespace BluetoothLibraryTester
             }
         }
 
-        static async Task HandleDisconnect(IHubController controller)
+        public async Task HandleDisconnectAsync(IHubController controller)
         {
             _controllers.Remove(controller);
             Console.WriteLine($"Disconnected device: {controller.Hub.HubType}");
