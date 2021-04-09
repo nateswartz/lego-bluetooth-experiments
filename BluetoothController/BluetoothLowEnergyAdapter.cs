@@ -23,20 +23,11 @@ namespace BluetoothController
 
         private readonly object _lock = new();
 
-        private readonly Func<DiscoveredDevice, Task> _discoveryHandler;
-        private readonly Func<IHubController, string, Task> _connectionHandler;
-        private readonly Func<IHubController, string, Task> _notificationHandler;
-        private readonly Func<IHubController, Task> _disconnectHandler;
+        private readonly IBluetoothLowEnergyAdapterEventHandler _eventHandler;
 
-        public BluetoothLowEnergyAdapter(Func<DiscoveredDevice, Task> discoveryHandler,
-                                         Func<IHubController, string, Task> connectionHandler,
-                                         Func<IHubController, string, Task> notificationHandler,
-                                         Func<IHubController, Task> disconnectHandler)
+        public BluetoothLowEnergyAdapter(IBluetoothLowEnergyAdapterEventHandler eventHandler)
         {
-            _discoveryHandler = discoveryHandler;
-            _connectionHandler = connectionHandler;
-            _notificationHandler = notificationHandler;
-            _disconnectHandler = disconnectHandler;
+            _eventHandler = eventHandler;
             _controllers = new List<IHubController>();
         }
 
@@ -78,12 +69,12 @@ namespace BluetoothController
                 _controllers.Add(controller);
             }
 
-            await _discoveryHandler(new DiscoveredDevice
+            await _eventHandler.HandleDiscoveryAsync(new DiscoveredDevice
             {
                 Name = device.Name,
                 BluetoothDeviceId = device.DeviceId
             });
-            await ConnectAsync(controller, _connectionHandler);
+            await ConnectAsync(controller, _eventHandler.HandleConnectAsync);
         }
 
         private static async Task<bool> IsValidDeviceAsync(BluetoothLEDevice device)
@@ -105,7 +96,7 @@ namespace BluetoothController
 
             RegisterEventHandlers(controller);
 
-            await controller.InitializeAsync(_notificationHandler, characteristic);
+            await controller.InitializeAsync(_eventHandler.HandleNotificationAsync, characteristic);
 
             await WaitForHubTypeDiscovery(controller);
 
@@ -141,7 +132,7 @@ namespace BluetoothController
             {
                 _controllers.Remove(hubController);
             }
-            await _disconnectHandler(hubController);
+            await _eventHandler.HandleDisconnectAsync(hubController);
         }
 
         private static async Task<GattDeviceService> GetGattDeviceServiceAsync(string bluetoothLEDeviceId)

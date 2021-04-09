@@ -4,7 +4,6 @@ using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace LegoBluetoothController.UI
@@ -22,7 +21,8 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            _adapter = new BluetoothLowEnergyAdapter(HandleDiscover, HandleConnect, HandleNotification, HandleDisconnect);
+            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _controllers);
+            _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
         }
@@ -87,54 +87,6 @@ namespace LegoBluetoothController.UI
             {
                 ConnectedHubs.Text += controller.Hub.HubType;
             }
-        }
-
-        private async Task HandleNotification(IHubController controller, string message)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                LogMessage($"{controller.Hub.HubType}: {message}");
-            });
-            await Task.CompletedTask;
-        }
-
-        private async Task HandleDiscover(DiscoveredDevice device)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                LogMessage($"Discovered device: {device.Name}");
-            });
-            await Task.CompletedTask;
-        }
-
-        private async Task HandleConnect(IHubController controller, string errorMessage)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (controller != null)
-                {
-                    _controllers.Add(controller);
-                    ConnectedHubs.Text += controller.Hub.HubType;
-
-                    LogMessage($"Connected device: {controller.Hub.HubType}");
-                }
-                else
-                {
-                    LogMessage($"Failed to connect: {errorMessage}");
-                }
-            });
-            await Task.CompletedTask;
-        }
-
-        private async Task HandleDisconnect(IHubController controller)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                _controllers.Remove(controller);
-                UpdateConnectedHubsText();
-                LogMessage($"Disconnected device: {controller.Hub.HubType}");
-            });
-            await Task.CompletedTask;
         }
 
         private void LogMessage(string message)
