@@ -25,6 +25,10 @@ namespace BluetoothController
 
         private readonly IBluetoothLowEnergyAdapterEventHandler _eventHandler;
 
+        public BluetoothLowEnergyAdapter() : this(new SimpleBluetoothLowEnergyAdapterEventHandler())
+        {
+        }
+
         public BluetoothLowEnergyAdapter(IBluetoothLowEnergyAdapterEventHandler eventHandler)
         {
             _eventHandler = eventHandler;
