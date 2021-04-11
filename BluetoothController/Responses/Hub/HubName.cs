@@ -9,7 +9,7 @@ namespace BluetoothController.Responses.Hub
 
         public HubName(string body) : base(body)
         {
-            var data = DataConverter.HexStringToByteArray(Body.Substring(10));
+            var data = DataConverter.HexStringToByteArray(Body[10..]);
             Name = Encoding.ASCII.GetString(data);
         }
 
