@@ -4,6 +4,7 @@ using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace LegoBluetoothController.UI
@@ -73,11 +74,7 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            ConnectedDevices.Text = "";
-            foreach (var port in controller.Hub.Ports)
-            {
-                ConnectedDevices.Text += $"{port.DeviceType} ({port.PortID}){Environment.NewLine}";
-            }
+            ConnectedDevices.Text = GetConnectedDevicesText(controller);
         }
 
         private void UpdateConnectedHubsText()
@@ -93,6 +90,23 @@ namespace LegoBluetoothController.UI
         {
             LogMessages.Text += message + Environment.NewLine;
             LogMessages.ScrollToEnd();
+        }
+
+        private void RefreshDevicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (HubSelect.SelectedItem is not IHubController controller)
+                return;
+            ConnectedDevices.Text = GetConnectedDevicesText(controller);
+        }
+
+        private static string GetConnectedDevicesText(IHubController controller)
+        {
+            var text = "";
+            foreach (var port in controller.Hub.Ports.Where(p => !string.IsNullOrWhiteSpace(p.DeviceType.Name)))
+            {
+                text += $"{port.DeviceType} ({port.PortID}){Environment.NewLine}";
+            }
+            return text;
         }
     }
 }

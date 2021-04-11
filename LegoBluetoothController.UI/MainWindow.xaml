@@ -20,5 +20,6 @@
         <ComboBox x:Name="ColorSelect" HorizontalAlignment="Left" Margin="241,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
         <TextBox x:Name="ConnectedDevices" IsReadOnly="True" Text="" TextWrapping="Wrap" Margin="623,52,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Height="100"/>
         <Label Content="Connected Devices" Margin="623,15,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="150" Height="30"/>
+        <Button x:Name="RefreshDevicesButton" Content="Refresh" Click="RefreshDevicesButton_Click" HorizontalAlignment="Left" Margin="623,169,0,0" VerticalAlignment="Top" Height="30" Width="66"/>
     </Grid>
 </Window>
