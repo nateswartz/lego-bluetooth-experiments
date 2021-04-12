@@ -22,7 +22,7 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _controllers);
+            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, ConnectedDevices, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
@@ -90,13 +90,6 @@ namespace LegoBluetoothController.UI
         {
             LogMessages.Text += message + Environment.NewLine;
             LogMessages.ScrollToEnd();
-        }
-
-        private void RefreshDevicesButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (HubSelect.SelectedItem is not IHubController controller)
-                return;
-            ConnectedDevices.Text = GetConnectedDevicesText(controller);
         }
 
         private static string GetConnectedDevicesText(IHubController controller)

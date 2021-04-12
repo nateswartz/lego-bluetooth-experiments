@@ -1,8 +1,10 @@
 ﻿using BluetoothController;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -12,12 +14,17 @@ namespace LegoBluetoothController.UI
     {
         private readonly TextBox _logOutputTextBox;
         private readonly TextBox _connectedHubsTextBox;
+        private readonly TextBox _connectedDevices;
         private readonly List<IHubController> _controllers;
 
-        public AdapterEventHandler(TextBox logOutputTextBox, TextBox connectedHubsTextBox, List<IHubController> controllers)
+        public AdapterEventHandler(TextBox logOutputTextBox,
+                                   TextBox connectedHubsTextBox,
+                                   TextBox connectedDevices,
+                                   List<IHubController> controllers)
         {
             _logOutputTextBox = logOutputTextBox;
             _connectedHubsTextBox = connectedHubsTextBox;
+            _connectedDevices = connectedDevices;
             _controllers = controllers;
         }
 
@@ -26,6 +33,11 @@ namespace LegoBluetoothController.UI
             App.Current.Dispatcher.Invoke(() =>
             {
                 LogMessage($"{controller.Hub.HubType}: {message}");
+                if (message.Contains(DeviceState.Attached.ToString())
+                    || message.Contains(DeviceState.Detached.ToString()))
+                {
+                    _connectedDevices.Text = GetConnectedDevicesText(controller);
+                }
             });
             await Task.CompletedTask;
         }
@@ -82,6 +94,15 @@ namespace LegoBluetoothController.UI
             {
                 _connectedHubsTextBox.Text += controller.Hub.HubType;
             }
+        }
+        private static string GetConnectedDevicesText(IHubController controller)
+        {
+            var text = "";
+            foreach (var port in controller.Hub.Ports.Where(p => !string.IsNullOrWhiteSpace(p.DeviceType.Name)))
+            {
+                text += $"{port.DeviceType} ({port.PortID}){Environment.NewLine}";
+            }
+            return text;
         }
     }
 }
