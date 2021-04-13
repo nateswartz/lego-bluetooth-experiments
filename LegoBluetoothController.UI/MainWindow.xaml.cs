@@ -9,9 +9,6 @@ using System.Windows;
 
 namespace LegoBluetoothController.UI
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
 
@@ -22,7 +19,7 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, ConnectedDevices, _controllers);
+            var eventHandler = new AdapterEventHandler(HubSelect, LogMessages, ConnectedHubs, ConnectedDevices, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;

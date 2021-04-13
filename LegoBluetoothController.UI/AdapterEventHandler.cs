@@ -1,40 +1,46 @@
 ﻿using BluetoothController;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
-using BluetoothController.Models.Enums;
+using BluetoothController.Responses;
+using BluetoothController.Responses.Device.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace LegoBluetoothController.UI
 {
     internal class AdapterEventHandler : IBluetoothLowEnergyAdapterEventHandler
     {
+        private readonly ComboBox _hubSelect;
         private readonly TextBox _logOutputTextBox;
         private readonly TextBox _connectedHubsTextBox;
         private readonly TextBox _connectedDevices;
         private readonly List<IHubController> _controllers;
 
-        public AdapterEventHandler(TextBox logOutputTextBox,
+        public AdapterEventHandler(ComboBox hubSelect,
+                                   TextBox logOutputTextBox,
                                    TextBox connectedHubsTextBox,
                                    TextBox connectedDevices,
                                    List<IHubController> controllers)
         {
+            _hubSelect = hubSelect;
             _logOutputTextBox = logOutputTextBox;
             _connectedHubsTextBox = connectedHubsTextBox;
             _connectedDevices = connectedDevices;
             _controllers = controllers;
         }
 
-        public async Task HandleNotificationAsync(IHubController controller, string message)
+        public async Task HandleNotificationAsync(IHubController controller, Response message)
         {
-            App.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 LogMessage($"{controller.Hub.HubType}: {message}");
-                if (message.Contains(DeviceState.Attached.ToString())
-                    || message.Contains(DeviceState.Detached.ToString()))
+                if (message is PortState
+                    && _hubSelect.SelectedItem is IHubController selectedController
+                    && controller == selectedController)
                 {
                     _connectedDevices.Text = GetConnectedDevicesText(controller);
                 }
@@ -44,7 +50,7 @@ namespace LegoBluetoothController.UI
 
         public async Task HandleDiscoveryAsync(DiscoveredDevice device)
         {
-            App.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 LogMessage($"Discovered device: {device.Name}");
             });
@@ -53,7 +59,7 @@ namespace LegoBluetoothController.UI
 
         public async Task HandleConnectAsync(IHubController controller, string errorMessage)
         {
-            App.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (controller != null)
                 {
@@ -72,7 +78,7 @@ namespace LegoBluetoothController.UI
 
         public async Task HandleDisconnectAsync(IHubController controller)
         {
-            App.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 _controllers.Remove(controller);
                 UpdateConnectedHubsText();

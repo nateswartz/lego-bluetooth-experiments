@@ -23,9 +23,7 @@ namespace BluetoothController.Controllers
 
         private Dictionary<string, List<object>> _eventHandlers { get; set; }
 
-        private readonly List<string> _notifications = new();
-
-        private Func<IHubController, string, Task> _notificationHandler;
+        private Func<IHubController, Response, Task> _notificationHandler;
 
         public HubController(ILegoHub legoHub, string selectedBleDeviceId)
         {
@@ -53,7 +51,7 @@ namespace BluetoothController.Controllers
             return writeSuccessful;
         }
 
-        public async Task InitializeAsync(Func<IHubController, string, Task> notificationHandler, GattCharacteristic gattCharacteristic)
+        public async Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, GattCharacteristic gattCharacteristic)
         {
             _hubCharacteristic = gattCharacteristic;
             await ToggleSubscribedForNotificationsAsync(notificationHandler);
@@ -85,15 +83,13 @@ namespace BluetoothController.Controllers
             }
         }
 
-        internal async Task<string> ProcessNotification(string notification)
+        internal async Task<Response> ProcessNotification(string notification)
         {
             var response = ResponseFactory.CreateResponse(notification, this);
 
             await TriggerActionsFromNotification(response);
 
-            var message = response.ToString();
-
-            return message;
+            return response;
         }
 
         public void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response
@@ -138,7 +134,7 @@ namespace BluetoothController.Controllers
             }
         }
 
-        private async Task<bool> ToggleSubscribedForNotificationsAsync(Func<IHubController, string, Task> notificationHandler)
+        private async Task<bool> ToggleSubscribedForNotificationsAsync(Func<IHubController, Response, Task> notificationHandler)
         {
             _notificationHandler = notificationHandler;
             try
@@ -169,11 +165,6 @@ namespace BluetoothController.Controllers
         {
             var notification = ReadNotificationFromBuffer(args.CharacteristicValue);
             var message = await ProcessNotification(notification);
-            _notifications.Add(message);
-            if (_notifications.Count > 10)
-            {
-                _notifications.RemoveAt(0);
-            }
             await _notificationHandler(this, message);
         }
 

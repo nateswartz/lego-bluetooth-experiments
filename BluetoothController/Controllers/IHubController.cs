@@ -15,7 +15,7 @@ namespace BluetoothController.Controllers
         ILegoHub Hub { get; set; }
         string SelectedBleDeviceId { get; }
         void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response;
-        Task InitializeAsync(Func<IHubController, string, Task> notificationHandler, GattCharacteristic gattCharacteristic);
+        Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, GattCharacteristic gattCharacteristic);
         Task<bool> ExecuteCommandAsync(ICommand command);
         IEnumerable<IEventHandler<T>> GetEventHandlers<T>() where T : Response;
         IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType);

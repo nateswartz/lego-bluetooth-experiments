@@ -1,10 +1,11 @@
 ﻿using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Responses;
 using System.Threading.Tasks;
 
 namespace BluetoothController
 {
-    public class SimpleBluetoothLowEnergyAdapterEventHandler : IBluetoothLowEnergyAdapterEventHandler
+    internal class SimpleBluetoothLowEnergyAdapterEventHandler : IBluetoothLowEnergyAdapterEventHandler
     {
         public Task HandleDiscoveryAsync(DiscoveredDevice discoveredDevice)
         {
@@ -16,7 +17,7 @@ namespace BluetoothController
             return Task.CompletedTask;
         }
 
-        public Task HandleNotificationAsync(IHubController hubController, string notification)
+        public Task HandleNotificationAsync(IHubController hubController, Response notification)
         {
             return Task.CompletedTask;
         }
