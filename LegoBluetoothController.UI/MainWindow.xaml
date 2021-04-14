@@ -8,7 +8,6 @@
     <Grid Margin="0,0,0,0">
         <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="748,490,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
         <TextBox x:Name="LogMessages" IsReadOnly="True" HorizontalAlignment="Left" Margin="34,382,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="604" Height="162"/>
-        <Button x:Name="ChangeLedColorButton" Content="Change LED Color" Click="ChangeLedColorButton_Click" HorizontalAlignment="Left" Margin="450,27,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
         <Button x:Name="ShutdownButton" Content="Shutdown" Click="ShutdownButton_Click" HorizontalAlignment="Left" Margin="364,87,0,0" VerticalAlignment="Top" Width="130" Height="30"/>
         <Label Content="Connected Hubs" Margin="756,352,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="150" Height="30"/>
         <TextBox x:Name="ConnectedHubs" IsReadOnly="True" Text="" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="756,382,0,0" Width="100" Height="100"/>
@@ -16,7 +15,7 @@
         <TextBox x:Name="RawCommandText" HorizontalAlignment="Left" Margin="34,88,0,0" Text="Enter command here" TextWrapping="Wrap" VerticalAlignment="Top" Width="179" Height="29"/>
         <ComboBox x:Name="HubSelect" SelectionChanged="HubSelect_SelectionChanged" HorizontalAlignment="Left" Margin="34,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
         <Button x:Name="ExecuteCommandButton" Content="Execute" Click="ExecuteCommandButton_Click" HorizontalAlignment="Left" Margin="241,88,0,0" VerticalAlignment="Top" Width="73" Height="29"/>
-        <ComboBox x:Name="ColorSelect" HorizontalAlignment="Left" Margin="241,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
+        <ComboBox x:Name="ColorSelect" SelectionChanged="ColorSelect_SelectionChanged" HorizontalAlignment="Left" Margin="241,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
         <TextBox x:Name="ConnectedDevices" IsReadOnly="True" Text="" TextWrapping="Wrap" Margin="623,52,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" Height="100"/>
         <Label Content="Connected Devices" Margin="623,15,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="150" Height="30"/>
     </Grid>

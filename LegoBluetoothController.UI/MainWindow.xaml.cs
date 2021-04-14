@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace LegoBluetoothController.UI
 {
@@ -41,12 +42,18 @@ namespace LegoBluetoothController.UI
             }
         }
 
-        private async void ChangeLedColorButton_Click(object sender, RoutedEventArgs e)
+        private async void ColorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
+            {
+                ColorSelect.SelectedItem = null;
                 return;
+            }
             if (ColorSelect.SelectedItem is not LEDColor color)
+            {
+                ColorSelect.SelectedItem = null;
                 return;
+            }
             await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
             LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
         }
@@ -55,6 +62,7 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
+            ConnectedDevices.Text = "";
             await controller.ExecuteCommandAsync(new ShutdownCommand());
 
             UpdateConnectedHubsText();
@@ -67,7 +75,7 @@ namespace LegoBluetoothController.UI
             controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
 
-        private void HubSelect_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
