@@ -3,7 +3,7 @@ using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
@@ -14,7 +14,7 @@ namespace LegoBluetoothController.UI
 
         static IBluetoothLowEnergyAdapter _adapter;
 
-        static readonly List<IHubController> _controllers = new();
+        static readonly ObservableCollection<IHubController> _controllers = new();
 
         public MainWindow()
         {

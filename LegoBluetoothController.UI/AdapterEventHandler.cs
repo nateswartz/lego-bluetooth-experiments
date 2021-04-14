@@ -4,7 +4,7 @@ using BluetoothController.Models;
 using BluetoothController.Responses;
 using BluetoothController.Responses.Device.State;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,13 +18,13 @@ namespace LegoBluetoothController.UI
         private readonly TextBox _logOutputTextBox;
         private readonly TextBox _connectedHubsTextBox;
         private readonly TextBox _connectedDevices;
-        private readonly List<IHubController> _controllers;
+        private readonly ObservableCollection<IHubController> _controllers;
 
         public AdapterEventHandler(ComboBox hubSelect,
                                    TextBox logOutputTextBox,
                                    TextBox connectedHubsTextBox,
                                    TextBox connectedDevices,
-                                   List<IHubController> controllers)
+                                   ObservableCollection<IHubController> controllers)
         {
             _hubSelect = hubSelect;
             _logOutputTextBox = logOutputTextBox;
