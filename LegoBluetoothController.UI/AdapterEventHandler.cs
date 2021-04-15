@@ -17,19 +17,16 @@ namespace LegoBluetoothController.UI
         private readonly ComboBox _hubSelect;
         private readonly TextBox _logOutputTextBox;
         private readonly TextBox _connectedHubsTextBox;
-        private readonly TextBox _connectedDevices;
         private readonly ObservableCollection<IHubController> _controllers;
 
         public AdapterEventHandler(ComboBox hubSelect,
                                    TextBox logOutputTextBox,
                                    TextBox connectedHubsTextBox,
-                                   TextBox connectedDevices,
                                    ObservableCollection<IHubController> controllers)
         {
             _hubSelect = hubSelect;
             _logOutputTextBox = logOutputTextBox;
             _connectedHubsTextBox = connectedHubsTextBox;
-            _connectedDevices = connectedDevices;
             _controllers = controllers;
         }
 
@@ -38,11 +35,9 @@ namespace LegoBluetoothController.UI
             Application.Current.Dispatcher.Invoke(() =>
             {
                 LogMessage($"{controller.Hub.HubType}: {message}");
-                if (message is PortState
-                    && _hubSelect.SelectedItem is IHubController selectedController
-                    && controller == selectedController)
+                if (message is PortState)
                 {
-                    _connectedDevices.Text = GetConnectedDevicesText(controller);
+                    RefreshConnectedHubsText();
                 }
             });
             await Task.CompletedTask;
@@ -64,8 +59,7 @@ namespace LegoBluetoothController.UI
                 if (controller != null)
                 {
                     _controllers.Add(controller);
-                    _connectedHubsTextBox.Text += controller.Hub.HubType;
-
+                    RefreshConnectedHubsText();
                     LogMessage($"Connected device: {controller.Hub.HubType}");
                 }
                 else
@@ -81,7 +75,7 @@ namespace LegoBluetoothController.UI
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _controllers.Remove(controller);
-                UpdateConnectedHubsText();
+                RefreshConnectedHubsText();
                 LogMessage($"Disconnected device: {controller.Hub.HubType}");
             });
             await Task.CompletedTask;
@@ -93,22 +87,18 @@ namespace LegoBluetoothController.UI
             _logOutputTextBox.ScrollToEnd();
         }
 
-        private void UpdateConnectedHubsText()
-        {
-            _connectedHubsTextBox.Text = "";
-            foreach (var controller in _controllers)
-            {
-                _connectedHubsTextBox.Text += controller.Hub.HubType;
-            }
-        }
-        private static string GetConnectedDevicesText(IHubController controller)
+        private void RefreshConnectedHubsText()
         {
             var text = "";
-            foreach (var port in controller.Hub.Ports.Where(p => !string.IsNullOrWhiteSpace(p.DeviceType.Name)))
+            foreach (var controller in _controllers)
             {
-                text += $"{port.DeviceType} ({port.PortID}){Environment.NewLine}";
+                text += $"{controller.Hub.HubType} ({controller.SelectedBleDeviceId}){Environment.NewLine}";
+                foreach (var port in controller.Hub.Ports.Where(p => !string.IsNullOrWhiteSpace(p.DeviceType.Name)))
+                {
+                    text += $"\t{port.DeviceType} ({port.PortID}){Environment.NewLine}";
+                }
             }
-            return text;
+            _connectedHubsTextBox.Text = text;
         }
     }
 }

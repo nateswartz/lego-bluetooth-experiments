@@ -4,7 +4,6 @@ using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,7 +19,7 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var eventHandler = new AdapterEventHandler(HubSelect, LogMessages, ConnectedHubs, ConnectedDevices, _controllers);
+            var eventHandler = new AdapterEventHandler(HubSelect, LogMessages, ConnectedHubs, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
@@ -62,10 +61,7 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            ConnectedDevices.Text = "";
             await controller.ExecuteCommandAsync(new ShutdownCommand());
-
-            UpdateConnectedHubsText();
         }
 
         private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
@@ -75,36 +71,10 @@ namespace LegoBluetoothController.UI
             controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
 
-        private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (HubSelect.SelectedItem is not IHubController controller)
-                return;
-            ConnectedDevices.Text = GetConnectedDevicesText(controller);
-        }
-
-        private void UpdateConnectedHubsText()
-        {
-            ConnectedHubs.Text = "";
-            foreach (var controller in _controllers)
-            {
-                ConnectedHubs.Text += controller.Hub.HubType;
-            }
-        }
-
         private void LogMessage(string message)
         {
             LogMessages.Text += message + Environment.NewLine;
             LogMessages.ScrollToEnd();
-        }
-
-        private static string GetConnectedDevicesText(IHubController controller)
-        {
-            var text = "";
-            foreach (var port in controller.Hub.Ports.Where(p => !string.IsNullOrWhiteSpace(p.DeviceType.Name)))
-            {
-                text += $"{port.DeviceType} ({port.PortID}){Environment.NewLine}";
-            }
-            return text;
         }
     }
 }
