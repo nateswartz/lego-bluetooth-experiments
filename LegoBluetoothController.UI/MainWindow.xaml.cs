@@ -4,17 +4,19 @@ using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace LegoBluetoothController.UI
 {
     public partial class MainWindow : Window
     {
+        private readonly IBluetoothLowEnergyAdapter _adapter;
+        private readonly ObservableCollection<IHubController> _controllers = new();
 
-        static IBluetoothLowEnergyAdapter _adapter;
-
-        static readonly ObservableCollection<IHubController> _controllers = new();
+        private bool _forceClose = false;
 
         public MainWindow()
         {
@@ -64,11 +66,11 @@ namespace LegoBluetoothController.UI
             await controller.ExecuteCommandAsync(new ShutdownCommand());
         }
 
-        private void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
+        private async void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
+            await controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
 
         private void LogMessage(string message)
@@ -76,5 +78,35 @@ namespace LegoBluetoothController.UI
             LogMessages.Text += message + Environment.NewLine;
             LogMessages.ScrollToEnd();
         }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+
+            if (_forceClose)
+            {
+                e.Cancel = false;
+                return;
+            }
+
+            Dispatcher.InvokeAsync(ShutdownApplication, DispatcherPriority.Normal);
+        }
+
+        private async void ShutdownApplication()
+        {
+            foreach (var controller in _controllers)
+            {
+                await controller.ExecuteCommandAsync(new ShutdownCommand());
+            }
+
+            CloseForced();
+        }
+
+        private void CloseForced()
+        {
+            _forceClose = true;
+            Close();
+        }
+
     }
 }

@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="LEGO Powered Up Controller" Height="653" Width="1045">
+        Title="LEGO Powered Up Controller" Height="653" Width="1045"
+        Closing="Window_Closing">
     <Grid Margin="0,0,0,0">
         <Button x:Name="DiscoverButton" Content="Discover" Click="DiscoverButton_Click" HorizontalAlignment="Left" Margin="748,490,0,0" VerticalAlignment="Top" Height="30" Width="130"/>
         <TextBox x:Name="LogMessages" IsReadOnly="True" HorizontalAlignment="Left" Margin="34,382,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="604" Height="162"/>
