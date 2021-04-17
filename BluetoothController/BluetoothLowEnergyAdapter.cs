@@ -2,6 +2,7 @@
 using BluetoothController.EventHandlers.Internal;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
+using BluetoothController.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,7 +101,7 @@ namespace BluetoothController
 
             RegisterEventHandlers(controller);
 
-            await controller.InitializeAsync(_eventHandler.HandleNotificationAsync, characteristic);
+            await controller.InitializeAsync(_eventHandler.HandleNotificationAsync, new GattCharacteristicWrapper(characteristic));
 
             await WaitForHubTypeDiscovery(controller);
 

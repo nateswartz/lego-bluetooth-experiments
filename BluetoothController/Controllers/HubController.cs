@@ -4,6 +4,7 @@ using BluetoothController.Hubs;
 using BluetoothController.Models;
 using BluetoothController.Responses;
 using BluetoothController.Util;
+using BluetoothController.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace BluetoothController.Controllers
 
         public string SelectedBleDeviceId { get; }
 
-        private GattCharacteristic _hubCharacteristic;
+        private IGattCharacteristicWrapper _hubCharacteristic;
 
         private Dictionary<string, List<object>> _eventHandlers { get; set; }
 
@@ -51,9 +52,9 @@ namespace BluetoothController.Controllers
             return writeSuccessful;
         }
 
-        public async Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, GattCharacteristic gattCharacteristic)
+        public async Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, IGattCharacteristicWrapper gattCharacteristicWrapper)
         {
-            _hubCharacteristic = gattCharacteristic;
+            _hubCharacteristic = gattCharacteristicWrapper;
             await ToggleSubscribedForNotificationsAsync(notificationHandler);
             await ExecuteCommandAsync(new HubTypeCommand());
             await ExecuteCommandAsync(new HubFirmwareCommand());
@@ -139,7 +140,7 @@ namespace BluetoothController.Controllers
             _notificationHandler = notificationHandler;
             try
             {
-                _hubCharacteristic.ValueChanged += Characteristic_ValueChanged;
+                _hubCharacteristic.AddValueChangedHandler(Characteristic_ValueChanged);
 
                 var status = await
                     _hubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
@@ -151,7 +152,7 @@ namespace BluetoothController.Controllers
                 }
                 else
                 {
-                    _hubCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+                    _hubCharacteristic.RemoveValueChangedHandler(Characteristic_ValueChanged);
                     return false;
                 }
             }

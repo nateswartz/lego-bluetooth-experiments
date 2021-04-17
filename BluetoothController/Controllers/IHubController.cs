@@ -3,10 +3,10 @@ using BluetoothController.EventHandlers;
 using BluetoothController.Hubs;
 using BluetoothController.Models;
 using BluetoothController.Responses;
+using BluetoothController.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace BluetoothController.Controllers
 {
@@ -15,7 +15,7 @@ namespace BluetoothController.Controllers
         ILegoHub Hub { get; set; }
         string SelectedBleDeviceId { get; }
         void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response;
-        Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, GattCharacteristic gattCharacteristic);
+        Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, IGattCharacteristicWrapper gattCharacteristicWrapper);
         Task<bool> ExecuteCommandAsync(ICommand command);
         IEnumerable<IEventHandler<T>> GetEventHandlers<T>() where T : Response;
         IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType);
