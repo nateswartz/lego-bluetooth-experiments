@@ -1,6 +1,7 @@
 ﻿using BluetoothController;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Responses;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace BluetoothLibraryTester
             _controllers = controllers;
         }
 
-        public async Task HandleNotificationAsync(IHubController controller, string message)
+        public async Task HandleNotificationAsync(IHubController controller, Response message)
         {
             Console.WriteLine($"{controller.Hub.HubType}: {message}");
             await Task.CompletedTask;
