@@ -1,4 +1,6 @@
-﻿using Windows.Devices.Bluetooth.GenericAttributeProfile;
+﻿using System;
+using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 
@@ -13,14 +15,17 @@ namespace BluetoothController.Wrappers
             _gattCharacteristic = gattCharacteristic;
         }
 
-        public IAsyncOperation<GattWriteResult> WriteValueWithResultAsync(IBuffer value)
+        public async Task<bool> WriteValueWithResultAsync(IBuffer value)
         {
-            return _gattCharacteristic.WriteValueWithResultAsync(value);
+            var result = await _gattCharacteristic.WriteValueWithResultAsync(value);
+
+            return result.Status == GattCommunicationStatus.Success;
         }
 
-        public IAsyncOperation<GattCommunicationStatus> WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue clientCharacteristicConfigurationDescriptorValue)
+        public async Task<bool> WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue clientCharacteristicConfigurationDescriptorValue)
         {
-            return _gattCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(clientCharacteristicConfigurationDescriptorValue);
+            var status = await _gattCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(clientCharacteristicConfigurationDescriptorValue);
+            return status == GattCommunicationStatus.Success;
         }
 
         public void AddValueChangedHandler(TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> handler)
@@ -32,6 +37,5 @@ namespace BluetoothController.Wrappers
         {
             _gattCharacteristic.ValueChanged -= handler;
         }
-
     }
 }
