@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
 
 namespace BluetoothController.Controllers
@@ -138,11 +137,9 @@ namespace BluetoothController.Controllers
             _notificationHandler = notificationHandler;
             try
             {
-                _hubCharacteristic.AddValueChangedHandler(Characteristic_ValueChanged);
+                _hubCharacteristic.AddValueChangedHandler(HubNotificationCallback);
 
-                var writeSuccessful = await
-                    _hubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                        GattClientCharacteristicConfigurationDescriptorValue.Notify);
+                var writeSuccessful = await _hubCharacteristic.EnableNotificationsAsync();
 
                 if (writeSuccessful)
                 {
@@ -150,7 +147,7 @@ namespace BluetoothController.Controllers
                 }
                 else
                 {
-                    _hubCharacteristic.RemoveValueChangedHandler(Characteristic_ValueChanged);
+                    _hubCharacteristic.RemoveValueChangedHandler();
                     return false;
                 }
             }
@@ -160,9 +157,9 @@ namespace BluetoothController.Controllers
             }
         }
 
-        private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
+        private async Task HubNotificationCallback(IBuffer messageData)
         {
-            var notification = ReadNotificationFromBuffer(args.CharacteristicValue);
+            var notification = ReadNotificationFromBuffer(messageData);
             var message = await ProcessNotification(notification);
             await _notificationHandler(this, message);
         }

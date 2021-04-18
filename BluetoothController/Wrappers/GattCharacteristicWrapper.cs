@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Foundation;
 using Windows.Storage.Streams;
 
 namespace BluetoothController.Wrappers
@@ -9,10 +8,12 @@ namespace BluetoothController.Wrappers
     public class GattCharacteristicWrapper : IGattCharacteristicWrapper
     {
         private GattCharacteristic _gattCharacteristic;
+        private Func<IBuffer, Task> _charactersticChangedCallback;
 
         public GattCharacteristicWrapper(GattCharacteristic gattCharacteristic)
         {
             _gattCharacteristic = gattCharacteristic;
+
         }
 
         public async Task<bool> WriteValueWithResultAsync(IBuffer value)
@@ -22,20 +23,26 @@ namespace BluetoothController.Wrappers
             return result.Status == GattCommunicationStatus.Success;
         }
 
-        public async Task<bool> WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue clientCharacteristicConfigurationDescriptorValue)
+        public async Task<bool> EnableNotificationsAsync()
         {
-            var status = await _gattCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(clientCharacteristicConfigurationDescriptorValue);
+            var status = await _gattCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
             return status == GattCommunicationStatus.Success;
         }
 
-        public void AddValueChangedHandler(TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> handler)
+        public void AddValueChangedHandler(Func<IBuffer, Task> charactersticChangedCallback)
         {
-            _gattCharacteristic.ValueChanged += handler;
+            _charactersticChangedCallback = charactersticChangedCallback;
+            _gattCharacteristic.ValueChanged += Characteristic_ValueChanged;
         }
 
-        public void RemoveValueChangedHandler(TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> handler)
+        public void RemoveValueChangedHandler()
         {
-            _gattCharacteristic.ValueChanged -= handler;
+            _gattCharacteristic.ValueChanged -= Characteristic_ValueChanged;
+        }
+
+        private async void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
+        {
+            await _charactersticChangedCallback(args.CharacteristicValue);
         }
     }
 }
