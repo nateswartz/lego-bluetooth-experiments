@@ -74,9 +74,7 @@ namespace BluetoothController.Controllers
         {
             try
             {
-                var result = await _hubCharacteristic.WriteValueWithResultAsync(buffer);
-
-                return result.Status == GattCommunicationStatus.Success;
+                return await _hubCharacteristic.WriteValueWithResultAsync(buffer);
             }
             catch (Exception)
             {
@@ -142,11 +140,11 @@ namespace BluetoothController.Controllers
             {
                 _hubCharacteristic.AddValueChangedHandler(Characteristic_ValueChanged);
 
-                var status = await
+                var writeSuccessful = await
                     _hubCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
                         GattClientCharacteristicConfigurationDescriptorValue.Notify);
 
-                if (status == GattCommunicationStatus.Success)
+                if (writeSuccessful)
                 {
                     return true;
                 }
