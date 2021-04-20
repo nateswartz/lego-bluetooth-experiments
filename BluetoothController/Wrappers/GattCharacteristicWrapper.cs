@@ -18,9 +18,15 @@ namespace BluetoothController.Wrappers
 
         public async Task<bool> WriteValueWithResultAsync(IBuffer value)
         {
-            var result = await _gattCharacteristic.WriteValueWithResultAsync(value);
-
-            return result.Status == GattCommunicationStatus.Success;
+            try
+            {
+                var result = await _gattCharacteristic.WriteValueWithResultAsync(value);
+                return result.Status == GattCommunicationStatus.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> EnableNotificationsAsync()

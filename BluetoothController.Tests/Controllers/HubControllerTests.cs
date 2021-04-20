@@ -2,6 +2,9 @@
 using BluetoothController.Hubs;
 using BluetoothController.Wrappers;
 using Moq;
+using System;
+using System.Threading.Tasks;
+using Windows.Storage.Streams;
 using Xunit;
 
 namespace BluetoothController.Tests.Controllers
@@ -19,6 +22,15 @@ namespace BluetoothController.Tests.Controllers
             _hubController = new HubController(_mockLegoHub.Object, "");
         }
 
+        private void VerifyMocks()
+        {
+            _mockGattCharacteristicWrapper.VerifyAll();
+            _mockGattCharacteristicWrapper.VerifyNoOtherCalls();
+
+            _mockLegoHub.VerifyAll();
+            _mockLegoHub.VerifyNoOtherCalls();
+        }
+
         [Fact]
         public void ToString_CleansBleDeviceId()
         {
@@ -27,7 +39,21 @@ namespace BluetoothController.Tests.Controllers
 
             var result = _hubController.ToString();
 
+            VerifyMocks();
             Assert.Equal("BoostMoveHub (34:34:23)", result);
+        }
+
+        [Fact]
+        public async Task InitializeAsync_CorrectMocksAreCalled()
+        {
+            _mockGattCharacteristicWrapper.Setup(x => x.WriteValueWithResultAsync(It.IsAny<IBuffer>()));
+            _mockGattCharacteristicWrapper.Setup(x => x.AddValueChangedHandler(It.IsAny<Func<IBuffer, Task>>()));
+            _mockGattCharacteristicWrapper.Setup(x => x.EnableNotificationsAsync()).ReturnsAsync(true);
+
+            await _hubController.InitializeAsync(null, _mockGattCharacteristicWrapper.Object);
+
+            VerifyMocks();
+            _mockGattCharacteristicWrapper.Verify(x => x.WriteValueWithResultAsync(It.IsAny<IBuffer>()), Times.Exactly(2));
         }
     }
 }

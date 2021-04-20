@@ -37,20 +37,6 @@ namespace BluetoothController.Controllers
             return await SetHexValueAsync(command.HexCommand);
         }
 
-        private async Task<bool> SetHexValueAsync(string hex)
-        {
-            var bytes = DataConverter.HexStringToByteArray(hex);
-
-            var writer = new DataWriter
-            {
-                ByteOrder = ByteOrder.LittleEndian
-            };
-            writer.WriteBytes(bytes);
-
-            var writeSuccessful = await WriteBufferToMoveHubCharacteristicAsync(writer.DetachBuffer());
-            return writeSuccessful;
-        }
-
         public async Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, IGattCharacteristicWrapper gattCharacteristicWrapper)
         {
             _hubCharacteristic = gattCharacteristicWrapper;
@@ -67,18 +53,6 @@ namespace BluetoothController.Controllers
         public override string ToString()
         {
             return $"{Hub.HubType} ({SelectedBleDeviceId.Replace("BluetoothLE#BluetoothLE", "")})";
-        }
-
-        private async Task<bool> WriteBufferToMoveHubCharacteristicAsync(IBuffer buffer)
-        {
-            try
-            {
-                return await _hubCharacteristic.WriteValueWithResultAsync(buffer);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         internal async Task<Response> ProcessNotification(string notification)
@@ -118,6 +92,20 @@ namespace BluetoothController.Controllers
             {
                 _eventHandlers[typeof(T).Name].RemoveAll(x => x.GetType() == eventHandler.GetType());
             }
+        }
+
+        private async Task<bool> SetHexValueAsync(string hex)
+        {
+            var bytes = DataConverter.HexStringToByteArray(hex);
+
+            var writer = new DataWriter
+            {
+                ByteOrder = ByteOrder.LittleEndian
+            };
+            writer.WriteBytes(bytes);
+
+            var writeSuccessful = await _hubCharacteristic.WriteValueWithResultAsync(writer.DetachBuffer());
+            return writeSuccessful;
         }
 
         private async Task TriggerActionsFromNotification(Response response)
