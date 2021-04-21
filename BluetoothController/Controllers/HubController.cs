@@ -55,15 +55,6 @@ namespace BluetoothController.Controllers
             return $"{Hub.HubType} ({SelectedBleDeviceId.Replace("BluetoothLE#BluetoothLE", "")})";
         }
 
-        internal async Task<Response> ProcessNotification(string notification)
-        {
-            var response = ResponseFactory.CreateResponse(notification, this);
-
-            await TriggerActionsFromNotification(response);
-
-            return response;
-        }
-
         public void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response
         {
             if (!_eventHandlers.ContainsKey(typeof(T).Name))
@@ -92,6 +83,15 @@ namespace BluetoothController.Controllers
             {
                 _eventHandlers[typeof(T).Name].RemoveAll(x => x.GetType() == eventHandler.GetType());
             }
+        }
+
+        private async Task<Response> ProcessNotification(string notification)
+        {
+            var response = ResponseFactory.CreateResponse(notification, this);
+
+            await TriggerActionsFromNotification(response);
+
+            return response;
         }
 
         private async Task<bool> SetHexValueAsync(string hex)
