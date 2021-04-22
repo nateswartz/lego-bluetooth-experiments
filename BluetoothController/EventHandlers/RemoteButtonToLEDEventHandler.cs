@@ -11,7 +11,7 @@ namespace BluetoothController.EventHandlers
     {
         public RemoteButtonToLEDEventHandler(IHubController controller) : base(controller) { }
 
-        public async Task HandleEventAsync(Response response)
+        public async Task<bool> HandleEventAsync(Response response)
         {
             var data = (RemoteButtonData)response;
             LEDColor color = LEDColors.Red;
@@ -33,6 +33,7 @@ namespace BluetoothController.EventHandlers
             }
             var command = new LEDCommand(_controller, color);
             await _controller.ExecuteCommandAsync(command);
+            return false;
         }
     }
 }

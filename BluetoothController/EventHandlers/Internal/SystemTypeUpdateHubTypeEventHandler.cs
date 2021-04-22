@@ -9,11 +9,12 @@ namespace BluetoothController.EventHandlers.Internal
     {
         public SystemTypeUpdateHubTypeEventHandler(IHubController controller) : base(controller) { }
 
-        public async Task HandleEventAsync(Response response)
+        public async Task<bool> HandleEventAsync(Response response)
         {
             var data = (SystemType)response;
             _controller.Hub.HubType = data.HubType;
             await Task.CompletedTask;
+            return true;
         }
     }
 }

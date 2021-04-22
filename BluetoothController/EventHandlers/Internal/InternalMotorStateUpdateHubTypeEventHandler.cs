@@ -10,10 +10,11 @@ namespace BluetoothController.EventHandlers.Internal
     {
         public InternalMotorStateUpdateHubTypeEventHandler(IHubController controller) : base(controller) { }
 
-        public async Task HandleEventAsync(Response response)
+        public async Task<bool> HandleEventAsync(Response response)
         {
             _controller.Hub.HubType = HubType.BoostMoveHub;
             await Task.CompletedTask;
+            return true;
         }
     }
 }

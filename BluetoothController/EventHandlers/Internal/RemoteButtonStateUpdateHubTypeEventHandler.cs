@@ -10,10 +10,11 @@ namespace BluetoothController.EventHandlers.Internal
     {
         public RemoteButtonStateUpdateHubTypeEventHandler(IHubController controller) : base(controller) { }
 
-        public async Task HandleEventAsync(Response response)
+        public async Task<bool> HandleEventAsync(Response response)
         {
             _controller.Hub.HubType = HubType.TwoPortHandset;
             await Task.CompletedTask;
+            return true;
         }
     }
 }

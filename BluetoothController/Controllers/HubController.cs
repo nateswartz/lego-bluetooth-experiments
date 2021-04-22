@@ -116,7 +116,11 @@ namespace BluetoothController.Controllers
             foreach (var handler in handlers)
             {
                 dynamic dynamicHandler = handler;
-                await dynamicHandler.HandleEventAsync(response);
+                var shouldRemoveHandler = (bool)(await dynamicHandler.HandleEventAsync(response));
+                if (shouldRemoveHandler)
+                {
+                    RemoveEventHandler(dynamicHandler);
+                }
             }
         }
 

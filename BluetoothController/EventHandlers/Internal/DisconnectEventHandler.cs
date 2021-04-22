@@ -16,13 +16,14 @@ namespace BluetoothController.EventHandlers.Internal
             _onDisconnectCallback = onDisconnectCallback;
         }
 
-        public async Task HandleEventAsync(Response response)
+        public async Task<bool> HandleEventAsync(Response response)
         {
             var data = (HubActionResponse)response;
             if (data.ActionType == HubActionTypes.Disconnect || data.ActionType == HubActionTypes.Shutdown)
             {
                 await _onDisconnectCallback(_controller);
             }
+            return true;
         }
     }
 }
