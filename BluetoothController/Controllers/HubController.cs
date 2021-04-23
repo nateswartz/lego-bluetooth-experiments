@@ -64,19 +64,6 @@ namespace BluetoothController.Controllers
             _eventHandlers[typeof(T).Name].Add(eventHandler);
         }
 
-        public IEnumerable<IEventHandler<T>> GetEventHandlers<T>() where T : Response
-        {
-            return _eventHandlers[typeof(T).Name].Cast<IEventHandler<T>>() ?? new List<IEventHandler<T>>();
-        }
-
-        public bool IsHandlerRegistered(Type eventType, Type eventHandlerType)
-        {
-            var hasHandlers = _eventHandlers.ContainsKey(eventType.Name) && _eventHandlers[eventType.Name] != null && _eventHandlers[eventType.Name].Count > 0;
-            if (!hasHandlers)
-                return false;
-            return _eventHandlers[eventType.Name].Exists(x => x.GetType() == eventHandlerType);
-        }
-
         public void RemoveEventHandler<T>(IEventHandler<T> eventHandler) where T : Response
         {
             if (_eventHandlers.ContainsKey(typeof(T).Name))
