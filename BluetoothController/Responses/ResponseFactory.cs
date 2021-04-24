@@ -77,6 +77,11 @@ namespace BluetoothController.Responses
                 hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
                 return new TrainMotorState(portInfo.Body);
             }
+            if (hub.GetPortsByDeviceType(IOTypes.ExternalLED).Any(p => p.PortID == portInfo.Port))
+            {
+                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
+                return new ExternalLEDState(portInfo.Body);
+            }
             if (hub.GetPortsByDeviceType(IOTypes.ExternalMotor).Any(p => p.PortID == portInfo.Port))
             {
                 hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
@@ -102,6 +107,8 @@ namespace BluetoothController.Responses
                 return new ExternalMotorState(portInfo.Body);
             if (portInfo.DeviceType == IOTypes.TrainMotor)
                 return new TrainMotorState(portInfo.Body);
+            if (portInfo.DeviceType == IOTypes.ExternalLED)
+                return new ExternalLEDState(portInfo.Body);
             if (portInfo.DeviceType == IOTypes.TiltSensor)
                 return new TiltState(portInfo.Body);
             if (portInfo.DeviceType == IOTypes.RemoteButton)

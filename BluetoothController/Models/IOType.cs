@@ -23,6 +23,7 @@ namespace BluetoothController.Models
     {
         public static readonly IOType None = new("", "");
         public static readonly IOType TrainMotor = new("02", "Train Motor");
+        public static readonly IOType ExternalLED = new("08", "External LED");
         public static readonly IOType VoltageSensor = new("14", "Voltage Sensor");
         public static readonly IOType CurrentSensor = new("15", "Current Sensor");
         public static readonly IOType LED = new("17", "LED");
@@ -35,6 +36,7 @@ namespace BluetoothController.Models
         private readonly static List<IOType> _all = new()
         {
             TrainMotor,
+            ExternalLED,
             VoltageSensor,
             CurrentSensor,
             LED,
