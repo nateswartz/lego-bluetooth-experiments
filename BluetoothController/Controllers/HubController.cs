@@ -100,14 +100,19 @@ namespace BluetoothController.Controllers
             if (!_eventHandlers.ContainsKey(response.NotificationType))
                 return;
             var handlers = _eventHandlers[response.NotificationType];
+            var handlersToRemove = new List<dynamic>();
             foreach (var handler in handlers)
             {
                 dynamic dynamicHandler = handler;
                 var shouldRemoveHandler = (bool)(await dynamicHandler.HandleEventAsync(response));
                 if (shouldRemoveHandler)
                 {
-                    RemoveEventHandler(dynamicHandler);
+                    handlersToRemove.Add(dynamicHandler);
                 }
+            }
+            foreach (var handlerToRemove in handlersToRemove)
+            {
+                handlers.Remove(handlerToRemove);
             }
         }
 
