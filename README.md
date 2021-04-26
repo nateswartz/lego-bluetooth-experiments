@@ -2,7 +2,7 @@
 A collection of projects to interface with Powered Up smart hubs.
 - The BluetoothController project is the low level library that interfaces with the bluetooth device.  This is the main project in this repo.
 - The BluetoothLibraryTester project is a scratchpad with some samples of how to use the library.
-- The LegoBoostController project shows how to use the library in a UWP application.
+- The LegoBluetoothController.UI project shows how to use the library in a WPF application.
 
 The following is a simple example of using the library.  To use it, simply run the program, then power on a hub.
 ```
