@@ -21,7 +21,7 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var eventHandler = new AdapterEventHandler(HubSelect, LogMessages, ConnectedHubs, _controllers);
+            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
