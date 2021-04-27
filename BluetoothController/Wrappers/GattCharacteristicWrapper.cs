@@ -7,16 +7,15 @@ namespace BluetoothController.Wrappers
 {
     public class GattCharacteristicWrapper : IGattCharacteristicWrapper
     {
-        private GattCharacteristic _gattCharacteristic;
+        private readonly GattCharacteristic _gattCharacteristic;
         private Func<IBuffer, Task> _charactersticChangedCallback;
 
         public GattCharacteristicWrapper(GattCharacteristic gattCharacteristic)
         {
             _gattCharacteristic = gattCharacteristic;
-
         }
 
-        public async Task<bool> WriteValueWithResultAsync(IBuffer value)
+        public async Task<bool> WriteValueAsync(IBuffer value)
         {
             try
             {
@@ -35,13 +34,13 @@ namespace BluetoothController.Wrappers
             return status == GattCommunicationStatus.Success;
         }
 
-        public void AddValueChangedHandler(Func<IBuffer, Task> charactersticChangedCallback)
+        public void AddValueChangedCallback(Func<IBuffer, Task> charactersticChangedCallback)
         {
             _charactersticChangedCallback = charactersticChangedCallback;
             _gattCharacteristic.ValueChanged += Characteristic_ValueChanged;
         }
 
-        public void RemoveValueChangedHandler()
+        public void RemoveValueChangedCallback()
         {
             _gattCharacteristic.ValueChanged -= Characteristic_ValueChanged;
         }

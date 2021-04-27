@@ -46,28 +46,28 @@ namespace BluetoothController.Tests.Controllers
         [Fact]
         public async Task InitializeAsync_EnableNotificationsSuccessful_CorrectMocksAreCalled()
         {
-            _mockGattCharacteristicWrapper.Setup(x => x.WriteValueWithResultAsync(It.IsAny<IBuffer>()));
-            _mockGattCharacteristicWrapper.Setup(x => x.AddValueChangedHandler(It.IsAny<Func<IBuffer, Task>>()));
+            _mockGattCharacteristicWrapper.Setup(x => x.WriteValueAsync(It.IsAny<IBuffer>()));
+            _mockGattCharacteristicWrapper.Setup(x => x.AddValueChangedCallback(It.IsAny<Func<IBuffer, Task>>()));
             _mockGattCharacteristicWrapper.Setup(x => x.EnableNotificationsAsync()).ReturnsAsync(true);
 
             await _hubController.InitializeAsync(null, _mockGattCharacteristicWrapper.Object);
 
             VerifyMocks();
-            _mockGattCharacteristicWrapper.Verify(x => x.WriteValueWithResultAsync(It.IsAny<IBuffer>()), Times.Exactly(2));
+            _mockGattCharacteristicWrapper.Verify(x => x.WriteValueAsync(It.IsAny<IBuffer>()), Times.Exactly(2));
         }
 
         [Fact]
         public async Task InitializeAsync_EnableNotificationsFails_CorrectMocksAreCalled()
         {
-            _mockGattCharacteristicWrapper.Setup(x => x.WriteValueWithResultAsync(It.IsAny<IBuffer>()));
-            _mockGattCharacteristicWrapper.Setup(x => x.AddValueChangedHandler(It.IsAny<Func<IBuffer, Task>>()));
+            _mockGattCharacteristicWrapper.Setup(x => x.WriteValueAsync(It.IsAny<IBuffer>()));
+            _mockGattCharacteristicWrapper.Setup(x => x.AddValueChangedCallback(It.IsAny<Func<IBuffer, Task>>()));
             _mockGattCharacteristicWrapper.Setup(x => x.EnableNotificationsAsync()).ReturnsAsync(false);
-            _mockGattCharacteristicWrapper.Setup(x => x.RemoveValueChangedHandler());
+            _mockGattCharacteristicWrapper.Setup(x => x.RemoveValueChangedCallback());
 
             await _hubController.InitializeAsync(null, _mockGattCharacteristicWrapper.Object);
 
             VerifyMocks();
-            _mockGattCharacteristicWrapper.Verify(x => x.WriteValueWithResultAsync(It.IsAny<IBuffer>()), Times.Exactly(2));
+            _mockGattCharacteristicWrapper.Verify(x => x.WriteValueAsync(It.IsAny<IBuffer>()), Times.Exactly(2));
         }
     }
 }

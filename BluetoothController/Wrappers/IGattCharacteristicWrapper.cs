@@ -6,9 +6,9 @@ namespace BluetoothController.Wrappers
 {
     public interface IGattCharacteristicWrapper
     {
-        void AddValueChangedHandler(Func<IBuffer, Task> charactersticChangedCallback);
-        void RemoveValueChangedHandler();
+        void AddValueChangedCallback(Func<IBuffer, Task> charactersticChangedCallback);
+        void RemoveValueChangedCallback();
         Task<bool> EnableNotificationsAsync();
-        Task<bool> WriteValueWithResultAsync(IBuffer value);
+        Task<bool> WriteValueAsync(IBuffer value);
     }
 }

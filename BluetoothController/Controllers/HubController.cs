@@ -91,7 +91,7 @@ namespace BluetoothController.Controllers
             };
             writer.WriteBytes(bytes);
 
-            var writeSuccessful = await _hubCharacteristic.WriteValueWithResultAsync(writer.DetachBuffer());
+            var writeSuccessful = await _hubCharacteristic.WriteValueAsync(writer.DetachBuffer());
             return writeSuccessful;
         }
 
@@ -121,7 +121,7 @@ namespace BluetoothController.Controllers
             _notificationHandler = notificationHandler;
             try
             {
-                _hubCharacteristic.AddValueChangedHandler(HubNotificationCallback);
+                _hubCharacteristic.AddValueChangedCallback(HubNotificationCallback);
 
                 var writeSuccessful = await _hubCharacteristic.EnableNotificationsAsync();
 
@@ -131,7 +131,7 @@ namespace BluetoothController.Controllers
                 }
                 else
                 {
-                    _hubCharacteristic.RemoveValueChangedHandler();
+                    _hubCharacteristic.RemoveValueChangedCallback();
                     return false;
                 }
             }
