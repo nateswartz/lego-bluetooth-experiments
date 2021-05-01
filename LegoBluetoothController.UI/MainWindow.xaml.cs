@@ -26,6 +26,8 @@ namespace LegoBluetoothController.UI
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
+            LEDBrightnessSlider.Visibility = Visibility.Hidden;
+            LEDBrightnessLabel.Visibility = Visibility.Hidden;
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -82,6 +84,23 @@ namespace LegoBluetoothController.UI
             if (string.IsNullOrWhiteSpace(externalLED))
                 return;
             controller.ExecuteCommandAsync(new ExternalLEDCommand(externalLED, Convert.ToInt32(LEDBrightnessSlider.Value)));
+        }
+
+        private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (HubSelect.SelectedItem is not IHubController controller)
+                return;
+
+            if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.ExternalLED).FirstOrDefault()))
+            {
+                LEDBrightnessSlider.Visibility = Visibility.Visible;
+                LEDBrightnessLabel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                LEDBrightnessSlider.Visibility = Visibility.Hidden;
+                LEDBrightnessLabel.Visibility = Visibility.Hidden;
+            }
         }
 
         private void LogMessage(string message)

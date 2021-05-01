@@ -14,10 +14,10 @@
         <TextBox x:Name="ConnectedHubs" IsReadOnly="True" Text="" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="596,62,0,0" Width="400" Height="228"/>
         <Label Content="Log Messages" HorizontalAlignment="Left" Margin="34,351,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="RawCommandText" HorizontalAlignment="Left" Margin="34,88,0,0" Text="Enter command here" TextWrapping="Wrap" VerticalAlignment="Top" Width="179" Height="29"/>
-        <ComboBox x:Name="HubSelect" HorizontalAlignment="Left" Margin="34,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
+        <ComboBox x:Name="HubSelect" SelectionChanged="HubSelect_SelectionChanged" HorizontalAlignment="Left" Margin="34,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
         <Button x:Name="ExecuteCommandButton" Content="Execute" Click="ExecuteCommandButton_Click" HorizontalAlignment="Left" Margin="241,88,0,0" VerticalAlignment="Top" Width="73" Height="29"/>
         <ComboBox x:Name="ColorSelect" SelectionChanged="ColorSelect_SelectionChanged" HorizontalAlignment="Left" Margin="241,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
         <Slider x:Name="LEDBrightnessSlider" Thumb.DragCompleted="LEDBrightnessSlider_DragCompleted" Maximum="100" Minimum="0" LargeChange="0" Focusable="False" HorizontalAlignment="Left" Margin="34,167,0,0" VerticalAlignment="Top" Width="120"/>
-        <Label Content="LED Brightness" HorizontalAlignment="Left" Margin="38,136,0,0" VerticalAlignment="Top" Width="99"/>
+        <Label x:Name="LEDBrightnessLabel" Content="LED Brightness" HorizontalAlignment="Left" Margin="38,136,0,0" VerticalAlignment="Top" Width="99"/>
     </Grid>
 </Window>
