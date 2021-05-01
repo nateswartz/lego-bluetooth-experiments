@@ -5,6 +5,7 @@ using BluetoothController.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -73,6 +74,16 @@ namespace LegoBluetoothController.UI
             await controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
         }
 
+        private void LEDBrightnessSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            if (HubSelect.SelectedItem is not IHubController controller)
+                return;
+            var externalLED = controller.GetPortIdsByDeviceType(IOTypes.ExternalLED).FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(externalLED))
+                return;
+            controller.ExecuteCommandAsync(new ExternalLEDCommand(externalLED, Convert.ToInt32(LEDBrightnessSlider.Value)));
+        }
+
         private void LogMessage(string message)
         {
             LogMessages.Text += message + Environment.NewLine;
@@ -107,6 +118,5 @@ namespace LegoBluetoothController.UI
             _forceClose = true;
             Close();
         }
-
     }
 }
