@@ -27,7 +27,7 @@ namespace BluetoothController.Controllers
 
         public HubController(ILegoHub legoHub, string selectedBleDeviceId)
         {
-            _eventHandlers = new Dictionary<string, List<object>>();
+            _eventHandlers = new();
             Hub = legoHub;
             SelectedBleDeviceId = selectedBleDeviceId;
         }

@@ -40,5 +40,16 @@ namespace BluetoothController.Tests.Responses.Device.Info
                 c => Assert.Equal(Capability.Output, c),
                 c => Assert.Equal(Capability.Input, c));
         }
+
+        [Fact]
+        public void Constructor_ModeInfo_SetsCorrectTotalModeCount()
+        {
+            var header = "00000000";
+            var footer = "000000000";
+            var messageBody = $"{header}010003{footer}";
+            var portInfoMessage = new PortInfo(messageBody);
+
+            Assert.Equal(3, portInfoMessage.TotalModeCount);
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace BluetoothController
 
         public void StartBleDeviceWatcher()
         {
-            _watcher = new BluetoothLEAdvertisementWatcher
+            _watcher = new()
             {
                 ScanningMode = BluetoothLEScanningMode.Active
             };
