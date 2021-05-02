@@ -1,6 +1,7 @@
 ﻿using BluetoothController;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Models.Enums;
 using BluetoothController.Responses;
 using BluetoothController.Responses.Device.State;
 using System;
@@ -16,14 +17,20 @@ namespace LegoBluetoothController.UI
     {
         private readonly TextBox _logOutputTextBox;
         private readonly TextBox _connectedHubsTextBox;
+        private readonly Label _ledBrightnessLabel;
+        private readonly Slider _ledBrightnessSlider;
         private readonly ObservableCollection<IHubController> _controllers;
 
         public AdapterEventHandler(TextBox logOutputTextBox,
                                    TextBox connectedHubsTextBox,
+                                   Label LEDBrightnessLabel,
+                                   Slider LEDBrightnessSlider,
                                    ObservableCollection<IHubController> controllers)
         {
             _logOutputTextBox = logOutputTextBox;
             _connectedHubsTextBox = connectedHubsTextBox;
+            _ledBrightnessLabel = LEDBrightnessLabel;
+            _ledBrightnessSlider = LEDBrightnessSlider;
             _controllers = controllers;
         }
 
@@ -37,6 +44,19 @@ namespace LegoBluetoothController.UI
                 if (message is PortState)
                 {
                     RefreshConnectedHubsText();
+                    if (message is ExternalLEDState state)
+                    {
+                        if (state.StateChangeEvent == DeviceState.Attached)
+                        {
+                            _ledBrightnessLabel.Visibility = Visibility.Visible;
+                            _ledBrightnessSlider.Visibility = Visibility.Visible;
+                        }
+                        if (state.StateChangeEvent == DeviceState.Detached)
+                        {
+                            _ledBrightnessLabel.Visibility = Visibility.Hidden;
+                            _ledBrightnessSlider.Visibility = Visibility.Hidden;
+                        }
+                    }
                 }
             });
             await Task.CompletedTask;
@@ -75,6 +95,8 @@ namespace LegoBluetoothController.UI
             {
                 _controllers.Remove(controller);
                 RefreshConnectedHubsText();
+                _ledBrightnessLabel.Visibility = Visibility.Hidden;
+                _ledBrightnessSlider.Visibility = Visibility.Hidden;
                 LogMessage($"Disconnected device: {controller.Hub.HubType}");
             });
             await Task.CompletedTask;
