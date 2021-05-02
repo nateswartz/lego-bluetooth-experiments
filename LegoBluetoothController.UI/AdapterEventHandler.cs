@@ -19,18 +19,21 @@ namespace LegoBluetoothController.UI
         private readonly TextBox _connectedHubsTextBox;
         private readonly Label _ledBrightnessLabel;
         private readonly Slider _ledBrightnessSlider;
+        private readonly ComboBox _hubSelect;
         private readonly ObservableCollection<IHubController> _controllers;
 
         public AdapterEventHandler(TextBox logOutputTextBox,
                                    TextBox connectedHubsTextBox,
                                    Label LEDBrightnessLabel,
                                    Slider LEDBrightnessSlider,
+                                   ComboBox HubSelect,
                                    ObservableCollection<IHubController> controllers)
         {
             _logOutputTextBox = logOutputTextBox;
             _connectedHubsTextBox = connectedHubsTextBox;
             _ledBrightnessLabel = LEDBrightnessLabel;
             _ledBrightnessSlider = LEDBrightnessSlider;
+            _hubSelect = HubSelect;
             _controllers = controllers;
         }
 
@@ -44,7 +47,9 @@ namespace LegoBluetoothController.UI
                 if (message is PortState)
                 {
                     RefreshConnectedHubsText();
-                    if (message is ExternalLEDState state)
+                    if (_hubSelect.SelectedItem is HubController selectedController &&
+                        selectedController == controller &&
+                        message is ExternalLEDState state)
                     {
                         if (state.StateChangeEvent == DeviceState.Attached)
                         {
@@ -95,8 +100,12 @@ namespace LegoBluetoothController.UI
             {
                 _controllers.Remove(controller);
                 RefreshConnectedHubsText();
-                _ledBrightnessLabel.Visibility = Visibility.Hidden;
-                _ledBrightnessSlider.Visibility = Visibility.Hidden;
+                if (_hubSelect.SelectedItem is HubController selectedController &&
+                        selectedController == controller)
+                {
+                    _ledBrightnessLabel.Visibility = Visibility.Hidden;
+                    _ledBrightnessSlider.Visibility = Visibility.Hidden;
+                }
                 LogMessage($"Disconnected device: {controller.Hub.HubType}");
             });
             await Task.CompletedTask;
