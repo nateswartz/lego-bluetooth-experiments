@@ -60,6 +60,7 @@ namespace LegoBluetoothController.UI
                         {
                             _ledBrightnessLabel.Visibility = Visibility.Hidden;
                             _ledBrightnessSlider.Visibility = Visibility.Hidden;
+                            _ledBrightnessSlider.Value = 0;
                         }
                     }
                 }
@@ -98,14 +99,15 @@ namespace LegoBluetoothController.UI
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                _controllers.Remove(controller);
-                RefreshConnectedHubsText();
                 if (_hubSelect.SelectedItem is HubController selectedController &&
-                        selectedController == controller)
+                    selectedController == controller)
                 {
                     _ledBrightnessLabel.Visibility = Visibility.Hidden;
                     _ledBrightnessSlider.Visibility = Visibility.Hidden;
+                    _ledBrightnessSlider.Value = 0;
                 }
+                _controllers.Remove(controller);
+                RefreshConnectedHubsText();
                 LogMessage($"Disconnected device: {controller.Hub.HubType}");
             });
             await Task.CompletedTask;

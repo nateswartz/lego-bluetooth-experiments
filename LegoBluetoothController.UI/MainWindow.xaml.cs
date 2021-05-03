@@ -22,12 +22,13 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, LEDBrightnessLabel, LEDBrightnessSlider, _controllers);
+            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, LEDBrightnessLabel, LEDBrightnessSlider, HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
             LEDBrightnessSlider.Visibility = Visibility.Hidden;
             LEDBrightnessLabel.Visibility = Visibility.Hidden;
+            LEDBrightnessSlider.Value = 0;
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -100,6 +101,7 @@ namespace LegoBluetoothController.UI
             {
                 LEDBrightnessSlider.Visibility = Visibility.Hidden;
                 LEDBrightnessLabel.Visibility = Visibility.Hidden;
+                LEDBrightnessSlider.Value = 0;
             }
         }
 
