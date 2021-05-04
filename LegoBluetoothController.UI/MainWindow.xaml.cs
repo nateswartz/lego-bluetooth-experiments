@@ -22,13 +22,19 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, LEDBrightnessLabel, LEDBrightnessSlider, HubSelect, _controllers);
+            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, LEDBrightnessLabel,
+                                                       LEDBrightnessSlider, TrainMotorLabel, TrainMotorSlider,
+                                                       HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
+
             LEDBrightnessSlider.Visibility = Visibility.Hidden;
             LEDBrightnessLabel.Visibility = Visibility.Hidden;
             LEDBrightnessSlider.Value = 0;
+            TrainMotorLabel.Visibility = Visibility.Hidden;
+            TrainMotorSlider.Visibility = Visibility.Hidden;
+            TrainMotorSlider.Value = 0;
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -87,6 +93,16 @@ namespace LegoBluetoothController.UI
             controller.ExecuteCommandAsync(new ExternalLEDCommand(externalLED, Convert.ToInt32(LEDBrightnessSlider.Value)));
         }
 
+        private void TrainMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            if (HubSelect.SelectedItem is not IHubController controller)
+                return;
+            var trainMotor = controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(trainMotor))
+                return;
+            controller.ExecuteCommandAsync(new TrainMotorCommand(trainMotor, Convert.ToInt32(TrainMotorSlider.Value), true));
+        }
+
         private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
@@ -102,6 +118,18 @@ namespace LegoBluetoothController.UI
                 LEDBrightnessSlider.Visibility = Visibility.Hidden;
                 LEDBrightnessLabel.Visibility = Visibility.Hidden;
                 LEDBrightnessSlider.Value = 0;
+            }
+
+            if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault()))
+            {
+                TrainMotorSlider.Visibility = Visibility.Visible;
+                TrainMotorSlider.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                TrainMotorSlider.Visibility = Visibility.Hidden;
+                TrainMotorSlider.Visibility = Visibility.Hidden;
+                TrainMotorSlider.Value = 0;
             }
         }
 
