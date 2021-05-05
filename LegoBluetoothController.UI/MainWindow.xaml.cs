@@ -122,12 +122,12 @@ namespace LegoBluetoothController.UI
 
             if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault()))
             {
-                TrainMotorSlider.Visibility = Visibility.Visible;
+                TrainMotorLabel.Visibility = Visibility.Visible;
                 TrainMotorSlider.Visibility = Visibility.Visible;
             }
             else
             {
-                TrainMotorSlider.Visibility = Visibility.Hidden;
+                TrainMotorLabel.Visibility = Visibility.Hidden;
                 TrainMotorSlider.Visibility = Visibility.Hidden;
                 TrainMotorSlider.Value = 0;
             }
