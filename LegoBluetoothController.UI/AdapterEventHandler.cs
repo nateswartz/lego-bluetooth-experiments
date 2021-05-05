@@ -17,8 +17,7 @@ namespace LegoBluetoothController.UI
     {
         private readonly TextBox _logOutputTextBox;
         private readonly TextBox _connectedHubsTextBox;
-        private readonly Label _ledBrightnessLabel;
-        private readonly Slider _ledBrightnessSlider;
+        private readonly PortSliderController _ledBrightnessControl;
         private readonly Label _trainMotorLabel;
         private readonly Slider _trainMotorSlider;
         private readonly ComboBox _hubSelect;
@@ -26,8 +25,7 @@ namespace LegoBluetoothController.UI
 
         public AdapterEventHandler(TextBox logOutputTextBox,
                                    TextBox connectedHubsTextBox,
-                                   Label LEDBrightnessLabel,
-                                   Slider LEDBrightnessSlider,
+                                   PortSliderController ledBrightnessControl,
                                    Label TrainMotorLabel,
                                    Slider TrainMotorSlider,
                                    ComboBox HubSelect,
@@ -35,8 +33,7 @@ namespace LegoBluetoothController.UI
         {
             _logOutputTextBox = logOutputTextBox;
             _connectedHubsTextBox = connectedHubsTextBox;
-            _ledBrightnessLabel = LEDBrightnessLabel;
-            _ledBrightnessSlider = LEDBrightnessSlider;
+            _ledBrightnessControl = ledBrightnessControl;
             _trainMotorLabel = TrainMotorLabel;
             _trainMotorSlider = TrainMotorSlider;
             _hubSelect = HubSelect;
@@ -60,14 +57,11 @@ namespace LegoBluetoothController.UI
                         {
                             if (ledState.StateChangeEvent == DeviceState.Attached)
                             {
-                                _ledBrightnessLabel.Visibility = Visibility.Visible;
-                                _ledBrightnessSlider.Visibility = Visibility.Visible;
+                                _ledBrightnessControl.Show();
                             }
                             if (ledState.StateChangeEvent == DeviceState.Detached)
                             {
-                                _ledBrightnessLabel.Visibility = Visibility.Hidden;
-                                _ledBrightnessSlider.Visibility = Visibility.Hidden;
-                                _ledBrightnessSlider.Value = 0;
+                                _ledBrightnessControl.Hide();
                             }
                         }
                         if (message is TrainMotorState trainState)
@@ -124,9 +118,7 @@ namespace LegoBluetoothController.UI
                 if (_hubSelect.SelectedItem is HubController selectedController &&
                     selectedController == controller)
                 {
-                    _ledBrightnessLabel.Visibility = Visibility.Hidden;
-                    _ledBrightnessSlider.Visibility = Visibility.Hidden;
-                    _ledBrightnessSlider.Value = 0;
+                    _ledBrightnessControl.Hide();
                     _trainMotorLabel.Visibility = Visibility.Hidden;
                     _trainMotorSlider.Visibility = Visibility.Hidden;
                     _trainMotorSlider.Value = 0;

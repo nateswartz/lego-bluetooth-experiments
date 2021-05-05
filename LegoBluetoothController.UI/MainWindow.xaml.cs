@@ -17,21 +17,22 @@ namespace LegoBluetoothController.UI
         private readonly IBluetoothLowEnergyAdapter _adapter;
         private readonly ObservableCollection<IHubController> _controllers = new();
 
+        private readonly PortSliderController _ledBrightnessControl;
+
         private bool _forceClose = false;
 
         public MainWindow()
         {
             InitializeComponent();
-            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, LEDBrightnessLabel,
-                                                       LEDBrightnessSlider, TrainMotorLabel, TrainMotorSlider,
+            _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider);
+            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _ledBrightnessControl,
+                                                       TrainMotorLabel, TrainMotorSlider,
                                                        HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
 
-            LEDBrightnessSlider.Visibility = Visibility.Hidden;
-            LEDBrightnessLabel.Visibility = Visibility.Hidden;
-            LEDBrightnessSlider.Value = 0;
+            _ledBrightnessControl.Hide();
             TrainMotorLabel.Visibility = Visibility.Hidden;
             TrainMotorSlider.Visibility = Visibility.Hidden;
             TrainMotorSlider.Value = 0;
@@ -110,14 +111,11 @@ namespace LegoBluetoothController.UI
 
             if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.ExternalLED).FirstOrDefault()))
             {
-                LEDBrightnessSlider.Visibility = Visibility.Visible;
-                LEDBrightnessLabel.Visibility = Visibility.Visible;
+                _ledBrightnessControl.Show();
             }
             else
             {
-                LEDBrightnessSlider.Visibility = Visibility.Hidden;
-                LEDBrightnessLabel.Visibility = Visibility.Hidden;
-                LEDBrightnessSlider.Value = 0;
+                _ledBrightnessControl.Hide();
             }
 
             if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault()))
