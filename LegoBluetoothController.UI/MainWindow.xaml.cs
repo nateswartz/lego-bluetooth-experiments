@@ -17,7 +17,8 @@ namespace LegoBluetoothController.UI
         private readonly IBluetoothLowEnergyAdapter _adapter;
         private readonly ObservableCollection<IHubController> _controllers = new();
 
-        private readonly PortSliderController _ledBrightnessControl;
+        private readonly IPortController _ledBrightnessControl;
+        private readonly IPortController _trainMotorControl;
 
         private bool _forceClose = false;
 
@@ -25,17 +26,17 @@ namespace LegoBluetoothController.UI
         {
             InitializeComponent();
             _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider);
+            _trainMotorControl = new PortSliderController(TrainMotorLabel, TrainMotorSlider);
+
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _ledBrightnessControl,
-                                                       TrainMotorLabel, TrainMotorSlider,
+                                                       _trainMotorControl,
                                                        HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
 
             _ledBrightnessControl.Hide();
-            TrainMotorLabel.Visibility = Visibility.Hidden;
-            TrainMotorSlider.Visibility = Visibility.Hidden;
-            TrainMotorSlider.Value = 0;
+            _trainMotorControl.Hide();
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -120,14 +121,11 @@ namespace LegoBluetoothController.UI
 
             if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault()))
             {
-                TrainMotorLabel.Visibility = Visibility.Visible;
-                TrainMotorSlider.Visibility = Visibility.Visible;
+                _trainMotorControl.Show();
             }
             else
             {
-                TrainMotorLabel.Visibility = Visibility.Hidden;
-                TrainMotorSlider.Visibility = Visibility.Hidden;
-                TrainMotorSlider.Value = 0;
+                _trainMotorControl.Hide();
             }
         }
 

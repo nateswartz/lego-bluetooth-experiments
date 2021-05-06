@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace LegoBluetoothController.UI
 {
-    public class PortSliderController
+    public class PortSliderController : IPortController
     {
         private readonly Label _label;
         private readonly Slider _slider;
