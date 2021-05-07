@@ -14,14 +14,14 @@ namespace LegoBluetoothController.UI
             _slider = slider;
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             _label.Visibility = Visibility.Hidden;
             _slider.Visibility = Visibility.Hidden;
             _slider.Value = 0;
         }
 
-        public void Show()
+        public virtual void Show()
         {
             _label.Visibility = Visibility.Visible;
             _slider.Visibility = Visibility.Visible;

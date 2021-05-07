@@ -26,7 +26,7 @@ namespace LegoBluetoothController.UI
         {
             InitializeComponent();
             _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider);
-            _trainMotorControl = new PortSliderController(TrainMotorLabel, TrainMotorSlider);
+            _trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox);
 
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _ledBrightnessControl,
                                                        _trainMotorControl,
@@ -97,12 +97,22 @@ namespace LegoBluetoothController.UI
 
         private void TrainMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
+            SendTrainMotorCommand();
+        }
+
+        private void TrainMotorClockwiseCheckbox_Click(object sender, RoutedEventArgs e)
+        {
+            SendTrainMotorCommand();
+        }
+
+        private void SendTrainMotorCommand()
+        {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
             var trainMotor = controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault();
             if (string.IsNullOrWhiteSpace(trainMotor))
                 return;
-            controller.ExecuteCommandAsync(new TrainMotorCommand(trainMotor, Convert.ToInt32(TrainMotorSlider.Value), true));
+            controller.ExecuteCommandAsync(new TrainMotorCommand(trainMotor, Convert.ToInt32(TrainMotorSlider.Value), TrainMotorClockwiseCheckbox.IsChecked.Value));
         }
 
         private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
