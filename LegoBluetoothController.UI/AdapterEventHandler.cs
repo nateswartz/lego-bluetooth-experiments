@@ -19,6 +19,7 @@ namespace LegoBluetoothController.UI
         private readonly TextBox _connectedHubsTextBox;
         private readonly IPortController _ledBrightnessControl;
         private readonly IPortController _trainMotorControl;
+        private readonly IPortController _externalMotorControl;
         private readonly ComboBox _hubSelect;
         private readonly ObservableCollection<IHubController> _controllers;
 
@@ -26,6 +27,7 @@ namespace LegoBluetoothController.UI
                                    TextBox connectedHubsTextBox,
                                    IPortController ledBrightnessControl,
                                    IPortController trainMotorControl,
+                                   IPortController externalMotorControl,
                                    ComboBox HubSelect,
                                    ObservableCollection<IHubController> controllers)
         {
@@ -33,6 +35,7 @@ namespace LegoBluetoothController.UI
             _connectedHubsTextBox = connectedHubsTextBox;
             _ledBrightnessControl = ledBrightnessControl;
             _trainMotorControl = trainMotorControl;
+            _externalMotorControl = externalMotorControl;
             _hubSelect = HubSelect;
             _controllers = controllers;
         }
@@ -70,6 +73,17 @@ namespace LegoBluetoothController.UI
                             if (trainState.StateChangeEvent == DeviceState.Detached)
                             {
                                 _trainMotorControl.Hide();
+                            }
+                        }
+                        if (message is ExternalMotorState motorState)
+                        {
+                            if (motorState.StateChangeEvent == DeviceState.Attached)
+                            {
+                                _externalMotorControl.Show();
+                            }
+                            if (motorState.StateChangeEvent == DeviceState.Detached)
+                            {
+                                _externalMotorControl.Hide();
                             }
                         }
                     }
@@ -114,6 +128,7 @@ namespace LegoBluetoothController.UI
                 {
                     _ledBrightnessControl.Hide();
                     _trainMotorControl.Hide();
+                    _externalMotorControl.Hide();
                 }
                 _controllers.Remove(controller);
                 RefreshConnectedHubsText();

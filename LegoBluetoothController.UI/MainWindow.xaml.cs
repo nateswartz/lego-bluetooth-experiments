@@ -19,6 +19,7 @@ namespace LegoBluetoothController.UI
 
         private readonly IPortController _ledBrightnessControl;
         private readonly IPortController _trainMotorControl;
+        private readonly IPortController _externalMotorControl;
 
         private bool _forceClose = false;
 
@@ -27,9 +28,9 @@ namespace LegoBluetoothController.UI
             InitializeComponent();
             _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider);
             _trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox);
-
+            _externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox);
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _ledBrightnessControl,
-                                                       _trainMotorControl,
+                                                       _trainMotorControl, _externalMotorControl,
                                                        HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
@@ -37,6 +38,7 @@ namespace LegoBluetoothController.UI
 
             _ledBrightnessControl.Hide();
             _trainMotorControl.Hide();
+            _externalMotorControl.Hide();
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -115,6 +117,26 @@ namespace LegoBluetoothController.UI
             controller.ExecuteCommandAsync(new TrainMotorCommand(trainMotor, Convert.ToInt32(TrainMotorSlider.Value), TrainMotorClockwiseCheckbox.IsChecked.Value));
         }
 
+        private void ExternalMotorClockwiseCheckbox_Click(object sender, RoutedEventArgs e)
+        {
+            SendMotorCommand();
+        }
+
+        private void ExternalMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            SendMotorCommand();
+        }
+
+        private void SendMotorCommand()
+        {
+            if (HubSelect.SelectedItem is not IHubController controller)
+                return;
+            var externalMotor = controller.GetPortIdsByDeviceType(IOTypes.ExternalMotor).FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(externalMotor))
+                return;
+            controller.ExecuteCommandAsync(new MotorCommand(externalMotor, Convert.ToInt32(ExternalMotorSlider.Value), 10000, ExternalMotorClockwiseCheckbox.IsChecked.Value));
+        }
+
         private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
@@ -136,6 +158,15 @@ namespace LegoBluetoothController.UI
             else
             {
                 _trainMotorControl.Hide();
+            }
+
+            if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.ExternalMotor).FirstOrDefault()))
+            {
+                _externalMotorControl.Show();
+            }
+            else
+            {
+                _externalMotorControl.Hide();
             }
         }
 
