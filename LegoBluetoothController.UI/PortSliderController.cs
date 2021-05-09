@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using BluetoothController.Models;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace LegoBluetoothController.UI
@@ -8,10 +9,13 @@ namespace LegoBluetoothController.UI
         private readonly Label _label;
         private readonly Slider _slider;
 
-        public PortSliderController(Label label, Slider slider)
+        public IOType HandledIOType { get; set; }
+
+        public PortSliderController(Label label, Slider slider, IOType iOType)
         {
             _label = label;
             _slider = slider;
+            HandledIOType = iOType;
         }
 
         public virtual void Hide()

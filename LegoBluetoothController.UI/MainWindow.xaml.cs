@@ -3,6 +3,7 @@ using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -21,14 +22,21 @@ namespace LegoBluetoothController.UI
         private readonly IPortController _trainMotorControl;
         private readonly IPortController _externalMotorControl;
 
+        private readonly List<IPortController> _portControllers = new();
+
         private bool _forceClose = false;
 
         public MainWindow()
         {
             InitializeComponent();
-            _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider);
-            _trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox);
-            _externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox);
+            _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.ExternalLED);
+            _trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
+            _externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox, IOTypes.ExternalMotor);
+
+            _portControllers.Add(_ledBrightnessControl);
+            _portControllers.Add(_trainMotorControl);
+            _portControllers.Add(_externalMotorControl);
+
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _ledBrightnessControl,
                                                        _trainMotorControl, _externalMotorControl,
                                                        HubSelect, _controllers);
@@ -36,9 +44,8 @@ namespace LegoBluetoothController.UI
             HubSelect.ItemsSource = _controllers;
             ColorSelect.ItemsSource = LEDColors.All;
 
-            _ledBrightnessControl.Hide();
-            _trainMotorControl.Hide();
-            _externalMotorControl.Hide();
+            foreach (var portController in _portControllers)
+                portController.Hide();
         }
 
         private void DiscoverButton_Click(object sender, RoutedEventArgs e)
@@ -142,31 +149,16 @@ namespace LegoBluetoothController.UI
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
 
-            if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.ExternalLED).FirstOrDefault()))
+            foreach (var portController in _portControllers)
             {
-                _ledBrightnessControl.Show();
-            }
-            else
-            {
-                _ledBrightnessControl.Hide();
-            }
-
-            if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault()))
-            {
-                _trainMotorControl.Show();
-            }
-            else
-            {
-                _trainMotorControl.Hide();
-            }
-
-            if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(IOTypes.ExternalMotor).FirstOrDefault()))
-            {
-                _externalMotorControl.Show();
-            }
-            else
-            {
-                _externalMotorControl.Hide();
+                if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(portController.HandledIOType).FirstOrDefault()))
+                {
+                    portController.Show();
+                }
+                else
+                {
+                    portController.Hide();
+                }
             }
         }
 

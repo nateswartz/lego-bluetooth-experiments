@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using BluetoothController.Models;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace LegoBluetoothController.UI
@@ -7,8 +8,8 @@ namespace LegoBluetoothController.UI
     {
         private readonly CheckBox _checkbox;
 
-        public PortSliderCheckboxController(Label label, Slider slider, CheckBox checkbox)
-            : base(label, slider)
+        public PortSliderCheckboxController(Label label, Slider slider, CheckBox checkbox, IOType handledIOType)
+            : base(label, slider, handledIOType)
         {
             _checkbox = checkbox;
         }
