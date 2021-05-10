@@ -5,6 +5,7 @@ using BluetoothController.Models.Enums;
 using BluetoothController.Responses;
 using BluetoothController.Responses.Device.State;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,25 +18,19 @@ namespace LegoBluetoothController.UI
     {
         private readonly TextBox _logOutputTextBox;
         private readonly TextBox _connectedHubsTextBox;
-        private readonly IPortController _ledBrightnessControl;
-        private readonly IPortController _trainMotorControl;
-        private readonly IPortController _externalMotorControl;
+        private readonly List<IPortController> _portControllers;
         private readonly ComboBox _hubSelect;
         private readonly ObservableCollection<IHubController> _controllers;
 
         public AdapterEventHandler(TextBox logOutputTextBox,
                                    TextBox connectedHubsTextBox,
-                                   IPortController ledBrightnessControl,
-                                   IPortController trainMotorControl,
-                                   IPortController externalMotorControl,
+                                   List<IPortController> portControllers,
                                    ComboBox HubSelect,
                                    ObservableCollection<IHubController> controllers)
         {
             _logOutputTextBox = logOutputTextBox;
             _connectedHubsTextBox = connectedHubsTextBox;
-            _ledBrightnessControl = ledBrightnessControl;
-            _trainMotorControl = trainMotorControl;
-            _externalMotorControl = externalMotorControl;
+            _portControllers = portControllers;
             _hubSelect = HubSelect;
             _controllers = controllers;
         }
@@ -47,43 +42,24 @@ namespace LegoBluetoothController.UI
             Application.Current.Dispatcher.Invoke(() =>
             {
                 LogMessage($"{controller.Hub.HubType}: {message}");
-                if (message is PortState)
+                if (message is PortState portState)
                 {
                     RefreshConnectedHubsText();
                     if (_hubSelect.SelectedItem is HubController selectedController &&
                         selectedController == controller)
                     {
-                        if (message is ExternalLEDState ledState)
+                        foreach (var portController in _portControllers)
                         {
-                            if (ledState.StateChangeEvent == DeviceState.Attached)
+                            if (portState.GetType() == portController.HandledPortState)
                             {
-                                _ledBrightnessControl.Show();
-                            }
-                            if (ledState.StateChangeEvent == DeviceState.Detached)
-                            {
-                                _ledBrightnessControl.Hide();
-                            }
-                        }
-                        if (message is TrainMotorState trainState)
-                        {
-                            if (trainState.StateChangeEvent == DeviceState.Attached)
-                            {
-                                _trainMotorControl.Show();
-                            }
-                            if (trainState.StateChangeEvent == DeviceState.Detached)
-                            {
-                                _trainMotorControl.Hide();
-                            }
-                        }
-                        if (message is ExternalMotorState motorState)
-                        {
-                            if (motorState.StateChangeEvent == DeviceState.Attached)
-                            {
-                                _externalMotorControl.Show();
-                            }
-                            if (motorState.StateChangeEvent == DeviceState.Detached)
-                            {
-                                _externalMotorControl.Hide();
+                                if (portState.StateChangeEvent == DeviceState.Attached)
+                                {
+                                    portController.Show();
+                                }
+                                if (portState.StateChangeEvent == DeviceState.Detached)
+                                {
+                                    portController.Hide();
+                                }
                             }
                         }
                     }
@@ -126,9 +102,8 @@ namespace LegoBluetoothController.UI
                 if (_hubSelect.SelectedItem is HubController selectedController &&
                     selectedController == controller)
                 {
-                    _ledBrightnessControl.Hide();
-                    _trainMotorControl.Hide();
-                    _externalMotorControl.Hide();
+                    foreach (var portController in _portControllers)
+                        portController.Hide();
                 }
                 _controllers.Remove(controller);
                 RefreshConnectedHubsText();

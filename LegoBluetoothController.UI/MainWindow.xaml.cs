@@ -2,6 +2,7 @@
 using BluetoothController.Commands.Basic;
 using BluetoothController.Controllers;
 using BluetoothController.Models;
+using BluetoothController.Responses.Device.State;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,16 +30,15 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.ExternalLED);
-            _trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
-            _externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox, IOTypes.ExternalMotor);
+            _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.ExternalLED, typeof(ExternalLEDState));
+            _trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor, typeof(TrainMotorState));
+            _externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox, IOTypes.ExternalMotor, typeof(ExternalMotorState));
 
             _portControllers.Add(_ledBrightnessControl);
             _portControllers.Add(_trainMotorControl);
             _portControllers.Add(_externalMotorControl);
 
-            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _ledBrightnessControl,
-                                                       _trainMotorControl, _externalMotorControl,
+            var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _portControllers,
                                                        HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;

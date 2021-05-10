@@ -1,4 +1,6 @@
 ﻿using BluetoothController.Models;
+using BluetoothController.Responses.Device.State;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -9,13 +11,20 @@ namespace LegoBluetoothController.UI
         private readonly Label _label;
         private readonly Slider _slider;
 
-        public IOType HandledIOType { get; set; }
+        public IOType HandledIOType { get; private set; }
 
-        public PortSliderController(Label label, Slider slider, IOType iOType)
+        public Type HandledPortState { get; private set; }
+
+        public PortSliderController(Label label, Slider slider, IOType iOType, Type handledPortState)
         {
+            if (!handledPortState.IsSubclassOf(typeof(PortState)))
+            {
+                throw new ArgumentException("handledPortState must be a derivative of PortState");
+            }
             _label = label;
             _slider = slider;
             HandledIOType = iOType;
+            HandledPortState = handledPortState;
         }
 
         public virtual void Hide()
