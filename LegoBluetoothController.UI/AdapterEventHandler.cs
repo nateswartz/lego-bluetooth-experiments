@@ -50,7 +50,7 @@ namespace LegoBluetoothController.UI
                     {
                         foreach (var portController in _portControllers)
                         {
-                            if (portState.GetType() == portController.HandledPortState)
+                            if (portState.DeviceType == portController.HandledIOType)
                             {
                                 if (portState.StateChangeEvent == DeviceState.Attached)
                                 {

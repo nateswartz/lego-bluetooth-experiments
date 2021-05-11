@@ -74,23 +74,23 @@ namespace BluetoothController.Responses
             var hub = controller.Hub;
             if (hub.GetPortsByDeviceType(IOTypes.TrainMotor).Any(p => p.PortID == portInfo.Port))
             {
+                portInfo.DeviceType = IOTypes.TrainMotor;
                 hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-                return new TrainMotorState(portInfo.Body);
             }
             if (hub.GetPortsByDeviceType(IOTypes.ExternalLED).Any(p => p.PortID == portInfo.Port))
             {
+                portInfo.DeviceType = IOTypes.ExternalLED;
                 hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-                return new ExternalLEDState(portInfo.Body);
             }
             if (hub.GetPortsByDeviceType(IOTypes.ExternalMotor).Any(p => p.PortID == portInfo.Port))
             {
+                portInfo.DeviceType = IOTypes.ExternalMotor;
                 hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-                return new ExternalMotorState(portInfo.Body);
             }
             if (hub.GetPortsByDeviceType(IOTypes.ColorDistance).Any(p => p.PortID == portInfo.Port))
             {
+                portInfo.DeviceType = IOTypes.ColorDistance;
                 hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-                return new ColorDistanceState(portInfo.Body);
             }
             return portInfo;
         }
@@ -98,27 +98,6 @@ namespace BluetoothController.Responses
         private static Response HandleIOAttached(IHubController controller, PortState portInfo)
         {
             AddIODeviceToHubPortList(controller, portInfo);
-
-            if (portInfo.DeviceType == IOTypes.LED)
-                return new LEDState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.ColorDistance)
-                return new ColorDistanceState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.ExternalMotor)
-                return new ExternalMotorState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.TrainMotor)
-                return new TrainMotorState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.ExternalLED)
-                return new ExternalLEDState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.TiltSensor)
-                return new TiltState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.RemoteButton)
-                return new RemoteButtonState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.VoltageSensor)
-                return new VoltageState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.InternalMotor)
-                return new InternalMotorState(portInfo.Body);
-            if (portInfo.DeviceType == IOTypes.CurrentSensor)
-                return new CurrentState(portInfo.Body);
 
             return portInfo;
         }

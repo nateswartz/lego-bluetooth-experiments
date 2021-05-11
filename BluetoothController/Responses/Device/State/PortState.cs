@@ -27,6 +27,9 @@ namespace BluetoothController.Responses.Device.State
                 DeviceType = IOTypes.GetByCode(body.Substring(10, 2));
         }
 
-        public override string ToString() => $"Unknown Device {StateChangeEvent} on port {Port} [{Body}]";
+        public override string ToString()
+        {
+            return $"{DeviceType?.Name ?? "Device"} {StateChangeEvent} on port {Port} [{Body}]";
+        }
     }
 }
