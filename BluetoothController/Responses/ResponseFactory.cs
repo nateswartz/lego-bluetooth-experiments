@@ -92,6 +92,11 @@ namespace BluetoothController.Responses
                 portInfo.DeviceType = IOTypes.ColorDistance;
                 hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
             }
+            if (hub.GetPortsByDeviceType(IOTypes.ColorSensor).Any(p => p.PortID == portInfo.Port))
+            {
+                portInfo.DeviceType = IOTypes.ColorSensor;
+                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
+            }
             return portInfo;
         }
 
