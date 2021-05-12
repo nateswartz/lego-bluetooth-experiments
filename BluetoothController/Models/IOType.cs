@@ -33,6 +33,7 @@ namespace BluetoothController.Models
         public static readonly IOType TiltSensor = new("28", "Tilt Sensor");
         public static readonly IOType RemoteButton = new("37", "Remote Button");
         public static readonly IOType ColorSensor = new("3d", "Color Sensor");
+        public static readonly IOType DistanceSensor = new("3e", "Distance Sensor");
 
         private readonly static List<IOType> _all = new()
         {
@@ -46,14 +47,15 @@ namespace BluetoothController.Models
             InternalMotor,
             TiltSensor,
             RemoteButton,
-            ColorSensor
+            ColorSensor,
+            DistanceSensor
         };
 
         public static IOType GetByCode(string code)
         {
             return _all.Where(c => c.Code.ToLower() == code.ToLower())
                        .FirstOrDefault()
-                       ?? new IOType(code, "Unknown Device");
+                       ?? new IOType(code, $"Unknown Device ({code})");
         }
     }
 }
