@@ -72,30 +72,11 @@ namespace BluetoothController.Responses
         private static Response HandleIODetached(IHubController controller, PortState portInfo)
         {
             var hub = controller.Hub;
-            if (hub.GetPortsByDeviceType(IOTypes.TrainMotor).Any(p => p.PortID == portInfo.Port))
+            var detachedPort = hub.Ports.Where(p => p.PortID == portInfo.Port).FirstOrDefault();
+            if (detachedPort != null)
             {
-                portInfo.DeviceType = IOTypes.TrainMotor;
-                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-            }
-            if (hub.GetPortsByDeviceType(IOTypes.ExternalLED).Any(p => p.PortID == portInfo.Port))
-            {
-                portInfo.DeviceType = IOTypes.ExternalLED;
-                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-            }
-            if (hub.GetPortsByDeviceType(IOTypes.ExternalMotor).Any(p => p.PortID == portInfo.Port))
-            {
-                portInfo.DeviceType = IOTypes.ExternalMotor;
-                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-            }
-            if (hub.GetPortsByDeviceType(IOTypes.ColorDistance).Any(p => p.PortID == portInfo.Port))
-            {
-                portInfo.DeviceType = IOTypes.ColorDistance;
-                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
-            }
-            if (hub.GetPortsByDeviceType(IOTypes.ColorSensor).Any(p => p.PortID == portInfo.Port))
-            {
-                portInfo.DeviceType = IOTypes.ColorSensor;
-                hub.GetPortByID(portInfo.Port).DeviceType = IOTypes.None;
+                portInfo.DeviceType = detachedPort.DeviceType;
+                detachedPort.DeviceType = IOTypes.None;
             }
             return portInfo;
         }
