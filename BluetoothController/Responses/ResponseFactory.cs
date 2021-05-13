@@ -124,6 +124,8 @@ namespace BluetoothController.Responses
                 return new RemoteButtonData(notification);
             if (port?.DeviceType == IOTypes.VoltageSensor)
                 return new VoltageData(notification);
+            if (port?.DeviceType == IOTypes.DistanceSensor)
+                return new DistanceData(notification);
 
             return sensorData;
         }
