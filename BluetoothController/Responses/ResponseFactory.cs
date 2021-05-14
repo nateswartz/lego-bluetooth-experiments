@@ -126,6 +126,8 @@ namespace BluetoothController.Responses
                 return new VoltageData(notification);
             if (port?.DeviceType == IOTypes.DistanceSensor)
                 return new DistanceData(notification);
+            if (port?.DeviceType == IOTypes.ColorSensor)
+                return new ColorData(notification, port.NotificationMode);
 
             return sensorData;
         }
