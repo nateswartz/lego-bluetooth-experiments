@@ -18,9 +18,6 @@ namespace LegoBluetoothController.UI
         private readonly IBluetoothLowEnergyAdapter _adapter;
         private readonly ObservableCollection<IHubController> _controllers = new();
 
-        private readonly IPortController _ledBrightnessControl;
-        private readonly IPortController _trainMotorControl;
-        private readonly IPortController _externalMotorControl;
 
         private readonly List<IPortController> _portControllers = new();
 
@@ -29,19 +26,21 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            _ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.ExternalLED);
-            _trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
-            _externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox, IOTypes.ExternalMotor);
+            var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.ExternalLED);
+            var trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
+            var externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox, IOTypes.ExternalMotor);
+            var ledColorControl = new PortComboBoxController(LedColorLabel, LedColorSelect, IOTypes.LED);
 
-            _portControllers.Add(_ledBrightnessControl);
-            _portControllers.Add(_trainMotorControl);
-            _portControllers.Add(_externalMotorControl);
+            _portControllers.Add(ledBrightnessControl);
+            _portControllers.Add(trainMotorControl);
+            _portControllers.Add(externalMotorControl);
+            _portControllers.Add(ledColorControl);
 
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _portControllers,
                                                        HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
-            ColorSelect.ItemsSource = LEDColors.All;
+            LedColorSelect.ItemsSource = LEDColors.All;
 
             foreach (var portController in _portControllers)
                 portController.Hide();
@@ -63,16 +62,16 @@ namespace LegoBluetoothController.UI
             }
         }
 
-        private async void ColorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void LedColorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
             {
-                ColorSelect.SelectedItem = null;
+                LedColorSelect.SelectedItem = null;
                 return;
             }
-            if (ColorSelect.SelectedItem is not LEDColor color)
+            if (LedColorSelect.SelectedItem is not LEDColor color)
             {
-                ColorSelect.SelectedItem = null;
+                LedColorSelect.SelectedItem = null;
                 return;
             }
             await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
