@@ -21,9 +21,9 @@
         <Slider x:Name="TrainMotorSlider" Thumb.DragCompleted="TrainMotorSlider_DragCompleted" Maximum="100" Minimum="0" LargeChange="0" Focusable="False" HorizontalAlignment="Left" Margin="38,238,0,0" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="TrainMotorLabel" Content="Train Motor Power" HorizontalAlignment="Left" Margin="38,204,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="TrainMotorClockwiseCheckbox" Click="TrainMotorClockwiseCheckbox_Click" Content="Clockwise" HorizontalAlignment="Left" Margin="175,238,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="ExternalMotorLabel" Content="External Motor Power" HorizontalAlignment="Left" Margin="192,136,0,0" VerticalAlignment="Top"/>
-        <Slider x:Name="ExternalMotorSlider" Thumb.DragCompleted="ExternalMotorSlider_DragCompleted"  Maximum="100" Minimum="0" LargeChange="0" Focusable="False" Margin="192,167,733,0" VerticalAlignment="Top" Width="120"/>
-        <CheckBox x:Name="ExternalMotorClockwiseCheckbox" Click="ExternalMotorClockwiseCheckbox_Click" Content="Clockwise" HorizontalAlignment="Left" Margin="324,168,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="BoostMotorLabel" Content="Boost Motor Power" HorizontalAlignment="Left" Margin="192,136,0,0" VerticalAlignment="Top"/>
+        <Slider x:Name="BoostMotorSlider" Thumb.DragCompleted="BoostMotorSlider_DragCompleted"  Maximum="100" Minimum="0" LargeChange="0" Focusable="False" Margin="192,167,733,0" VerticalAlignment="Top" Width="120"/>
+        <CheckBox x:Name="BoostMotorClockwiseCheckbox" Click="BoostMotorClockwiseCheckbox_Click" Content="Clockwise" HorizontalAlignment="Left" Margin="324,168,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LedColorLabel" Content="LED Color" HorizontalAlignment="Left" Margin="288,204,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="LedColorSelect" SelectionChanged="LedColorSelect_SelectionChanged" HorizontalAlignment="Left" Margin="294,238,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
     </Grid>

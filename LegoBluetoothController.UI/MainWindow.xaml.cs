@@ -28,12 +28,12 @@ namespace LegoBluetoothController.UI
             InitializeComponent();
             var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.ExternalLED);
             var trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
-            var externalMotorControl = new PortSliderCheckboxController(ExternalMotorLabel, ExternalMotorSlider, ExternalMotorClockwiseCheckbox, IOTypes.ExternalMotor);
+            var boostMotorControl = new PortSliderCheckboxController(BoostMotorLabel, BoostMotorSlider, BoostMotorClockwiseCheckbox, IOTypes.BoostTachoMotor);
             var ledColorControl = new PortComboBoxController(LedColorLabel, LedColorSelect, IOTypes.LED);
 
             _portControllers.Add(ledBrightnessControl);
             _portControllers.Add(trainMotorControl);
-            _portControllers.Add(externalMotorControl);
+            _portControllers.Add(boostMotorControl);
             _portControllers.Add(ledColorControl);
 
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _portControllers,
@@ -122,12 +122,12 @@ namespace LegoBluetoothController.UI
             controller.ExecuteCommandAsync(new TrainMotorCommand(trainMotor, Convert.ToInt32(TrainMotorSlider.Value), TrainMotorClockwiseCheckbox.IsChecked.Value));
         }
 
-        private void ExternalMotorClockwiseCheckbox_Click(object sender, RoutedEventArgs e)
+        private void BoostMotorClockwiseCheckbox_Click(object sender, RoutedEventArgs e)
         {
             SendMotorCommand();
         }
 
-        private void ExternalMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void BoostMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             SendMotorCommand();
         }
@@ -136,10 +136,10 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            var externalMotor = controller.GetPortIdsByDeviceType(IOTypes.ExternalMotor).FirstOrDefault();
-            if (string.IsNullOrWhiteSpace(externalMotor))
+            var boostMotor = controller.GetPortIdsByDeviceType(IOTypes.BoostTachoMotor).FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(boostMotor))
                 return;
-            controller.ExecuteCommandAsync(new MotorCommand(externalMotor, Convert.ToInt32(ExternalMotorSlider.Value), 10000, ExternalMotorClockwiseCheckbox.IsChecked.Value));
+            controller.ExecuteCommandAsync(new MotorCommand(boostMotor, Convert.ToInt32(BoostMotorSlider.Value), 10000, BoostMotorClockwiseCheckbox.IsChecked.Value));
         }
 
         private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)

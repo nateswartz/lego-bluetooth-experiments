@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class MotorToLEDEventHandler : EventHandlerBase, IEventHandler<ExternalMotorData>
+    public class MotorToLEDEventHandler : EventHandlerBase, IEventHandler<BoostMotorData>
     {
         public MotorToLEDEventHandler(IHubController controller) : base(controller) { }
 
         public async Task<bool> HandleEventAsync(Response response)
         {
-            var data = (ExternalMotorData)response;
+            var data = (BoostMotorData)response;
             var color = LEDColors.Red;
             if (data.Speed > 30)
             {

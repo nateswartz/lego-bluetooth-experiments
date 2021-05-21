@@ -28,12 +28,13 @@ namespace BluetoothController.Models
         public static readonly IOType CurrentSensor = new("15", "Current Sensor");
         public static readonly IOType LED = new("17", "LED");
         public static readonly IOType ColorDistance = new("25", "Color/Distance Sensor");
-        public static readonly IOType ExternalMotor = new("26", "External Motor");
+        public static readonly IOType BoostTachoMotor = new("26", "Boost Tacho Motor");
         public static readonly IOType InternalMotor = new("27", "Internal Motor");
         public static readonly IOType TiltSensor = new("28", "Tilt Sensor");
         public static readonly IOType RemoteButton = new("37", "Remote Button");
         public static readonly IOType ColorSensor = new("3d", "Color Sensor");
         public static readonly IOType DistanceSensor = new("3e", "Distance Sensor");
+        public static readonly IOType SmallAngularMotor = new("4b", "Small Angular Motor");
 
         private readonly static List<IOType> _all = new()
         {
@@ -43,12 +44,13 @@ namespace BluetoothController.Models
             CurrentSensor,
             LED,
             ColorDistance,
-            ExternalMotor,
+            BoostTachoMotor,
             InternalMotor,
             TiltSensor,
             RemoteButton,
             ColorSensor,
-            DistanceSensor
+            DistanceSensor,
+            SmallAngularMotor
         };
 
         public static IOType GetByCode(string code)

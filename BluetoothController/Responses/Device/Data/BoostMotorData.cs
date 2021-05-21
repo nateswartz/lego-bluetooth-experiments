@@ -2,12 +2,12 @@
 
 namespace BluetoothController.Responses.Device.Data
 {
-    public class ExternalMotorData : SensorData
+    public class BoostMotorData : SensorData
     {
         public int Speed { get; set; }
         public string Mode { get; set; }
 
-        public ExternalMotorData(string body, string mode) : base(body)
+        public BoostMotorData(string body, string mode) : base(body)
         {
             Mode = mode;
             if (Mode == "01")
@@ -20,9 +20,9 @@ namespace BluetoothController.Responses.Device.Data
         {
             return Mode switch
             {
-                "02" => $"External Motor ({Port}) Angle Data [{Body}]",
-                "01" => $"External Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)} [{Body}]",
-                _ => $"External Motor ({Port}) Data [{Body}]",
+                "02" => $"Boost Motor ({Port}) Angle Data [{Body}]",
+                "01" => $"Boost Motor ({Port}) Speed Data: {(Speed == 255 ? 0 : Speed)} [{Body}]",
+                _ => $"Boost Motor ({Port}) Data [{Body}]",
             };
         }
     }

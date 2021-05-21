@@ -7,7 +7,7 @@ namespace BluetoothController.Commands.Basic
         // TODO: Make sensor mode more user friendly
         // For Tilt Sensor, 01-04 all work, vary granularity
         // For Internal Motor (single/combined), 01-02 work, 03-04 don't
-        // For External Motor, 02 is angle data, 01 is speed data, 03 is more granular something, 04 doesn't work
+        // For Boost Motor, 02 is angle data, 01 is speed data, 03 is more granular something, 04 doesn't work
         // For Color Distance
         //      00 is just color, 01 is just distance, 02 seems to send a value which increments every time something gets close
         //      03 is distance, increasing as something is closer,

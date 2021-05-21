@@ -114,8 +114,8 @@ namespace BluetoothController.Responses
 
             if (port?.DeviceType == IOTypes.ColorDistance)
                 return new ColorDistanceData(notification, port.NotificationMode);
-            if (port?.DeviceType == IOTypes.ExternalMotor)
-                return new ExternalMotorData(notification, port.NotificationMode);
+            if (port?.DeviceType == IOTypes.BoostTachoMotor)
+                return new BoostMotorData(notification, port.NotificationMode);
             if (port?.DeviceType == IOTypes.TrainMotor)
                 return new TrainMotorData(notification);
             if (port?.DeviceType == IOTypes.TiltSensor)
