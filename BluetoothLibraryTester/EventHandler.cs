@@ -23,7 +23,7 @@ namespace BluetoothLibraryTester
             await Task.CompletedTask;
         }
 
-        public async Task HandleDiscoveryAsync(DiscoveredDevice device)
+        public async Task HandleDiscoveryAsync(DiscoveredBluetoothDevice device)
         {
             Console.WriteLine($"Discovered device: {device.Name}");
             await Task.CompletedTask;

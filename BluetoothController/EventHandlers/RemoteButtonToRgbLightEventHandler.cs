@@ -31,7 +31,7 @@ namespace BluetoothController.EventHandlers
             {
                 color = LEDColors.None;
             }
-            var command = new LEDCommand(_controller, color);
+            var command = new RgbLightCommand(_controller, color);
             await _controller.ExecuteCommandAsync(command);
             return false;
         }

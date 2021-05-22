@@ -74,7 +74,7 @@ namespace BluetoothController
                 _controllers.Add(controller);
             }
 
-            await _eventHandler.HandleDiscoveryAsync(new DiscoveredDevice
+            await _eventHandler.HandleDiscoveryAsync(new DiscoveredBluetoothDevice
             {
                 Name = device.Name,
                 BluetoothDeviceId = device.DeviceId

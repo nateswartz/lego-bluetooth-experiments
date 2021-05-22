@@ -112,7 +112,7 @@ namespace BluetoothController.Responses
             var hub = controller.Hub;
             var port = hub.GetPortByID(sensorData.Port);
 
-            if (port?.DeviceType == IOTypes.ColorDistance)
+            if (port?.DeviceType == IOTypes.ColorDistanceSensor)
                 return new ColorDistanceData(notification, port.NotificationMode);
             if (port?.DeviceType == IOTypes.BoostTachoMotor)
                 return new BoostMotorData(notification, port.NotificationMode);

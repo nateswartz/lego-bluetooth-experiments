@@ -26,10 +26,10 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.ExternalLED);
+            var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.LedLight);
             var trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
             var boostMotorControl = new PortSliderCheckboxController(BoostMotorLabel, BoostMotorSlider, BoostMotorClockwiseCheckbox, IOTypes.BoostTachoMotor);
-            var ledColorControl = new PortComboBoxController(LedColorLabel, LedColorSelect, IOTypes.LED);
+            var ledColorControl = new PortComboBoxController(LedColorLabel, LedColorSelect, IOTypes.RgbLight);
 
             _portControllers.Add(ledBrightnessControl);
             _portControllers.Add(trainMotorControl);
@@ -96,7 +96,7 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            var externalLED = controller.GetPortIdsByDeviceType(IOTypes.ExternalLED).FirstOrDefault();
+            var externalLED = controller.GetPortIdsByDeviceType(IOTypes.LedLight).FirstOrDefault();
             if (string.IsNullOrWhiteSpace(externalLED))
                 return;
             controller.ExecuteCommandAsync(new ExternalLEDCommand(externalLED, Convert.ToInt32(LEDBrightnessSlider.Value)));

@@ -7,7 +7,7 @@ namespace BluetoothController
 {
     internal class SimpleBluetoothLowEnergyAdapterEventHandler : IBluetoothLowEnergyAdapterEventHandler
     {
-        public Task HandleDiscoveryAsync(DiscoveredDevice discoveredDevice)
+        public Task HandleDiscoveryAsync(DiscoveredBluetoothDevice discoveredDevice)
         {
             return Task.CompletedTask;
         }

@@ -68,7 +68,7 @@ namespace LegoBluetoothController.UI
             await Task.CompletedTask;
         }
 
-        public async Task HandleDiscoveryAsync(DiscoveredDevice device)
+        public async Task HandleDiscoveryAsync(DiscoveredBluetoothDevice device)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {

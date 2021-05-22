@@ -23,11 +23,11 @@ namespace BluetoothController.Models
     {
         public static readonly IOType None = new("", "");
         public static readonly IOType TrainMotor = new("02", "Train Motor");
-        public static readonly IOType ExternalLED = new("08", "External LED");
+        public static readonly IOType LedLight = new("08", "LED Light");
         public static readonly IOType VoltageSensor = new("14", "Voltage Sensor");
         public static readonly IOType CurrentSensor = new("15", "Current Sensor");
-        public static readonly IOType LED = new("17", "LED");
-        public static readonly IOType ColorDistance = new("25", "Color/Distance Sensor");
+        public static readonly IOType RgbLight = new("17", "RGB Light");
+        public static readonly IOType ColorDistanceSensor = new("25", "Color/Distance Sensor");
         public static readonly IOType BoostTachoMotor = new("26", "Boost Tacho Motor");
         public static readonly IOType InternalMotor = new("27", "Internal Motor");
         public static readonly IOType TiltSensor = new("28", "Tilt Sensor");
@@ -39,11 +39,11 @@ namespace BluetoothController.Models
         private readonly static List<IOType> _all = new()
         {
             TrainMotor,
-            ExternalLED,
+            LedLight,
             VoltageSensor,
             CurrentSensor,
-            LED,
-            ColorDistance,
+            RgbLight,
+            ColorDistanceSensor,
             BoostTachoMotor,
             InternalMotor,
             TiltSensor,
