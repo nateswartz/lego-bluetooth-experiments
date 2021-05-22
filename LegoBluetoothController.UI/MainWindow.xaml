@@ -24,7 +24,7 @@
         <Label x:Name="BoostMotorLabel" Content="Boost Motor Power" HorizontalAlignment="Left" Margin="192,136,0,0" VerticalAlignment="Top"/>
         <Slider x:Name="BoostMotorSlider" Thumb.DragCompleted="BoostMotorSlider_DragCompleted"  Maximum="100" Minimum="0" LargeChange="0" Focusable="False" Margin="192,167,733,0" VerticalAlignment="Top" Width="120"/>
         <CheckBox x:Name="BoostMotorClockwiseCheckbox" Click="BoostMotorClockwiseCheckbox_Click" Content="Clockwise" HorizontalAlignment="Left" Margin="324,168,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="LedColorLabel" Content="LED Color" HorizontalAlignment="Left" Margin="288,204,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="LedColorSelect" SelectionChanged="LedColorSelect_SelectionChanged" HorizontalAlignment="Left" Margin="294,238,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
+        <Label x:Name="RgbLightColorLabel" Content="RGB Light Color" HorizontalAlignment="Left" Margin="288,204,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="RgbLightColorSelect" SelectionChanged="RgbLightColorSelect_SelectionChanged" HorizontalAlignment="Left" Margin="294,238,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
     </Grid>
 </Window>

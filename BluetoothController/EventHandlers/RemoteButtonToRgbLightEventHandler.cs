@@ -7,29 +7,29 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class RemoteButtonToLEDEventHandler : EventHandlerBase, IEventHandler<RemoteButtonData>
+    public class RemoteButtonToRgbLightEventHandler : EventHandlerBase, IEventHandler<RemoteButtonData>
     {
-        public RemoteButtonToLEDEventHandler(IHubController controller) : base(controller) { }
+        public RemoteButtonToRgbLightEventHandler(IHubController controller) : base(controller) { }
 
         public async Task<bool> HandleEventAsync(Response response)
         {
             var data = (RemoteButtonData)response;
-            LEDColor color = LEDColors.Red;
+            var color = RgbLightColors.Red;
             if (data.PlusPressed)
             {
-                color = LEDColors.Yellow;
+                color = RgbLightColors.Yellow;
             }
             else if (data.RedPressed)
             {
-                color = LEDColors.Red;
+                color = RgbLightColors.Red;
             }
             else if (data.MinusPressed)
             {
-                color = LEDColors.Pink;
+                color = RgbLightColors.Pink;
             }
             if (!data.PlusPressed && !data.MinusPressed && !data.RedPressed)
             {
-                color = LEDColors.None;
+                color = RgbLightColors.None;
             }
             var command = new RgbLightCommand(_controller, color);
             await _controller.ExecuteCommandAsync(command);

@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace BluetoothController.EventHandlers
 {
-    public class ButtonToLEDEventHandler : EventHandlerBase, IEventHandler<ButtonStateMessage>
+    public class ButtonToRgbLightEventHandler : EventHandlerBase, IEventHandler<ButtonStateMessage>
     {
-        public ButtonToLEDEventHandler(IHubController controller) : base(controller) { }
+        public ButtonToRgbLightEventHandler(IHubController controller) : base(controller) { }
 
         public async Task<bool> HandleEventAsync(Response response)
         {
             var data = (ButtonStateMessage)response;
-            LEDColor color = LEDColors.Red;
+            var color = RgbLightColors.Red;
             if (data.State == ButtonState.Pressed)
             {
-                color = LEDColors.Yellow;
+                color = RgbLightColors.Yellow;
             }
             else if (data.State == ButtonState.Released)
             {
-                color = LEDColors.Purple;
+                color = RgbLightColors.Purple;
             }
             var command = new RgbLightCommand(_controller, color);
             await _controller.ExecuteCommandAsync(command);

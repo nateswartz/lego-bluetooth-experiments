@@ -29,18 +29,18 @@ namespace LegoBluetoothController.UI
             var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.LedLight);
             var trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
             var boostMotorControl = new PortSliderCheckboxController(BoostMotorLabel, BoostMotorSlider, BoostMotorClockwiseCheckbox, IOTypes.BoostTachoMotor);
-            var ledColorControl = new PortComboBoxController(LedColorLabel, LedColorSelect, IOTypes.RgbLight);
+            var rgbLightControl = new PortComboBoxController(RgbLightColorLabel, RgbLightColorSelect, IOTypes.RgbLight);
 
             _portControllers.Add(ledBrightnessControl);
             _portControllers.Add(trainMotorControl);
             _portControllers.Add(boostMotorControl);
-            _portControllers.Add(ledColorControl);
+            _portControllers.Add(rgbLightControl);
 
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _portControllers,
                                                        HubSelect, _controllers);
             _adapter = new BluetoothLowEnergyAdapter(eventHandler);
             HubSelect.ItemsSource = _controllers;
-            LedColorSelect.ItemsSource = LEDColors.All;
+            RgbLightColorSelect.ItemsSource = RgbLightColors.All;
 
             foreach (var portController in _portControllers)
                 portController.Hide();
@@ -62,20 +62,20 @@ namespace LegoBluetoothController.UI
             }
         }
 
-        private async void LedColorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void RgbLightColorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
             {
-                LedColorSelect.SelectedItem = null;
+                RgbLightColorSelect.SelectedItem = null;
                 return;
             }
-            if (LedColorSelect.SelectedItem is not LEDColor color)
+            if (RgbLightColorSelect.SelectedItem is not RgbLightColor color)
             {
-                LedColorSelect.SelectedItem = null;
+                RgbLightColorSelect.SelectedItem = null;
                 return;
             }
-            await controller.ExecuteCommandAsync(new LEDCommand(controller, color));
-            LogMessage($"{controller.Hub.HubType}: Changing LED Color to {color.Name}");
+            await controller.ExecuteCommandAsync(new RgbLightCommand(controller, color));
+            LogMessage($"{controller.Hub.HubType}: Changing RGB Color to {color.Name}");
         }
 
         private async void ShutdownButton_Click(object sender, RoutedEventArgs e)

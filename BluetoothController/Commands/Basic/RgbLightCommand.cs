@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace BluetoothController.Commands.Basic
 {
-    public class LEDCommand : PortOutputCommandType
+    public class RgbLightCommand : PortOutputCommandType
     {
-        public LEDCommand(IHubController controller, LEDColor color)
+        public RgbLightCommand(IHubController controller, RgbLightColor color)
         {
             var port = controller.Hub.GetPortsByDeviceType(IOTypes.RgbLight).First().PortID;
             HexCommand = AddHeader($"{port}115100{color.Code}");

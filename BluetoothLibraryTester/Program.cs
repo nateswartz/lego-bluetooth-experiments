@@ -36,9 +36,11 @@ namespace BluetoothLibraryTester
                     await Task.Delay(100);
                 }
 
-                await GetInfo();
+                //await GetInfo();
                 Console.WriteLine("Running test method...");
-                await GetPortInfoForIOType(_controllers.First(), IOTypes.TrainMotor);
+                await RunMotor(_controllers.First());
+                //await GetPortInfoForIOType(_controllers.First(), IOTypes.SmallAngularMotor);
+                //await RegisterForNotifications(_controllers.First());
                 await Disconnect();
             }
             catch (Exception e)
@@ -46,6 +48,21 @@ namespace BluetoothLibraryTester
                 Console.WriteLine($"Encountered exception: {e.Message}");
                 await Disconnect();
             }
+        }
+
+        static async Task RunMotor(IHubController controller)
+        {
+            var port = controller.GetPortIdsByDeviceType(IOTypes.SmallAngularMotor).First();
+            await controller.ExecuteCommandAsync(new MotorCommand(port, 100, 2000, true));
+            await Task.Delay(3000);
+        }
+
+        static async Task RegisterForNotifications(IHubController controller)
+        {
+            await Task.Delay(3000);
+            var port = controller.GetPortIdsByDeviceType(IOTypes.ColorSensor).First();
+            await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "00"));
+            await Task.Delay(30000);
         }
 
         static async Task GetInfo()

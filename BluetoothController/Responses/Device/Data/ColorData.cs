@@ -4,7 +4,7 @@ namespace BluetoothController.Responses.Device.Data
 {
     public class ColorData : SensorData
     {
-        public LEDColor Color { get; set; }
+        public RgbLightColor Color { get; set; }
         public string Mode { get; set; }
 
         public ColorData(string body, string mode) : base(body)
@@ -12,7 +12,7 @@ namespace BluetoothController.Responses.Device.Data
             Mode = mode;
             if (Mode == "00")
             {
-                Color = LEDColors.GetByCode(Body.Substring(8, 2));
+                Color = RgbLightColors.GetByCode(Body.Substring(8, 2));
             }
         }
 

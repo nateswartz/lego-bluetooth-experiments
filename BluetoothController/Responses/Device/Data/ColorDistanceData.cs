@@ -5,7 +5,7 @@ namespace BluetoothController.Responses.Device.Data
 {
     public class ColorDistanceData : SensorData
     {
-        public LEDColor Color { get; set; }
+        public RgbLightColor Color { get; set; }
         public int Inches { get; set; }
         public int ProximityCounter { get; set; }
         public string Mode { get; set; }
@@ -15,7 +15,7 @@ namespace BluetoothController.Responses.Device.Data
             Mode = mode;
             if (Mode == "00")
             {
-                Color = LEDColors.GetByCode(Body.Substring(8, 2));
+                Color = RgbLightColors.GetByCode(Body.Substring(8, 2));
             }
             else if (Mode == "01")
             {
@@ -27,7 +27,7 @@ namespace BluetoothController.Responses.Device.Data
             }
             else if (Mode == "08")
             {
-                Color = LEDColors.GetByCode(Body.Substring(8, 2));
+                Color = RgbLightColors.GetByCode(Body.Substring(8, 2));
                 Inches = Convert.ToInt32(Body.Substring(10, 2), 16);
             }
         }
