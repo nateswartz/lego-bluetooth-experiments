@@ -14,7 +14,7 @@ namespace BluetoothController.EventHandlers.Internal
         public async Task<bool> HandleEventAsync(Response response)
         {
             var portState = (PortState)response;
-            if (portState.DeviceType == IOTypes.InternalMotor)
+            if (portState.DeviceType == IoDeviceTypes.InternalMotor)
             {
                 _controller.Hub.HubType = HubType.BoostMoveHub;
                 await Task.CompletedTask;

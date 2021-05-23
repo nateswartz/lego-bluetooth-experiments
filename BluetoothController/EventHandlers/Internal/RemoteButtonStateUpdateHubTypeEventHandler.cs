@@ -14,7 +14,7 @@ namespace BluetoothController.EventHandlers.Internal
         public async Task<bool> HandleEventAsync(Response response)
         {
             var portState = (PortState)response;
-            if (portState.DeviceType == IOTypes.RemoteButton)
+            if (portState.DeviceType == IoDeviceTypes.RemoteButton)
             {
                 _controller.Hub.HubType = HubType.TwoPortHandset;
                 await Task.CompletedTask;

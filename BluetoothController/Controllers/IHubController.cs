@@ -17,7 +17,7 @@ namespace BluetoothController.Controllers
         void AddEventHandler<T>(IEventHandler<T> eventHandler) where T : Response;
         Task InitializeAsync(Func<IHubController, Response, Task> notificationHandler, IGattCharacteristicWrapper gattCharacteristicWrapper);
         Task<bool> ExecuteCommandAsync(ICommand command);
-        IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType);
+        IEnumerable<string> GetPortIdsByDeviceType(IoDeviceType deviceType);
         void RemoveEventHandler<T>(IEventHandler<T> eventHandler) where T : Response;
         string ToString();
     }

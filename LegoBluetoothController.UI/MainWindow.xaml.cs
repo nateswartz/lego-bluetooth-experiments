@@ -26,10 +26,10 @@ namespace LegoBluetoothController.UI
         public MainWindow()
         {
             InitializeComponent();
-            var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IOTypes.LedLight);
-            var trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IOTypes.TrainMotor);
-            var boostMotorControl = new PortSliderCheckboxController(BoostMotorLabel, BoostMotorSlider, BoostMotorClockwiseCheckbox, IOTypes.BoostTachoMotor);
-            var rgbLightControl = new PortComboBoxController(RgbLightColorLabel, RgbLightColorSelect, IOTypes.RgbLight);
+            var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IoDeviceTypes.LedLight);
+            var trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IoDeviceTypes.TrainMotor);
+            var boostMotorControl = new PortSliderCheckboxController(BoostMotorLabel, BoostMotorSlider, BoostMotorClockwiseCheckbox, IoDeviceTypes.BoostTachoMotor);
+            var rgbLightControl = new PortComboBoxController(RgbLightColorLabel, RgbLightColorSelect, IoDeviceTypes.RgbLight);
 
             _portControllers.Add(ledBrightnessControl);
             _portControllers.Add(trainMotorControl);
@@ -96,10 +96,10 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            var externalLED = controller.GetPortIdsByDeviceType(IOTypes.LedLight).FirstOrDefault();
+            var externalLED = controller.GetPortIdsByDeviceType(IoDeviceTypes.LedLight).FirstOrDefault();
             if (string.IsNullOrWhiteSpace(externalLED))
                 return;
-            controller.ExecuteCommandAsync(new ExternalLEDCommand(externalLED, Convert.ToInt32(LEDBrightnessSlider.Value)));
+            controller.ExecuteCommandAsync(new ExternalLedCommand(externalLED, Convert.ToInt32(LEDBrightnessSlider.Value)));
         }
 
         private void TrainMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
@@ -116,7 +116,7 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            var trainMotor = controller.GetPortIdsByDeviceType(IOTypes.TrainMotor).FirstOrDefault();
+            var trainMotor = controller.GetPortIdsByDeviceType(IoDeviceTypes.TrainMotor).FirstOrDefault();
             if (string.IsNullOrWhiteSpace(trainMotor))
                 return;
             controller.ExecuteCommandAsync(new TrainMotorCommand(trainMotor, Convert.ToInt32(TrainMotorSlider.Value), TrainMotorClockwiseCheckbox.IsChecked.Value));
@@ -136,7 +136,7 @@ namespace LegoBluetoothController.UI
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            var boostMotor = controller.GetPortIdsByDeviceType(IOTypes.BoostTachoMotor).FirstOrDefault();
+            var boostMotor = controller.GetPortIdsByDeviceType(IoDeviceTypes.BoostTachoMotor).FirstOrDefault();
             if (string.IsNullOrWhiteSpace(boostMotor))
                 return;
             controller.ExecuteCommandAsync(new MotorCommand(boostMotor, Convert.ToInt32(BoostMotorSlider.Value), 10000, BoostMotorClockwiseCheckbox.IsChecked.Value));
@@ -149,7 +149,7 @@ namespace LegoBluetoothController.UI
 
             foreach (var portController in _portControllers)
             {
-                if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(portController.HandledIOType).FirstOrDefault()))
+                if (!string.IsNullOrWhiteSpace(controller.GetPortIdsByDeviceType(portController.HandledDeviceType).FirstOrDefault()))
                 {
                     portController.Show();
                 }

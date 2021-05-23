@@ -9,13 +9,13 @@ namespace LegoBluetoothController.UI
         private readonly Label _label;
         private readonly Slider _slider;
 
-        public IOType HandledIOType { get; private set; }
+        public IoDeviceType HandledDeviceType { get; private set; }
 
-        public PortSliderController(Label label, Slider slider, IOType iOType)
+        public PortSliderController(Label label, Slider slider, IoDeviceType iOType)
         {
             _label = label;
             _slider = slider;
-            HandledIOType = iOType;
+            HandledDeviceType = iOType;
         }
 
         public virtual void Hide()

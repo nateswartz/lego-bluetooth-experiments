@@ -8,8 +8,8 @@ namespace LegoBluetoothController.UI
     {
         private readonly CheckBox _checkbox;
 
-        public PortSliderCheckboxController(Label label, Slider slider, CheckBox checkbox, IOType handledIOType)
-            : base(label, slider, handledIOType)
+        public PortSliderCheckboxController(Label label, Slider slider, CheckBox checkbox, IoDeviceType handledDeviceType)
+            : base(label, slider, handledDeviceType)
         {
             _checkbox = checkbox;
         }

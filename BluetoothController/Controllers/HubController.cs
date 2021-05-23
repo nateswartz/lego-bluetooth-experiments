@@ -45,7 +45,7 @@ namespace BluetoothController.Controllers
             await ExecuteCommandAsync(new HubFirmwareCommand());
         }
 
-        public IEnumerable<string> GetPortIdsByDeviceType(IOType deviceType)
+        public IEnumerable<string> GetPortIdsByDeviceType(IoDeviceType deviceType)
         {
             return Hub.GetPortsByDeviceType(deviceType).Select(h => h.PortID);
         }

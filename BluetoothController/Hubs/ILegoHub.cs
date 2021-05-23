@@ -10,6 +10,6 @@ namespace BluetoothController.Hubs
         List<HubPort> Ports { get; set; }
 
         HubPort GetPortByID(string portID);
-        IEnumerable<HubPort> GetPortsByDeviceType(IOType deviceType);
+        IEnumerable<HubPort> GetPortsByDeviceType(IoDeviceType deviceType);
     }
 }

@@ -76,7 +76,7 @@ namespace BluetoothController.Responses
             if (detachedPort != null)
             {
                 portInfo.DeviceType = detachedPort.DeviceType;
-                detachedPort.DeviceType = IOTypes.None;
+                detachedPort.DeviceType = IoDeviceTypes.None;
             }
             return portInfo;
         }
@@ -112,21 +112,21 @@ namespace BluetoothController.Responses
             var hub = controller.Hub;
             var port = hub.GetPortByID(sensorData.Port);
 
-            if (port?.DeviceType == IOTypes.ColorDistanceSensor)
+            if (port?.DeviceType == IoDeviceTypes.ColorDistanceSensor)
                 return new ColorDistanceData(notification, port.NotificationMode);
-            if (port?.DeviceType == IOTypes.BoostTachoMotor)
+            if (port?.DeviceType == IoDeviceTypes.BoostTachoMotor)
                 return new BoostMotorData(notification, port.NotificationMode);
-            if (port?.DeviceType == IOTypes.TrainMotor)
+            if (port?.DeviceType == IoDeviceTypes.TrainMotor)
                 return new TrainMotorData(notification);
-            if (port?.DeviceType == IOTypes.TiltSensor)
+            if (port?.DeviceType == IoDeviceTypes.TiltSensor)
                 return new TiltData(notification);
-            if (port?.DeviceType == IOTypes.RemoteButton)
+            if (port?.DeviceType == IoDeviceTypes.RemoteButton)
                 return new RemoteButtonData(notification);
-            if (port?.DeviceType == IOTypes.VoltageSensor)
+            if (port?.DeviceType == IoDeviceTypes.VoltageSensor)
                 return new VoltageData(notification);
-            if (port?.DeviceType == IOTypes.DistanceSensor)
+            if (port?.DeviceType == IoDeviceTypes.DistanceSensor)
                 return new DistanceData(notification);
-            if (port?.DeviceType == IOTypes.ColorSensor)
+            if (port?.DeviceType == IoDeviceTypes.ColorSensor)
                 return new ColorData(notification, port.NotificationMode);
 
             return sensorData;

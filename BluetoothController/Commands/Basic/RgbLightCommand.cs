@@ -9,7 +9,7 @@ namespace BluetoothController.Commands.Basic
     {
         public RgbLightCommand(IHubController controller, RgbLightColor color)
         {
-            var port = controller.Hub.GetPortsByDeviceType(IOTypes.RgbLight).First().PortID;
+            var port = controller.Hub.GetPortsByDeviceType(IoDeviceTypes.RgbLight).First().PortID;
             HexCommand = AddHeader($"{port}115100{color.Code}");
         }
     }

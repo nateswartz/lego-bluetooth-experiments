@@ -2,9 +2,9 @@
 
 namespace BluetoothController.Commands.Basic
 {
-    public class ExternalLEDCommand : PortOutputCommandType
+    public class ExternalLedCommand : PortOutputCommandType
     {
-        public ExternalLEDCommand(string portId, int powerPercentage)
+        public ExternalLedCommand(string portId, int powerPercentage)
         {
             HexCommand = AddHeader($"{portId}115100{powerPercentage:X2}");
         }

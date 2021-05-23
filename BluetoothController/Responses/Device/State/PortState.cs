@@ -8,7 +8,7 @@ namespace BluetoothController.Responses.Device.State
     {
         public string Port { get; set; }
         public string PortLetter { get; set; }
-        public IOType DeviceType { get; set; }
+        public IoDeviceType DeviceType { get; set; }
         public DeviceState StateChangeEvent { get; set; }
 
         public PortState(string body) : base(body)
@@ -24,7 +24,7 @@ namespace BluetoothController.Responses.Device.State
                 _ => "?",
             };
             if (StateChangeEvent != DeviceState.Detached)
-                DeviceType = IOTypes.GetByCode(body.Substring(10, 2));
+                DeviceType = IoDeviceTypes.GetByCode(body.Substring(10, 2));
         }
 
         public override string ToString()

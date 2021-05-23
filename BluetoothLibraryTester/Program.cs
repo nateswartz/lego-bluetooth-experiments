@@ -52,7 +52,7 @@ namespace BluetoothLibraryTester
 
         static async Task RunMotor(IHubController controller)
         {
-            var port = controller.GetPortIdsByDeviceType(IOTypes.SmallAngularMotor).First();
+            var port = controller.GetPortIdsByDeviceType(IoDeviceTypes.SmallAngularMotor).First();
             await controller.ExecuteCommandAsync(new MotorCommand(port, 100, 2000, true));
             await Task.Delay(3000);
         }
@@ -60,7 +60,7 @@ namespace BluetoothLibraryTester
         static async Task RegisterForNotifications(IHubController controller)
         {
             await Task.Delay(3000);
-            var port = controller.GetPortIdsByDeviceType(IOTypes.ColorSensor).First();
+            var port = controller.GetPortIdsByDeviceType(IoDeviceTypes.ColorSensor).First();
             await controller.ExecuteCommandAsync(new ToggleNotificationsCommand(port, true, "00"));
             await Task.Delay(30000);
         }
@@ -76,7 +76,7 @@ namespace BluetoothLibraryTester
             await Task.Delay(1000);
         }
 
-        static async Task GetPortInfoForIOType(IHubController controller, IOType ioType)
+        static async Task GetPortInfoForIOType(IHubController controller, IoDeviceType ioType)
         {
             var ports = controller.GetPortIdsByDeviceType(ioType);
 

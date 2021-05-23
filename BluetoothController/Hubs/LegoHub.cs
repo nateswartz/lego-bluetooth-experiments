@@ -16,7 +16,7 @@ namespace BluetoothController.Hubs
             return Ports.FirstOrDefault(p => p?.PortID == portID);
         }
 
-        public IEnumerable<HubPort> GetPortsByDeviceType(IOType deviceType)
+        public IEnumerable<HubPort> GetPortsByDeviceType(IoDeviceType deviceType)
         {
             return Ports.Where(p => p?.DeviceType.Code == deviceType.Code);
         }

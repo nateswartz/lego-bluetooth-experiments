@@ -9,13 +9,13 @@ namespace LegoBluetoothController.UI
         private readonly Label _label;
         private readonly ComboBox _comboBox;
 
-        public IOType HandledIOType { get; private set; }
+        public IoDeviceType HandledDeviceType { get; private set; }
 
-        public PortComboBoxController(Label label, ComboBox comboBox, IOType iOType)
+        public PortComboBoxController(Label label, ComboBox comboBox, IoDeviceType handledDeviceType)
         {
             _label = label;
             _comboBox = comboBox;
-            HandledIOType = iOType;
+            HandledDeviceType = handledDeviceType;
         }
 
         public virtual void Hide()

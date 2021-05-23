@@ -4,7 +4,7 @@ namespace LegoBluetoothController.UI
 {
     public interface IPortController
     {
-        public IOType HandledIOType { get; }
+        public IoDeviceType HandledDeviceType { get; }
         void Hide();
         void Show();
     }
