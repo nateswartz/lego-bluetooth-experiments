@@ -29,12 +29,14 @@ namespace LegoBluetoothController.UI
             var ledBrightnessControl = new PortSliderController(LEDBrightnessLabel, LEDBrightnessSlider, IoDeviceTypes.LedLight);
             var trainMotorControl = new PortSliderCheckboxController(TrainMotorLabel, TrainMotorSlider, TrainMotorClockwiseCheckbox, IoDeviceTypes.TrainMotor);
             var boostMotorControl = new PortSliderCheckboxController(BoostMotorLabel, BoostMotorSlider, BoostMotorClockwiseCheckbox, IoDeviceTypes.BoostTachoMotor);
+            var technicMotorControl = new PortSliderCheckboxController(TechnicMotorLabel, TechnicMotorSlider, TechnicMotorClockwiseCheckbox, IoDeviceTypes.SmallAngularMotor);
             var rgbLightControl = new PortComboBoxController(RgbLightColorLabel, RgbLightColorSelect, IoDeviceTypes.RgbLight);
 
             _portControllers.Add(ledBrightnessControl);
             _portControllers.Add(trainMotorControl);
             _portControllers.Add(boostMotorControl);
             _portControllers.Add(rgbLightControl);
+            _portControllers.Add(technicMotorControl);
 
             var eventHandler = new AdapterEventHandler(LogMessages, ConnectedHubs, _portControllers,
                                                        HubSelect, _controllers);
@@ -85,13 +87,6 @@ namespace LegoBluetoothController.UI
             await controller.ExecuteCommandAsync(new ShutdownCommand());
         }
 
-        private async void ExecuteCommandButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (HubSelect.SelectedItem is not IHubController controller)
-                return;
-            await controller.ExecuteCommandAsync(new RawCommand(RawCommandText.Text));
-        }
-
         private void LEDBrightnessSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
@@ -124,22 +119,42 @@ namespace LegoBluetoothController.UI
 
         private void BoostMotorClockwiseCheckbox_Click(object sender, RoutedEventArgs e)
         {
-            SendMotorCommand();
+            SendBoostMotorCommand();
         }
 
         private void BoostMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            SendMotorCommand();
+            SendBoostMotorCommand();
         }
 
-        private void SendMotorCommand()
+        private void SendBoostMotorCommand()
+        {
+            SendMotorCommand(IoDeviceTypes.BoostTachoMotor, Convert.ToInt32(BoostMotorSlider.Value), BoostMotorClockwiseCheckbox.IsChecked.Value);
+        }
+
+        private void TechnicMotorClockwiseCheckbox_Click(object sender, RoutedEventArgs e)
+        {
+            SendSmallAngularMotorCommand();
+        }
+
+        private void TechnicMotorSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            SendSmallAngularMotorCommand();
+        }
+
+        private void SendSmallAngularMotorCommand()
+        {
+            SendMotorCommand(IoDeviceTypes.SmallAngularMotor, Convert.ToInt32(TechnicMotorSlider.Value), TechnicMotorClockwiseCheckbox.IsChecked.Value);
+        }
+
+        private void SendMotorCommand(IoDeviceType motorType, int power, bool clockwise)
         {
             if (HubSelect.SelectedItem is not IHubController controller)
                 return;
-            var boostMotor = controller.GetPortIdsByDeviceType(IoDeviceTypes.BoostTachoMotor).FirstOrDefault();
-            if (string.IsNullOrWhiteSpace(boostMotor))
+            var motor = controller.GetPortIdsByDeviceType(motorType).FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(motor))
                 return;
-            controller.ExecuteCommandAsync(new MotorCommand(boostMotor, Convert.ToInt32(BoostMotorSlider.Value), 10000, BoostMotorClockwiseCheckbox.IsChecked.Value));
+            controller.ExecuteCommandAsync(new MotorCommand(motor, power, 10000, clockwise));
         }
 
         private void HubSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)

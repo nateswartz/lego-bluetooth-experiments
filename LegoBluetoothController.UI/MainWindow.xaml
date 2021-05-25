@@ -13,9 +13,7 @@
         <Label Content="Connected Hubs" Margin="596,27,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="150" Height="30"/>
         <TextBox x:Name="ConnectedHubs" IsReadOnly="True" Text="" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="596,62,0,0" Width="400" Height="228"/>
         <Label Content="Log Messages" HorizontalAlignment="Left" Margin="34,351,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="RawCommandText" HorizontalAlignment="Left" Margin="34,88,0,0" Text="Enter command here" TextWrapping="Wrap" VerticalAlignment="Top" Width="179" Height="29"/>
         <ComboBox x:Name="HubSelect" SelectionChanged="HubSelect_SelectionChanged" HorizontalAlignment="Left" Margin="34,27,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
-        <Button x:Name="ExecuteCommandButton" Content="Execute" Click="ExecuteCommandButton_Click" HorizontalAlignment="Left" Margin="241,88,0,0" VerticalAlignment="Top" Width="73" Height="29"/>
         <Slider x:Name="LEDBrightnessSlider" Thumb.DragCompleted="LEDBrightnessSlider_DragCompleted" Maximum="100" Minimum="0" LargeChange="0" Focusable="False" HorizontalAlignment="Left" Margin="34,167,0,0" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="LEDBrightnessLabel" Content="LED Brightness" HorizontalAlignment="Left" Margin="38,136,0,0" VerticalAlignment="Top" Width="99"/>
         <Slider x:Name="TrainMotorSlider" Thumb.DragCompleted="TrainMotorSlider_DragCompleted" Maximum="100" Minimum="0" LargeChange="0" Focusable="False" HorizontalAlignment="Left" Margin="38,238,0,0" VerticalAlignment="Top" Width="120"/>
@@ -26,5 +24,8 @@
         <CheckBox x:Name="BoostMotorClockwiseCheckbox" Click="BoostMotorClockwiseCheckbox_Click" Content="Clockwise" HorizontalAlignment="Left" Margin="324,168,0,0" VerticalAlignment="Top"/>
         <Label x:Name="RgbLightColorLabel" Content="RGB Light Color" HorizontalAlignment="Left" Margin="288,204,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="RgbLightColorSelect" SelectionChanged="RgbLightColorSelect_SelectionChanged" HorizontalAlignment="Left" Margin="294,238,0,0" VerticalAlignment="Top" Width="167" Height="30"/>
+        <Label x:Name="TechnicMotorLabel" Content="Technic Motor Power" HorizontalAlignment="Left" Margin="38,69,0,0" VerticalAlignment="Top"/>
+        <Slider x:Name="TechnicMotorSlider" Thumb.DragCompleted="TechnicMotorSlider_DragCompleted"  Maximum="100" Minimum="0" LargeChange="0" Focusable="False" Margin="38,102,887,0" VerticalAlignment="Top" Width="120"/>
+        <CheckBox x:Name="TechnicMotorClockwiseCheckbox" Click="TechnicMotorClockwiseCheckbox_Click" Content="Clockwise" HorizontalAlignment="Left" Margin="163,102,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
